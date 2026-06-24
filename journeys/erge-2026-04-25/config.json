@@ -1,0 +1,16 @@
+{
+  "id": "erge-2026-04-25",
+  "label": "二格山稜線 · 2026-04-25",
+  "user_login": "bunnytailgrass",
+  "place_id": 130869,
+  "d1": "2026-04-25",
+  "d2": "2026-04-25",
+  "walk_gap_min": 120,
+  "scope": {
+    "exclude_obs_ids": ["353345277", "353345653"],
+    "time_before": "14:56"
+  },
+  "snapshot": "2026/04/25 · 14:41 CST",
+  "elevation": "srtm30m",
+  "brand": "sow"
+}
