@@ -1,23 +1,15 @@
 {
   "id": "erge-2026-04-25",
-  "label": "二格山稜線 · 2026-04-25",
-  "query": {
-    "user_login": "bunnytailgrass",
-    "place_id": 130869,
-    "d1": "2026-04-25",
-    "d2": "2026-04-25"
-  },
-  "walk_gap_min": 120,
-  "generated_at": "2026-06-24T17:55:20",
+  "label": "二格山稜線",
+  "generated_at": "2026-06-24T18:08:41",
   "walks": [
     {
       "walk_id": "2026-04-25",
       "date": "2026-04-25",
       "start": "10:27",
       "end": "15:14",
-      "span_min": 287,
-      "n": 111,
-      "species": 79
+      "n": 93,
+      "species": 63
     }
   ]
 }
