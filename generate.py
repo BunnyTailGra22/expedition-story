@@ -26,6 +26,7 @@ def journey_index_html(cfg, walks):
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>body{{margin:0;background:#fff;color:#3a3a36;font-family:"Noto Sans TC",system-ui,sans-serif}}
 .wrap{{max-width:760px;margin:0 auto;padding:44px 26px}}
+.nav{{font-size:13px;margin:0 0 14px}}.nav a{{color:{BR['green']};text-decoration:none}}
 h1{{color:{BR['green']};font-weight:700;font-size:24px;margin:0 0 4px}}
 .sub{{color:{BR['gray']};font-size:14px;margin:0 0 22px}}
 ul{{list-style:none;padding:0;margin:0}}
@@ -33,6 +34,7 @@ li{{border:0.5px solid {BR['gray2']};border-radius:10px;margin-bottom:10px}}
 li a{{display:block;padding:14px 16px;color:#3a3a36;text-decoration:none}}
 li a:hover{{background:#f5f4ef;color:{BR['green']}}}
 .foot{{margin-top:24px;font-size:11.5px;color:{BR['gray2']}}}</style></head><body><div class="wrap">
+<div class="nav"><a href="../index.html">← 所有旅程 all journeys</a></div>
 <h1>{cfg['label']}</h1>
 <p class="sub">{q['user_login']} · place_id {q['place_id']} · {q['d1']}–{q['d2']} · {len(walks)} 趟 walks（依時間自動分段）</p>
 <ul>{rows}</ul>
@@ -82,18 +84,19 @@ def run_trek(cfg, obs, out):
     d0, d1 = dts[0].strftime("%Y-%m-%d"), dts[-1].strftime("%Y-%m-%d")
     ndays = len({t.date() for t in dts})
     nsp = len({p["s"] for p in pts})
-    km = pts[-1]["x"] / 1000
+    ys, km = [p["y"] for p in pts], pts[-1]["x"] / 1000
     meta = {"title": cfg["label"],
             "subtitle": f"{d0} – {d1} · {ndays} 天 · {len(pts)} 樣點 · {nsp} 種 · "
                         f"連續路徑剖面 single continuous transect",
             "user": cfg["user_login"], "place_id": cfg["place_id"],
-            "snapshot": cfg.get("snapshot"), "nav": False, "trek": True,
+            "snapshot": cfg.get("snapshot"), "trek": True,
             "taxonomy": cfg.get("taxonomy")}
     open(os.path.join(out, "index.html"), "w").write(R.transect_html(meta, pts))
     json.dump({"id": cfg["id"], "label": cfg["label"], "mode": "trek",
                "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
                "d1": d0, "d2": d1, "days": ndays, "points": len(pts), "species": nsp,
-               "trail_km": round(km, 1), "climb_m": round(pts[-1]["y"] - pts[0]["y"])},
+               "trail_km": round(km, 1), "peak_m": round(max(ys)), "low_m": round(min(ys)),
+               "climb_m": round(pts[-1]["y"] - pts[0]["y"])},
               open(os.path.join(out, "journey.json"), "w"), ensure_ascii=False, indent=2)
     print(f"{cfg['label']}: {len(obs)} obs → 1 continuous transect → site/{cfg['id']}/")
     print(f"  {d0}–{d1} · {ndays} 天 · {len(pts)} pts · {nsp} spp · "

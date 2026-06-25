@@ -2,12 +2,14 @@
   "id": "nepal-2023-trek",
   "label": "尼泊爾 2023 · 喜馬拉雅健行",
   "mode": "trek",
-  "generated_at": "2026-06-24T22:11:04",
+  "generated_at": "2026-06-25T19:35:06",
   "d1": "2023-10-01",
   "d2": "2023-10-12",
   "days": 11,
   "points": 103,
   "species": 87,
   "trail_km": 161.8,
+  "peak_m": 5628,
+  "low_m": 2570,
   "climb_m": -130
 }
