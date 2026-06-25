@@ -140,7 +140,7 @@ def transect_html(meta, pts):
            else "科/屬中拉名與特有/保育：TaiCoL 臺灣物種名錄")
     foot = (f"資料來源 iNaturalist API（觀察者 {meta.get('user','')}，地點 place_id {meta.get('place_id','')}）· "
             f"海拔 SRTM 30 m（雙線性內插）· GPS &gt;100 m 之點位置與高程以鄰近可靠點時間內插 · "
-            f"{tax} · 色彩：荒野保護協會"
+            f"{tax}"
             + (f" · 快照 {meta['snapshot']}" if meta.get("snapshot") else "") + "。")
     rep = {"__TITLE__": meta["title"], "__SUBT__": meta["subtitle"], "__NAV__": nav,
            "__N__": str(len(pts)), "__SP__": str(nsp), "__DIST__": dist, "__DUNIT__": unit,

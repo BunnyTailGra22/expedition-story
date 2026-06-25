@@ -38,7 +38,7 @@ li a:hover{{background:#f5f4ef;color:{BR['green']}}}
 <h1>{cfg['label']}</h1>
 <p class="sub">{q['user_login']} · place_id {q['place_id']} · {q['d1']}–{q['d2']} · {len(walks)} 趟 walks（依時間自動分段）</p>
 <ul>{rows}</ul>
-<p class="foot">Expedition Story · 資料來源 iNaturalist · 海拔 SRTM 30 m · 學名 TaiCoL · 色彩 荒野保護協會。</p>
+<p class="foot">Expedition Story · 資料來源 iNaturalist · 海拔 SRTM 30 m · 學名 TaiCoL。</p>
 </div></body></html>"""
 
 

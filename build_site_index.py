@@ -49,9 +49,9 @@ li a:hover{{background:#f5f4ef}}
 .foot{{margin-top:28px;font-size:11.5px;color:{BR['gray2']};line-height:1.7}}</style></head><body><div class="wrap">
 <h1>Expedition Story</h1>
 <p class="sub">把任一段 iNaturalist 踏查（使用者 × 地點 × 日期區間）自動產成植被／生物多樣性海拔剖面圖。<br>
-荒野保護協會 Society of Wilderness · {len(journeys)} 趟旅程。</p>
+共 {len(journeys)} 趟旅程。</p>
 <ul>{rows}</ul>
-<p class="foot">資料來源 iNaturalist · 海拔 SRTM 30 m · 學名 TaiCoL（臺灣）／ iNaturalist（海外）· 色彩 荒野保護協會。</p>
+<p class="foot">資料來源 iNaturalist · 海拔 SRTM 30 m · 學名 TaiCoL（臺灣）／ iNaturalist（海外）。</p>
 </div></body></html>"""
     open(os.path.join(SITE, "index.html"), "w").write(html)
     print(f"site/index.html ← {len(journeys)} journeys: " + ", ".join(j["id"] for j in journeys))
