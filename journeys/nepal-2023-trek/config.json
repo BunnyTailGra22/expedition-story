@@ -1,0 +1,16 @@
+{
+  "id": "nepal-2023-trek",
+  "label": "尼泊爾 2023 · 喜馬拉雅健行",
+  "user_login": "bunnytailgrass",
+  "place_id": 7335,
+  "d1": "2023-10-01",
+  "d2": "2023-10-16",
+  "mode": "trek",
+  "taxonomy": "inat",
+  "scope": {
+    "exclude_obs_ids": ["185668064", "185668091", "187587209"]
+  },
+  "snapshot": "2023/10 · Khumbu",
+  "elevation": "srtm30m",
+  "brand": "sow"
+}

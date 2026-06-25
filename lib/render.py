@@ -38,7 +38,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 .ctt .nm{font-weight:700;color:var(--green);font-size:14px}.ctt .sci{font-style:italic;color:var(--gray)}.ctt .fam{color:var(--gray)}.ctt .lnk{display:inline-block;margin-top:6px;color:var(--green);font-weight:500;text-decoration:none}
 .foot{margin-top:20px;font-size:11.5px;color:var(--gray2);line-height:1.6}
 </style></head><body><div class="wrap">
-<div class="nav"><a href="../index.html">← 旅程索引 journeys</a></div>
+__NAV__
 <h1>__TITLE__</h1>
 <p class="sub">__SUBT__</p>
 <div class="cards">
@@ -46,8 +46,8 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
   <div class="card"><div class="lbl">物種數 species</div><div class="val">__SP__</div></div>
   <div class="card"><div class="lbl">科別 family</div><select id="famSel" autocomplete="off"></select></div>
   <div class="card"><div class="lbl">屬別 genus</div><select id="genSel" autocomplete="off"></select></div>
-  <div class="card"><div class="lbl">步道長 trail</div><div class="val">__DIST__ m</div></div>
-  <div class="card"><div class="lbl">爬升 climb</div><div class="val">__CLIMBSIGN____CLIMB__ m</div><div class="sub2">__E0__ → __E1__ m</div></div>
+  <div class="card"><div class="lbl">步道長 trail</div><div class="val">__DIST__ __DUNIT__</div></div>
+  <div class="card"><div class="lbl">__C6LBL__</div><div class="val">__C6VAL__</div><div class="sub2">__C6SUB__</div></div>
 </div>
 <div class="legend">
   <span><i class="dot" style="background:var(--green)"></i>研究等級 research</span>
@@ -108,7 +108,7 @@ function go(){
       onClick:function(e,els){if(els.length){var p=DATA[els[0].index];if(!active(p))return;window.open(p.u,'_blank');}},
       plugins:{legend:{display:false},tooltip:{enabled:false,external:extTip},
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'x'},limits:{x:{min:0,max:__XMAX__,minRange:40}}}},
-      scales:{x:{type:'linear',min:0,max:__XMAX__,title:{display:true,text:'沿步道水平距離 horizontal distance (m)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v+' m';}}},
+      scales:{x:{type:'linear',min:0,max:__XMAX__,title:{display:true,text:'沿步道水平距離 horizontal distance (__XUNIT__)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v/__USCALE__+' __XUNIT__';}}},
         y:{min:__YMIN__,max:__YMAX__,title:{display:true,text:'海拔 elevation (m)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v+' m';}}}}}});
 }
 if(window.Chart){go();}else{var w=setInterval(function(){if(window.Chart){clearInterval(w);go();}},60);}
@@ -118,18 +118,34 @@ if(window.Chart){go();}else{var w=setInterval(function(){if(window.Chart){clearI
 def transect_html(meta, pts):
     ys = [p["y"] for p in pts]
     nsp = len({p["s"] for p in pts})
-    dist = int(round(pts[-1]["x"])) if pts else 0
-    xmax = int(math.ceil((pts[-1]["x"] if pts else 0) / 25) * 25) or 25
+    maxx = pts[-1]["x"] if pts else 0
+    xmax = int(math.ceil(maxx / 25) * 25) or 25
+    # adaptive distance unit: metres for a short ridge walk, km for a long trek
+    if maxx >= 2000:
+        uscale, unit, dist = 1000, "km", f"{maxx / 1000:.1f}"
+    else:
+        uscale, unit, dist = 1, "m", str(int(round(maxx)))
     e0, e1 = int(round(ys[0])), int(round(ys[-1]))
     climb = e1 - e0
+    if meta.get("trek"):  # out-and-back trek: peak + total ascent, not net start→end
+        ascent = round(sum(max(0.0, ys[i] - ys[i - 1]) for i in range(1, len(ys))))
+        c6lbl, c6val, c6sub = "最高海拔 peak", f"{int(round(max(ys)))} m", f"總爬升 +{ascent} m"
+    else:
+        c6lbl = "爬升 climb"
+        c6val = f"{'+' if climb >= 0 else '−'}{abs(climb)} m"
+        c6sub = f"{e0} → {e1} m"
+    nav = "" if meta.get("nav") is False else \
+        '<div class="nav"><a href="../index.html">← 旅程索引 journeys</a></div>'
+    tax = ("科/屬中拉名：iNaturalist 分類（地區俗名 zh-TW）" if meta.get("taxonomy") == "inat"
+           else "科/屬中拉名與特有/保育：TaiCoL 臺灣物種名錄")
     foot = (f"資料來源 iNaturalist API（觀察者 {meta.get('user','')}，地點 place_id {meta.get('place_id','')}）· "
             f"海拔 SRTM 30 m（雙線性內插）· GPS &gt;100 m 之點位置與高程以鄰近可靠點時間內插 · "
-            f"科/屬中拉名與特有/保育：TaiCoL 臺灣物種名錄 · 色彩：荒野保護協會"
+            f"{tax} · 色彩：荒野保護協會"
             + (f" · 快照 {meta['snapshot']}" if meta.get("snapshot") else "") + "。")
-    rep = {"__TITLE__": meta["title"], "__SUBT__": meta["subtitle"],
-           "__N__": str(len(pts)), "__SP__": str(nsp), "__DIST__": str(dist),
-           "__XMAX__": str(xmax), "__CLIMB__": str(abs(climb)), "__CLIMBSIGN__": "+" if climb >= 0 else "−",
-           "__E0__": str(e0), "__E1__": str(e1),
+    rep = {"__TITLE__": meta["title"], "__SUBT__": meta["subtitle"], "__NAV__": nav,
+           "__N__": str(len(pts)), "__SP__": str(nsp), "__DIST__": dist, "__DUNIT__": unit,
+           "__XMAX__": str(xmax), "__USCALE__": str(uscale), "__XUNIT__": unit,
+           "__C6LBL__": c6lbl, "__C6VAL__": c6val, "__C6SUB__": c6sub,
            "__YMIN__": str(int(min(ys)) - 8), "__YMAX__": str(int(max(ys)) + 8),
            "__FOOT__": foot, "__DATA__": json.dumps(pts, ensure_ascii=False)}
     html = TPL

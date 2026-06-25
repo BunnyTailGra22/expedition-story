@@ -103,7 +103,7 @@ function go(){
       onClick:function(e,els){if(els.length){var p=DATA[els[0].index];if(!active(p))return;window.open(p.u,'_blank');}},
       plugins:{legend:{display:false},tooltip:{enabled:false,external:extTip},
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'x'},limits:{x:{min:0,max:650,minRange:40}}}},
-      scales:{x:{type:'linear',min:0,max:650,title:{display:true,text:'沿步道水平距離 horizontal distance (m)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v+' m';}}},
+      scales:{x:{type:'linear',min:0,max:650,title:{display:true,text:'沿步道水平距離 horizontal distance (m)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v/1+' m';}}},
         y:{min:517,max:667,title:{display:true,text:'海拔 elevation (m)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v+' m';}}}}}});
 }
 if(window.Chart){go();}else{var w=setInterval(function(){if(window.Chart){clearInterval(w);go();}},60);}

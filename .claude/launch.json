@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "es-site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8014", "--directory", "/Users/bunnytailgra22/Library/CloudStorage/GoogleDrive-trist0n.tsai@gmail.com/My Drive/ABC/Expedition Story/site"],
+      "port": 8014
+    }
+  ]
+}

@@ -9,7 +9,7 @@ import argparse, json, os, sys, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from lib import walks as W, profile as P, taicol as T, render as R
+from lib import walks as W, profile as P, taicol as T, render as R, inat_taxa as IT
 
 CACHE = os.path.join(HERE, "caches")
 BR = {"green": "#587A30", "gray": "#666", "gray2": "#B2B2B2"}
@@ -40,22 +40,21 @@ li a:hover{{background:#f5f4ef;color:{BR['green']}}}
 </div></body></html>"""
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--journey", required=True)
-    jid = ap.parse_args().journey
-    cfg = json.load(open(os.path.join(HERE, "journeys", jid, "config.json")))
-
-    obs = W.fetch(cfg["user_login"], cfg["place_id"], cfg["d1"], cfg["d2"])
-    walks = W.segment(obs, cfg.get("walk_gap_min", 120))
-    out = os.path.join(HERE, "site", cfg["id"])
-    os.makedirs(out, exist_ok=True)
-
-    seen, index = {}, []
-    for w in walks:
-        pts = P.build(w["obs"], cfg.get("scope"), CACHE)
-        if not pts:
-            continue
+def enrich_points(pts, cfg):
+    """Attach famSci/famZh/genSci/genZh/end/threat to each point. Taxonomy source
+    follows cfg['taxonomy']: 'inat' (global, family from iNat ancestors) or the
+    default 'taicol' (Taiwan-scope: adds 中文名 + 特有/保育)."""
+    if cfg.get("taxonomy") == "inat":
+        tx = IT.enrich([p.get("tid") for p in pts], os.path.join(CACHE, "inat_taxa.json"))
+        for p in pts:
+            e = tx.get(str(p.get("tid")), {})
+            p["famSci"] = e.get("fam_sci") or "?"
+            p["famZh"] = e.get("fam_zh") or ""
+            p["genSci"] = e.get("gen_sci") or ((p["s"] or "?").split(" ")[0])
+            p["genZh"] = e.get("gen_zh") or ""
+            p["end"] = False
+            p["threat"] = None
+    else:
         species = {p["s"]: p["c"] for p in pts if p["s"]}
         tx = T.enrich(species, os.path.join(CACHE, "taicol.json"))
         for p in pts:
@@ -66,6 +65,62 @@ def main():
             p["genZh"] = e.get("gen_zh") or ""
             p["end"] = bool(e.get("is_endemic"))
             p["threat"] = e.get("threat")
+
+
+def run_trek(cfg, obs, out):
+    """Trek mode: the whole multi-day journey is ONE continuous path → a single
+    elevation transect (x = cumulative along-track distance over the whole trek).
+    Deliberately overrides the per-walk 'no cross-day merge' rule for point-to-point
+    treks (see CLAUDE.md)."""
+    pts = P.build(obs, cfg.get("scope"), CACHE)
+    if not pts:
+        print(f"{cfg['label']}: no usable points after scope.")
+        return
+    enrich_points(pts, cfg)
+    ex = set((cfg.get("scope") or {}).get("exclude_obs_ids", []))
+    dts = sorted(t for t in (W._t(o) for o in obs if str(o.get("id")) not in ex) if t)
+    d0, d1 = dts[0].strftime("%Y-%m-%d"), dts[-1].strftime("%Y-%m-%d")
+    ndays = len({t.date() for t in dts})
+    nsp = len({p["s"] for p in pts})
+    km = pts[-1]["x"] / 1000
+    meta = {"title": cfg["label"],
+            "subtitle": f"{d0} – {d1} · {ndays} 天 · {len(pts)} 樣點 · {nsp} 種 · "
+                        f"連續路徑剖面 single continuous transect",
+            "user": cfg["user_login"], "place_id": cfg["place_id"],
+            "snapshot": cfg.get("snapshot"), "nav": False, "trek": True,
+            "taxonomy": cfg.get("taxonomy")}
+    open(os.path.join(out, "index.html"), "w").write(R.transect_html(meta, pts))
+    json.dump({"id": cfg["id"], "label": cfg["label"], "mode": "trek",
+               "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
+               "d1": d0, "d2": d1, "days": ndays, "points": len(pts), "species": nsp,
+               "trail_km": round(km, 1), "climb_m": round(pts[-1]["y"] - pts[0]["y"])},
+              open(os.path.join(out, "journey.json"), "w"), ensure_ascii=False, indent=2)
+    print(f"{cfg['label']}: {len(obs)} obs → 1 continuous transect → site/{cfg['id']}/")
+    print(f"  {d0}–{d1} · {ndays} 天 · {len(pts)} pts · {nsp} spp · "
+          f"{km:.1f} km · {round(pts[0]['y'])}→{round(pts[-1]['y'])} m")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--journey", required=True)
+    jid = ap.parse_args().journey
+    cfg = json.load(open(os.path.join(HERE, "journeys", jid, "config.json")))
+
+    obs = W.fetch(cfg["user_login"], cfg["place_id"], cfg["d1"], cfg["d2"])
+    out = os.path.join(HERE, "site", cfg["id"])
+    os.makedirs(out, exist_ok=True)
+
+    if cfg.get("mode") == "trek":
+        run_trek(cfg, obs, out)
+        return
+
+    walks = W.segment(obs, cfg.get("walk_gap_min", 120))
+    seen, index = {}, []
+    for w in walks:
+        pts = P.build(w["obs"], cfg.get("scope"), CACHE)
+        if not pts:
+            continue
+        enrich_points(pts, cfg)
         wid = w["date"]
         seen[wid] = seen.get(wid, 0) + 1
         if seen[wid] > 1:
