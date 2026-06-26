@@ -25,6 +25,11 @@ python3 generate.py --journey erge-2026-04-25
 
 讀 `journeys/<id>/config.json` → 抓取 → 分段 → 產出 `site/<id>/`。
 
+### 新增旅程 / Add a journey
+
+- **線上表單 / Hosted form**：GitHub → **Actions** → **Create journey** → Run workflow，填使用者、地點（名稱或 place_id）、日期、模式即可自動產生並部署。執行記錄會列出地點候選 place_id 與偏離路線的離群觀測（供 `exclude_ids` 重跑）。
+- **本機 / Local**：`python3 new_journey.py --user U --place "Yushan" --d1 … --d2 … --mode trek`，再 `python3 generate.py --journey <id> && python3 build_site_index.py`。
+
 ## 狀態 / Status
 
 | 階段 | 內容 | 狀態 |

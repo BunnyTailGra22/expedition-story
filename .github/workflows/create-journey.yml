@@ -1,0 +1,109 @@
+name: Create journey
+
+# A form-driven way to add a journey: Actions tab ▸ "Create journey" ▸ Run workflow.
+# Resolves the place, scaffolds the config, generates the site, commits, and deploys.
+
+on:
+  workflow_dispatch:
+    inputs:
+      user_login:
+        description: "iNaturalist user"
+        required: true
+        default: "bunnytailgrass"
+      place:
+        description: "Place NAME (resolved via iNat) or numeric place_id"
+        required: true
+      d1:
+        description: "Start date (YYYY-MM-DD)"
+        required: true
+      d2:
+        description: "End date (YYYY-MM-DD)"
+        required: true
+      mode:
+        description: "Output mode"
+        type: choice
+        options: [trek, survey]
+        default: trek
+      taxonomy:
+        description: "Taxonomy source (auto = taicol in Taiwan, else inat)"
+        type: choice
+        options: [auto, inat, taicol]
+        default: auto
+      exclude_ids:
+        description: "Obs IDs to drop, comma-separated (optional; see run log for off-trail candidates)"
+        required: false
+        default: ""
+      label:
+        description: "Display label (optional; defaults to the place name)"
+        required: false
+        default: ""
+      id:
+        description: "URL slug (optional; derived if blank)"
+        required: false
+        default: ""
+      gap_min:
+        description: "Survey walk-gap minutes (survey mode only)"
+        required: false
+        default: "120"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Scaffold config
+        id: scaffold
+        env:  # pass inputs as env (not inline) to avoid shell injection
+          USER_LOGIN: ${{ inputs.user_login }}
+          PLACE: ${{ inputs.place }}
+          D1: ${{ inputs.d1 }}
+          D2: ${{ inputs.d2 }}
+          MODE: ${{ inputs.mode }}
+          TAXONOMY: ${{ inputs.taxonomy }}
+          EXCLUDE: ${{ inputs.exclude_ids }}
+          LABEL: ${{ inputs.label }}
+          JID: ${{ inputs.id }}
+          GAP: ${{ inputs.gap_min }}
+        run: |
+          python3 new_journey.py \
+            --user "$USER_LOGIN" --place "$PLACE" \
+            --d1 "$D1" --d2 "$D2" --mode "$MODE" --taxonomy "$TAXONOMY" \
+            --exclude "$EXCLUDE" --label "$LABEL" --id "$JID" --gap "$GAP"
+
+      - name: Generate transect + map
+        run: python3 generate.py --journey "${{ steps.scaffold.outputs.journey_id }}"
+
+      - name: Rebuild global index
+        run: python3 build_site_index.py
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Create journey ${{ steps.scaffold.outputs.journey_id }} (via form)" \
+            || { echo "nothing to commit"; exit 1; }
+          git push
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

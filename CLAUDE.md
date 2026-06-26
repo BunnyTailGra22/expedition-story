@@ -67,7 +67,11 @@ photo tooltip, intersect:true hover). Port these into `lib/` parameterized by co
   科/屬 filter and render are taxon-agnostic.
 - Pure stdlib where possible; no secrets in repo.
 
-## Run
-```bash
-python3 generate.py --journey erge-2026-04-25
-```
+## Run / add a journey
+- **Hosted form**: GitHub → Actions → "Create journey" → Run workflow (inputs: user, place
+  name/id, dates, mode, taxonomy=auto…). `create-journey.yml` runs `new_journey.py` →
+  `generate.py` → `build_site_index.py` → commit → deploy. Place-name matches are ambiguous;
+  the run log lists candidate place_ids + off-trail outlier obs to exclude on a re-run.
+- **Local CLI** (same scaffolder): `python3 new_journey.py --user U --place "Yushan" --d1 …
+  --d2 … --mode trek`, then `python3 generate.py --journey <id> && python3 build_site_index.py`.
+- **Regenerate one**: `python3 generate.py --journey erge-2026-04-25`
