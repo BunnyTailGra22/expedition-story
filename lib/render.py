@@ -75,13 +75,13 @@ __NAV__
 </div>
 <div class="ctrl"><span>縮放：雙指 / 滾輪　平移：拖曳　點選點位 → iNaturalist</span><button id="rz" type="button">重置 reset</button></div>
 <div class="chartbox"><canvas id="t" role="img" aria-label="__TITLE__ 海拔剖面圖"></canvas></div>
-<div class="seclbl">觀測點地圖 observation map<span>拖曳/縮放　點選圖示看物種　科/屬篩選同步</span></div>
+<div class="seclbl">觀測點地圖 observation map<span>拖曳/縮放　科/屬篩選同步　游標連動剖面圖 ↔ 地圖</span></div>
 <div class="mapbox"><div id="map"></div></div>
 <p class="foot">__FOOT__</p>
 </div>
 <script>
 var DATA=__DATA__;
-var FAM='*', GEN='*', chart, lmap, markers=[], trackLine;
+var FAM='*', GEN='*', chart, lmap, markers=[], trackLine, hiRing=null, hiMk=null;
 function isMobile(){return window.matchMedia('(max-width:760px)').matches;}
 function gen(d){return d.genSci;}
 function active(d){return (FAM==='*'||d.famSci===FAM)&&(GEN==='*'||gen(d)===GEN);}
@@ -94,9 +94,10 @@ function extTip(ctx){
   var tip=ctx.tooltip, mob=isMobile();
   var el=document.getElementById('ctt');
   if(!el){el=document.createElement('div');el.id='ctt';document.body.appendChild(el);}
-  if(tip.opacity===0){el.style.opacity=0;return;}
+  if(tip.opacity===0){el.style.opacity=0;highlightMarker(null);return;}
   var d=tip.dataPoints[0].raw;
-  if(!active(d)){el.style.opacity=0;return;}
+  if(!active(d)){el.style.opacity=0;highlightMarker(null);return;}
+  highlightMarker(tip.dataPoints[0].dataIndex);
   var img=d.ph?('<img src="'+d.ph+'" alt="">'):'';
   var link=mob?('<a class="lnk" href="'+d.u+'" target="_blank" rel="noopener">iNaturalist ↗</a>'):'';
   var bd=(d.end?'<span style="color:#3B6D11">⬥臺灣特有</span> ':'')+(d.threat?'<span style="color:#A32D2D">'+(['CR','EN','VU','NT'].indexOf(d.threat)>=0?'IUCN ':'紅皮書 ')+d.threat+'</span>':'');
@@ -127,6 +128,26 @@ function popupHtml(d){
   var bd=(d.end?'<span style="color:#3B6D11">⬥臺灣特有</span> ':'')+(d.threat?'<span style="color:#A32D2D">'+(['CR','EN','VU','NT'].indexOf(d.threat)>=0?'IUCN ':'紅皮書 ')+d.threat+'</span>':'');
   return '<div class="pp">'+img+'<div class="nm">'+(d.c||'—')+'</div><div class="sci">'+d.s+'</div><div class="fam">'+(d.famZh||'')+' '+(d.famSci||'')+'</div>'+(bd?'<div class="fam">'+bd+'</div>':'')+(d.fl?'<div class="fam" style="color:#E8380D">GPS ±'+Math.round(d.a)+'m · 位置內插</div>':'')+'<a class="lnk" href="'+d.u+'" target="_blank" rel="noopener">iNaturalist ↗</a></div>';
 }
+// linked hover: highlight the map marker for chart point i (orange halo)
+function highlightMarker(i){
+  if(!lmap)return;
+  if(hiMk){hiMk.setZIndexOffset(0);hiMk=null;}                 // drop previous raise
+  if(i==null||DATA[i]==null||DATA[i].lat==null||!active(DATA[i])){if(hiRing){lmap.removeLayer(hiRing);hiRing=null;}return;}
+  var d=DATA[i],ll=[d.lat,d.lng];
+  if(!hiRing){hiRing=L.circleMarker(ll,{radius:23,color:'#FC5200',weight:4,fillColor:'#FC5200',fillOpacity:0.12,interactive:false}).addTo(lmap);}
+  else{hiRing.setLatLng(ll);if(!lmap.hasLayer(hiRing))hiRing.addTo(lmap);}
+  var mo=markers.find(function(o){return o.i===i;});           // raise hovered photo above its neighbours
+  if(mo){mo.m.setZIndexOffset(1000);hiMk=mo.m;}
+}
+// linked hover: drive the chart's point + photo card for map marker i
+function highlightPoint(i){
+  if(!chart)return;
+  if(i==null||DATA[i]==null||!active(DATA[i])){chart.setActiveElements([]);chart.tooltip.setActiveElements([],{x:0,y:0});chart.update('none');return;}
+  var el=chart.getDatasetMeta(0).data[i];
+  chart.setActiveElements([{datasetIndex:0,index:i}]);
+  chart.tooltip.setActiveElements([{datasetIndex:0,index:i}],{x:el.x,y:el.y});
+  chart.update('none');
+}
 function initMap(){
   if(!window.L){setTimeout(initMap,80);return;}
   var geo=DATA.filter(function(d){return d.lat!=null&&d.lng!=null;});
@@ -134,12 +155,20 @@ function initMap(){
   lmap=L.map('map',{scrollWheelZoom:true});
   L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:'© OpenStreetMap、SRTM ｜ © OpenTopoMap (CC-BY-SA)'}).addTo(lmap);
   trackLine=L.polyline(geo.map(function(d){return [d.lat,d.lng];}),{color:'#FC5200',weight:3,opacity:0.9}).addTo(lmap);
-  geo.forEach(function(d){var m=L.marker([d.lat,d.lng],{icon:markerIcon(d)});m.bindPopup(popupHtml(d),{maxWidth:200});markers.push({m:m,d:d});});
+  DATA.forEach(function(d,idx){
+    if(d.lat==null||d.lng==null)return;
+    var m=L.marker([d.lat,d.lng],{icon:markerIcon(d)});
+    m.bindPopup(popupHtml(d),{maxWidth:200});
+    m.on('mouseover',function(){highlightPoint(idx);});
+    m.on('mouseout',function(){highlightPoint(null);});
+    markers.push({m:m,d:d,i:idx});
+  });
   refreshMarkers();
   lmap.fitBounds(trackLine.getBounds(),{padding:[30,30]});
 }
 function refreshMarkers(){
   if(!lmap)return;
+  highlightMarker(null);
   markers.forEach(function(o){
     if(active(o.d)){if(!lmap.hasLayer(o.m))o.m.addTo(lmap);}
     else if(lmap.hasLayer(o.m))lmap.removeLayer(o.m);
