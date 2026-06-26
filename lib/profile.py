@@ -60,7 +60,7 @@ def build(walk_obs, scope, cache_dir):
         pts.append({"n": i + 1, "t": r["_t"].strftime("%H:%M"), "s": tx.get("name"),
                     "c": tx.get("preferred_common_name") or "", "g": o.get("quality_grade"),
                     "a": round(r["acc"], 1), "x": dist[i], "y": els[i], "fl": r["fl"],
-                    "tid": tx.get("id"),
+                    "lat": round(r["lat"], 6), "lng": round(r["lng"], 6), "tid": tx.get("id"),
                     "u": o.get("uri") or f"https://www.inaturalist.org/observations/{o.get('id')}",
                     "ph": (ph[0].get("url", "").replace("square", "medium") if ph else "")})
 

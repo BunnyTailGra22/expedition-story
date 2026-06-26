@@ -1,6 +1,9 @@
-"""Render one walk's points into a self-contained transect HTML (SOW brand):
-elevation profile, 科/屬 filter (中拉, TaiCoL), GPS-flag diamonds, photo tooltip,
-pinch-zoom/pan; clicking a point opens its iNaturalist observation."""
+"""Render one walk's points into a self-contained HTML page:
+1) elevation transect (Chart.js): 科/屬 filter (中拉), GPS-flag diamonds, photo
+   tooltip, pinch-zoom/pan; click a point → its iNaturalist observation.
+2) observation map below it (Leaflet + OpenTopoMap, MVP): obs-point track polyline
+   + circular photo markers + popups; the 科/屬 filter syncs both views. Mobile-
+   responsive. (Track = obs points in time order; a real GPX route is a later tier.)"""
 import json, math
 
 TPL = """<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8">
@@ -10,6 +13,8 @@ TPL = """<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{--green:#587A30;--green2:#90B821;--gray:#666;--gray2:#B2B2B2;--yellow:#FFD900;--red:#E8380D;--ink:#3a3a36}
 *{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:"Noto Sans TC",system-ui,sans-serif}
@@ -37,6 +42,20 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 .ctt.sheet img{width:88px;height:88px;flex:0 0 auto;object-fit:cover;border-radius:8px;background:#f1efe8}
 .ctt .nm{font-weight:700;color:var(--green);font-size:14px}.ctt .sci{font-style:italic;color:var(--gray)}.ctt .fam{color:var(--gray)}.ctt .lnk{display:inline-block;margin-top:6px;color:var(--green);font-weight:500;text-decoration:none}
 .foot{margin-top:20px;font-size:11.5px;color:var(--gray2);line-height:1.6}
+.seclbl{font-size:15px;font-weight:500;color:var(--green);margin:30px 0 6px}
+.seclbl span{font-size:12px;font-weight:400;color:var(--gray2);margin-left:8px}
+.mapbox{position:relative;width:100%;height:480px;border-radius:12px;overflow:hidden;border:0.5px solid var(--gray2)}
+#map{width:100%;height:100%;background:#eee}
+.mk{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);background:#f1efe8}
+.mk img{width:100%;height:100%;object-fit:cover;display:block}
+.mk.fl{border-color:var(--red)}
+.dotmk{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.dotmk.fl{border-color:var(--red)}
+.leaflet-popup-content{font-family:"Noto Sans TC",system-ui,sans-serif;margin:10px 12px;width:180px!important}
+.pp img{width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;background:#f1efe8}
+.pp .nm{font-weight:700;color:var(--green);font-size:14px}.pp .sci{font-style:italic;color:var(--gray);font-size:12px}
+.pp .fam{color:var(--gray);font-size:12px}.pp .lnk{display:inline-block;margin-top:6px;color:var(--green);font-weight:500;text-decoration:none;font-size:12px}
+@media(max-width:760px){.mapbox{height:360px}}
 </style></head><body><div class="wrap">
 __NAV__
 <h1>__TITLE__</h1>
@@ -56,11 +75,13 @@ __NAV__
 </div>
 <div class="ctrl"><span>縮放：雙指 / 滾輪　平移：拖曳　點選點位 → iNaturalist</span><button id="rz" type="button">重置 reset</button></div>
 <div class="chartbox"><canvas id="t" role="img" aria-label="__TITLE__ 海拔剖面圖"></canvas></div>
+<div class="seclbl">觀測點地圖 observation map<span>拖曳/縮放　點選圖示看物種　科/屬篩選同步</span></div>
+<div class="mapbox"><div id="map"></div></div>
 <p class="foot">__FOOT__</p>
 </div>
 <script>
 var DATA=__DATA__;
-var FAM='*', GEN='*', chart;
+var FAM='*', GEN='*', chart, lmap, markers=[], trackLine;
 function isMobile(){return window.matchMedia('(max-width:760px)').matches;}
 function gen(d){return d.genSci;}
 function active(d){return (FAM==='*'||d.famSci===FAM)&&(GEN==='*'||gen(d)===GEN);}
@@ -95,10 +116,39 @@ function fillGenera(fam){var gc={},gz={};DATA.forEach(function(d){if(fam==='*'||
   var keys=Object.keys(gc).sort();var h='<option value="*">全部 all ('+keys.length+' 屬)</option>';
   keys.forEach(function(k){h+='<option value="'+k+'">'+(gz[k]?gz[k]+' ':'')+k+' · '+gc[k]+'</option>';});
   document.getElementById('genSel').innerHTML=h;}
+function markerIcon(d){
+  if(d.ph){var u=d.ph.replace('medium','square');
+    return L.divIcon({className:'',iconSize:[38,38],iconAnchor:[19,19],html:'<div class="mk'+(d.fl?' fl':'')+'"><img src="'+u+'" alt=""></div>'});}
+  var col=d.g==='research'?'#587A30':'#90B821';
+  return L.divIcon({className:'',iconSize:[14,14],iconAnchor:[7,7],html:'<div class="dotmk'+(d.fl?' fl':'')+'" style="background:'+col+'"></div>'});
+}
+function popupHtml(d){
+  var img=d.ph?('<img src="'+d.ph+'" alt="">'):'';
+  var bd=(d.end?'<span style="color:#3B6D11">⬥臺灣特有</span> ':'')+(d.threat?'<span style="color:#A32D2D">'+(['CR','EN','VU','NT'].indexOf(d.threat)>=0?'IUCN ':'紅皮書 ')+d.threat+'</span>':'');
+  return '<div class="pp">'+img+'<div class="nm">'+(d.c||'—')+'</div><div class="sci">'+d.s+'</div><div class="fam">'+(d.famZh||'')+' '+(d.famSci||'')+'</div>'+(bd?'<div class="fam">'+bd+'</div>':'')+(d.fl?'<div class="fam" style="color:#E8380D">GPS ±'+Math.round(d.a)+'m · 位置內插</div>':'')+'<a class="lnk" href="'+d.u+'" target="_blank" rel="noopener">iNaturalist ↗</a></div>';
+}
+function initMap(){
+  if(!window.L){setTimeout(initMap,80);return;}
+  var geo=DATA.filter(function(d){return d.lat!=null&&d.lng!=null;});
+  if(!geo.length)return;
+  lmap=L.map('map',{scrollWheelZoom:true});
+  L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:'© OpenStreetMap、SRTM ｜ © OpenTopoMap (CC-BY-SA)'}).addTo(lmap);
+  trackLine=L.polyline(geo.map(function(d){return [d.lat,d.lng];}),{color:'#FC5200',weight:3,opacity:0.9}).addTo(lmap);
+  geo.forEach(function(d){var m=L.marker([d.lat,d.lng],{icon:markerIcon(d)});m.bindPopup(popupHtml(d),{maxWidth:200});markers.push({m:m,d:d});});
+  refreshMarkers();
+  lmap.fitBounds(trackLine.getBounds(),{padding:[30,30]});
+}
+function refreshMarkers(){
+  if(!lmap)return;
+  markers.forEach(function(o){
+    if(active(o.d)){if(!lmap.hasLayer(o.m))o.m.addTo(lmap);}
+    else if(lmap.hasLayer(o.m))lmap.removeLayer(o.m);
+  });
+}
 function go(){
   fillFamilies();fillGenera('*');
-  document.getElementById('famSel').onchange=function(){FAM=this.value;GEN='*';fillGenera(FAM);chart.update();};
-  document.getElementById('genSel').onchange=function(){GEN=this.value;chart.update();};
+  document.getElementById('famSel').onchange=function(){FAM=this.value;GEN='*';fillGenera(FAM);chart.update();refreshMarkers();};
+  document.getElementById('genSel').onchange=function(){GEN=this.value;chart.update();refreshMarkers();};
   document.getElementById('rz').onclick=function(){if(chart.resetZoom)chart.resetZoom();};
   chart=new Chart(document.getElementById('t'),{type:'line',
     data:{datasets:[{data:DATA,borderColor:'#666666',borderWidth:1.5,fill:'start',backgroundColor:'rgba(178,178,178,0.20)',tension:0.3,
@@ -110,6 +160,7 @@ function go(){
         zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'x'},limits:{x:{min:0,max:__XMAX__,minRange:40}}}},
       scales:{x:{type:'linear',min:0,max:__XMAX__,title:{display:true,text:'沿步道水平距離 horizontal distance (__XUNIT__)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v/__USCALE__+' __XUNIT__';}}},
         y:{min:__YMIN__,max:__YMAX__,title:{display:true,text:'海拔 elevation (m)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v+' m';}}}}}});
+  initMap();
 }
 if(window.Chart){go();}else{var w=setInterval(function(){if(window.Chart){clearInterval(w);go();}},60);}
 </script></body></html>"""
