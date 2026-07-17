@@ -1,8 +1,12 @@
 # Expedition Story — CLAUDE.md
 
 Generalized tool that turns an iNaturalist query (user × place × date-range) into a
-vegetation **elevation-transect** site. Generalized from the 二格山 ridgeline transect.
-SOW (荒野保護協會) tool.
+self-contained **elevation-transect + observation-map** site. Generalized from the 二格山
+ridgeline transect; handles mixed taxa (biodiversity), not just vegetation.
+
+Full docs: **[ARCHITECTURE.md](ARCHITECTURE.md)** (modules/flow) · **[DESIGN.md](DESIGN.md)** (rationale) ·
+**[SPEC.md](SPEC.md)** (config/outputs/form) · **[README.md](README.md)** (overview). The organization name
+was removed from all rendered pages; the green palette is kept.
 
 ## Core principle
 The elevation transect is a **single-path** visualization (x = along-track distance on
