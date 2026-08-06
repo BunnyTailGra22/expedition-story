@@ -1,0 +1,16 @@
+{
+  "id": "south3-2025-trek",
+  "label": "中央山脈南三段 2025 · 花蓮→南投八日縱走",
+  "user_login": "bunnytailgrass",
+  "place_id": 7888,
+  "d1": "2025-10-04",
+  "d2": "2025-10-11",
+  "mode": "trek",
+  "taxonomy": "taicol",
+  "scope": {
+    "exclude_obs_ids": ["320336492", "320336436", "320337180"]
+  },
+  "snapshot": "2025/10 · 中央山脈南三段",
+  "elevation": "srtm30m",
+  "brand": "sow"
+}
