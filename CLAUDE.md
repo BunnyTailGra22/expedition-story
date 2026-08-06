@@ -37,7 +37,7 @@ lib/                        # shared engine
   inat_taxa.py              # global-scope: family/genus (中拉) from iNat /v1/taxa ancestors, cached
   geo.py / profile.py       # haversine cumulative distance / per-walk point build (carries lat/lng)
   render.py                 # page template: transect (adaptive m↔km axis, optional nav, peak vs
-                            #   climb) + observation map below (Leaflet, light CARTO base + topo/OSM
+                            #   climb) + observation map below (Leaflet, OSM base + light/topo
                             #   switcher, obs-point track + photo markers). Transect ↔ map are linked
                             #   three ways: 科/屬 filter, hover, and synced zoom/pan. Mobile-responsive
 caches/                     # cross-journey shared: elevation.json, taicol.json, inat_taxa.json

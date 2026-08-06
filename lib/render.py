@@ -1,8 +1,8 @@
 """Render one walk's points into a self-contained HTML page:
 1) elevation transect (Chart.js): 科/屬 filter (中拉), GPS-flag diamonds, photo
    tooltip, pinch-zoom/pan; click a point → its iNaturalist observation.
-2) observation map below it (Leaflet, light CARTO Positron base + a layer switcher
-   for topo/OSM): obs-point track polyline + circular photo markers + popups.
+2) observation map below it (Leaflet, OSM base + a layer switcher for a light
+   CARTO/topo base): obs-point track polyline + circular photo markers + popups.
 The two views are linked three ways: the 科/屬 filter drives both, hovering one
 highlights the other, and **zoom/pan is synced** — narrowing the transect to a
 stretch of trail fits the map to it, and navigating the map narrows the transect
@@ -167,8 +167,8 @@ function initMap(){
         {maxZoom:17,attribution:'© OpenStreetMap、SRTM ｜ © OpenTopoMap (CC-BY-SA)'}),
       bOsm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {maxZoom:19,attribution:'© OpenStreetMap contributors'});
-  bLight.addTo(lmap);
-  L.control.layers({'淺色 light':bLight,'地形 topo':bTopo,'街道 OSM':bOsm},null,{position:'bottomright'}).addTo(lmap);
+  bOsm.addTo(lmap);
+  L.control.layers({'街道 OSM':bOsm,'淺色 light':bLight,'地形 topo':bTopo},null,{position:'bottomright'}).addTo(lmap);
   trackLine=L.polyline(geo.map(function(d){return [d.lat,d.lng];}),{color:'#FC5200',weight:3,opacity:0.9}).addTo(lmap);
   DATA.forEach(function(d,idx){
     if(d.lat==null||d.lng==null)return;

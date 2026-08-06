@@ -68,7 +68,7 @@ site/<id>/journey.json          manifest (see below)
 ```
 
 Each transect page contains, top to bottom: title + summary cards + family/genus filters → **elevation
-transect** (Chart.js) → **observation map** (Leaflet, light CARTO base + topo/OSM switcher) → footer.
+transect** (Chart.js) → **observation map** (Leaflet, OSM base + light/topo switcher) → footer.
 Both views share one point array and are linked three ways: hover, the 科/屬 filter, and **zoom/pan**
 (map view ⇄ transect distance range). Pages are responsive (cards reflow, map 480→360 px on mobile).
 

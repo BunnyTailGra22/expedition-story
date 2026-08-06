@@ -88,8 +88,8 @@ Both the chart and the map render the **same** ordered array, so they link by in
   **adaptive** (metres for a short ridge, km for a long trek); card 6 shows **peak + total ascent** for
   treks vs **net climb** for surveys.
 - **Observation map** (Leaflet): an orange track polyline through the points, circular photo markers
-  (dots when a photo is missing), popups → iNaturalist. The base map is **CARTO Positron (light)**, with
-  a bottom-right switcher for OpenTopoMap (terrain + contours) and plain OSM.
+  (dots when a photo is missing), popups → iNaturalist. The base map is **OpenStreetMap**, with a
+  bottom-right switcher for CARTO Positron (light) and OpenTopoMap (terrain + contours).
 - **Linked hover**: hovering a chart point rings + raises its map marker; hovering a marker activates the
   chart point and pops its photo card. The 科/屬 filter syncs both and clears stale highlights.
 - **Linked zoom/pan**: navigating the map narrows the transect to the stretch of trail on screen;

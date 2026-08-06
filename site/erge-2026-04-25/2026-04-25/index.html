@@ -152,8 +152,8 @@ function initMap(){
         {maxZoom:17,attribution:'© OpenStreetMap、SRTM ｜ © OpenTopoMap (CC-BY-SA)'}),
       bOsm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {maxZoom:19,attribution:'© OpenStreetMap contributors'});
-  bLight.addTo(lmap);
-  L.control.layers({'淺色 light':bLight,'地形 topo':bTopo,'街道 OSM':bOsm},null,{position:'bottomright'}).addTo(lmap);
+  bOsm.addTo(lmap);
+  L.control.layers({'街道 OSM':bOsm,'淺色 light':bLight,'地形 topo':bTopo},null,{position:'bottomright'}).addTo(lmap);
   trackLine=L.polyline(geo.map(function(d){return [d.lat,d.lng];}),{color:'#FC5200',weight:3,opacity:0.9}).addTo(lmap);
   DATA.forEach(function(d,idx){
     if(d.lat==null||d.lng==null)return;
