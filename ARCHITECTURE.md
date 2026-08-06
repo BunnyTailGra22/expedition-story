@@ -17,7 +17,7 @@ lib/                        the engine (pure-stdlib Python)
   taicol.py                 Taiwan taxonomy (TaiCoL): 中拉 family/genus + endemism/Red List
   inat_taxa.py              global taxonomy: family/genus from iNat /v1/taxa ancestors
   profile.py                one walk's obs → transect points (scope → QA → elev → distance)
-  render.py                 points → self-contained HTML (transect chart + observation map)
+  render.py                 points → self-contained HTML (transect chart + map × elevation panes)
 generate.py                 orchestrator: config → fetch → (trek | survey) → site/<id>/
 build_site_index.py         scans site/*/journey.json → site/index.html (global landing)
 new_journey.py              scaffolder: resolve place + write a config + probe (form/CLI)
@@ -89,8 +89,15 @@ Both the chart and the map render the **same** ordered array, so they link by in
   treks vs **net climb** for surveys.
 - **Observation map** (Leaflet + OpenTopoMap): an orange track polyline through the points, circular
   photo markers (dots when a photo is missing), popups → iNaturalist.
-- **Linked hover**: hovering a chart point rings + raises its map marker; hovering a marker activates the
-  chart point and pops its photo card. The 科/屬 filter syncs both and clears stale highlights.
+- **Elevation profile pane** (Leaflet, no tiles): the map's twin — a second Leaflet map in the **same
+  projection** where elevation rides on a synthetic lat/lng axis. Because both panes use one projection
+  and one zoom, they share a geographic axis *pixel-for-pixel*: a graticule tick drawn in one lands on
+  the same pixel in the other, and pan/zoom is a plain `setView` between them. The shared axis follows
+  the track: **latitude → panes side by side** (N-S walk), **longitude → panes stacked** (E-W walk),
+  chosen in `transect_html` by comparing the track's metric N-S and E-W spans.
+- **Linked hover**: hovering a chart point rings + raises its map marker and rings the profile dot;
+  hovering either map marker activates the chart point and pops its photo card. The 科/屬 filter syncs
+  all three views and clears stale highlights.
 
 Pages are **self-contained**: data is inlined; only libraries (Chart.js, Leaflet from CDN), map tiles,
 and photos are fetched live. This keeps every page a single portable file with no build step.

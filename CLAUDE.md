@@ -37,8 +37,10 @@ lib/                        # shared engine
   inat_taxa.py              # global-scope: family/genus (中拉) from iNat /v1/taxa ancestors, cached
   geo.py / profile.py       # haversine cumulative distance / per-walk point build (carries lat/lng)
   render.py                 # page template: transect (adaptive m↔km axis, optional nav, peak vs
-                            #   climb) + observation map below (Leaflet+OpenTopoMap, MVP obs-point
-                            #   track + photo markers, 科/屬 filter syncs both, mobile-responsive)
+                            #   climb) + paired Leaflet view below (OpenTopoMap obs map × elevation
+                            #   profile as a 2nd Leaflet map; they share one geographic axis —
+                            #   lat side-by-side for N-S walks, lng stacked for E-W — and pan/zoom
+                            #   together; 科/屬 filter + hover sync all three, mobile-responsive)
 caches/                     # cross-journey shared: elevation.json, taicol.json, inat_taxa.json
 generate.py --journey <id>  # config -> fetch -> segment -> per-walk render -> site/<id>/
 site/<id>/journey.json      # walk manifest (P1)

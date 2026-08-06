@@ -68,9 +68,12 @@ site/<id>/journey.json          manifest (see below)
 ```
 
 Each transect page contains, top to bottom: title + summary cards + family/genus filters → **elevation
-transect** (Chart.js) → **observation map** (Leaflet + OpenTopoMap) → footer. Both views share one point
-array and are linked by hover; the 科/屬 filter drives both. Pages are responsive (cards reflow, map
-480→360 px on mobile).
+transect** (Chart.js, x = along-track distance) → **observation map × elevation profile** (two Leaflet
+panes) → footer. The profile pane is a Leaflet map in the map's own projection, so the pair shares one
+geographic axis and pans/zooms together: **side by side** with latitude shared for a north-south walk,
+**stacked** with longitude shared for an east-west one (picked from the track's spans). All three views
+share one point array and are linked by hover; the 科/屬 filter drives all of them. Pages are responsive
+(cards reflow, panes stack and shrink to 360 px on mobile).
 
 ### `journey.json`
 
