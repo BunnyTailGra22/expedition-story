@@ -17,7 +17,7 @@ lib/                        the engine (pure-stdlib Python)
   taicol.py                 Taiwan taxonomy (TaiCoL): 中拉 family/genus + endemism/Red List
   inat_taxa.py              global taxonomy: family/genus from iNat /v1/taxa ancestors
   profile.py                one walk's obs → transect points (scope → QA → elev → distance)
-  render.py                 points → self-contained HTML (transect chart + map × elevation panes)
+  render.py                 points → self-contained HTML (transect chart + observation map)
 generate.py                 orchestrator: config → fetch → (trek | survey) → site/<id>/
 build_site_index.py         scans site/*/journey.json → site/index.html (global landing)
 new_journey.py              scaffolder: resolve place + write a config + probe (form/CLI)
@@ -87,17 +87,16 @@ Both the chart and the map render the **same** ordered array, so they link by in
   GPS-flagged points drawn as red diamonds, external photo tooltip, click → iNaturalist. The x-axis is
   **adaptive** (metres for a short ridge, km for a long trek); card 6 shows **peak + total ascent** for
   treks vs **net climb** for surveys.
-- **Observation map** (Leaflet + OpenTopoMap): an orange track polyline through the points, circular
-  photo markers (dots when a photo is missing), popups → iNaturalist.
-- **Elevation profile pane** (Leaflet, no tiles): the map's twin — a second Leaflet map in the **same
-  projection** where elevation rides on a synthetic lat/lng axis. Because both panes use one projection
-  and one zoom, they share a geographic axis *pixel-for-pixel*: a graticule tick drawn in one lands on
-  the same pixel in the other, and pan/zoom is a plain `setView` between them. The shared axis follows
-  the track: **latitude → panes side by side** (N-S walk), **longitude → panes stacked** (E-W walk),
-  chosen in `transect_html` by comparing the track's metric N-S and E-W spans.
-- **Linked hover**: hovering a chart point rings + raises its map marker and rings the profile dot;
-  hovering either map marker activates the chart point and pops its photo card. The 科/屬 filter syncs
-  all three views and clears stale highlights.
+- **Observation map** (Leaflet): an orange track polyline through the points, circular photo markers
+  (dots when a photo is missing), popups → iNaturalist. The base map is **CARTO Positron (light)**, with
+  a bottom-right switcher for OpenTopoMap (terrain + contours) and plain OSM.
+- **Linked hover**: hovering a chart point rings + raises its map marker; hovering a marker activates the
+  chart point and pops its photo card. The 科/屬 filter syncs both and clears stale highlights.
+- **Linked zoom/pan**: moving the map narrows the transect to the points in view; zooming or panning the
+  transect fits the map to the points in that distance range. Both directions resolve through the point
+  array, so they agree by construction; `lockC`/`lockZ` stop the two syncs ping-ponging. "重置 reset"
+  restores both. Map→chart is exact; chart→map is limited by Leaflet's integer zoom levels, so a short
+  selection on a wide pane still shows neighbouring trail.
 
 Pages are **self-contained**: data is inlined; only libraries (Chart.js, Leaflet from CDN), map tiles,
 and photos are fetched live. This keeps every page a single portable file with no build step.

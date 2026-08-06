@@ -1,16 +1,13 @@
 """Render one walk's points into a self-contained HTML page:
 1) elevation transect (Chart.js): 科/屬 filter (中拉), GPS-flag diamonds, photo
    tooltip, pinch-zoom/pan; click a point → its iNaturalist observation.
-2) a paired Leaflet view below it: the observation map (OpenTopoMap, obs-point
-   track polyline + circular photo markers + popups) next to an elevation profile
-   that is itself a Leaflet map in the SAME projection — elevation rides on a
-   synthetic lat/lng axis, so the two panes share one geographic axis pixel-for-
-   pixel and pan/zoom locked together.
-   Which axis is shared follows the track's own geometry (see transect_html):
-     north-south walk → panes side by side, latitude shared vertically
-     east-west walk   → panes stacked, longitude shared horizontally
-   The 科/屬 filter and hover highlighting drive all three views. Mobile-responsive
-   (panes stack). (Track = obs points in time order; a real GPX route is a later tier.)"""
+2) observation map below it (Leaflet, light CARTO Positron base + a layer switcher
+   for topo/OSM): obs-point track polyline + circular photo markers + popups.
+The two views are linked three ways: the 科/屬 filter drives both, hovering one
+highlights the other, and **zoom/pan is synced** — narrowing the transect to a
+stretch of trail fits the map to those points, and moving the map narrows the
+transect to whatever is in view. Mobile-responsive.
+(Track = obs points in time order; a real GPX route is a later tier.)"""
 import json, math
 
 TPL = """<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8">
@@ -51,19 +48,8 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 .foot{margin-top:20px;font-size:11.5px;color:var(--gray2);line-height:1.6}
 .seclbl{font-size:15px;font-weight:500;color:var(--green);margin:30px 0 6px}
 .seclbl span{font-size:12px;font-weight:400;color:var(--gray2);margin-left:8px}
-.panes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.panes.stack{grid-template-columns:1fr}
-.mapbox,.profbox{position:relative;width:100%;height:480px;border-radius:12px;overflow:hidden;border:0.5px solid var(--gray2)}
-.panes.stack .mapbox{height:430px}.panes.stack .profbox{height:300px}
+.mapbox{position:relative;width:100%;height:480px;border-radius:12px;overflow:hidden;border:0.5px solid var(--gray2)}
 #map{width:100%;height:100%;background:#eee}
-#prof{width:100%;height:100%;background:#fff}
-.grid{position:absolute;inset:0;pointer-events:none;z-index:350}
-.glab{position:absolute;inset:0;pointer-events:none;z-index:500}
-.grid .h{position:absolute;left:0;right:0;border-top:1px solid rgba(120,120,120,.28)}
-.grid .v{position:absolute;top:0;bottom:0;border-left:1px solid rgba(120,120,120,.28)}
-.glab .lb{position:absolute;font-size:11px;color:var(--gray);background:rgba(255,255,255,.78);padding:0 3px;border-radius:3px;white-space:nowrap;transform:translateY(-50%)}
-.glab .lb.x{transform:translate(-50%,0);bottom:5px}
-.glab .lb.x.t{bottom:auto;top:6px}
 .mk{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);background:#f1efe8}
 .mk img{width:100%;height:100%;object-fit:cover;display:block}
 .mk.fl{border-color:var(--red)}
@@ -73,7 +59,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 .pp img{width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;background:#f1efe8}
 .pp .nm{font-weight:700;color:var(--green);font-size:14px}.pp .sci{font-style:italic;color:var(--gray);font-size:12px}
 .pp .fam{color:var(--gray);font-size:12px}.pp .lnk{display:inline-block;margin-top:6px;color:var(--green);font-weight:500;text-decoration:none;font-size:12px}
-@media(max-width:760px){.panes{grid-template-columns:1fr}.mapbox,.profbox{height:360px}}
+@media(max-width:760px){.mapbox{height:360px}}
 </style></head><body><div class="wrap">
 __NAV__
 <h1>__TITLE__</h1>
@@ -91,24 +77,16 @@ __NAV__
   <span><i class="dot" style="background:var(--green2)"></i>需鑑定 needs-ID</span>
   <span><i class="diam"></i>GPS &gt;100 m · 位置/高程內插 interpolated</span>
 </div>
-<div class="ctrl"><span>縮放：雙指 / 滾輪　平移：拖曳　點選點位 → iNaturalist</span><button id="rz" type="button">重置 reset</button></div>
+<div class="ctrl"><span>縮放：雙指 / 滾輪　平移：拖曳　點選點位 → iNaturalist　剖面圖與地圖同步縮放</span><button id="rz" type="button">重置 reset</button></div>
 <div class="chartbox"><canvas id="t" role="img" aria-label="__TITLE__ 海拔剖面圖"></canvas></div>
-<div class="seclbl">觀測點地圖 × 海拔分布 map × elevation<span>兩圖共用__AXNAME__軸、同步平移縮放　科/屬篩選同步　游標三圖連動</span></div>
-<div class="ctrl"><span>__AXHINT__</span><button id="rv" type="button">重置視角 reset view</button></div>
-<div class="panes __PANECLS__">
-  <div class="mapbox"><div id="map"></div><div class="grid" id="mapGrid"></div><div class="glab" id="mapLab"></div></div>
-  <div class="profbox"><div id="prof"></div><div class="grid" id="profGrid"></div><div class="glab" id="profLab"></div></div>
-</div>
+<div class="seclbl">觀測點地圖 observation map<span>與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</span></div>
+<div class="mapbox"><div id="map"></div></div>
 <p class="foot">__FOOT__</p>
 </div>
 <script>
 var DATA=__DATA__;
 var FAM='*', GEN='*', chart, lmap, markers=[], trackLine, hiRing=null, hiMk=null;
-// elevation-profile pane: a second Leaflet map in the SAME projection, so latitude
-// lines up pixel-for-pixel with the map. Elevation rides on a synthetic longitude
-// axis (lng = LNG0 + elev*KEL), which makes pan/zoom sync a plain setView.
-var AX='__PROFAX__', prof, profMk=[], profLine, hiProf=null;
-var LNG0=0, LAT0=0, CLAT=0, PC=0, KEL=1, EMAX=1, syncing=false;
+var XMAX=__XMAX__, lockC=false, lockZ=false;   // guards so the two syncs can't ping-pong
 function isMobile(){return window.matchMedia('(max-width:760px)').matches;}
 function gen(d){return d.genSci;}
 function active(d){return (FAM==='*'||d.famSci===FAM)&&(GEN==='*'||gen(d)===GEN);}
@@ -157,7 +135,6 @@ function popupHtml(d){
 }
 // linked hover: highlight the map marker for chart point i (orange halo)
 function highlightMarker(i){
-  highlightProf(i);
   if(!lmap)return;
   if(hiMk){hiMk.setZIndexOffset(0);hiMk=null;}                 // drop previous raise
   if(i==null||DATA[i]==null||DATA[i].lat==null||!active(DATA[i])){if(hiRing){lmap.removeLayer(hiRing);hiRing=null;}return;}
@@ -181,7 +158,14 @@ function initMap(){
   var geo=DATA.filter(function(d){return d.lat!=null&&d.lng!=null;});
   if(!geo.length)return;
   lmap=L.map('map',{scrollWheelZoom:true});
-  L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:'© OpenStreetMap、SRTM ｜ © OpenTopoMap (CC-BY-SA)'}).addTo(lmap);
+  var bLight=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        {maxZoom:19,subdomains:'abcd',attribution:'© OpenStreetMap contributors ｜ © CARTO'}),
+      bTopo=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        {maxZoom:17,attribution:'© OpenStreetMap、SRTM ｜ © OpenTopoMap (CC-BY-SA)'}),
+      bOsm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {maxZoom:19,attribution:'© OpenStreetMap contributors'});
+  bLight.addTo(lmap);
+  L.control.layers({'淺色 light':bLight,'地形 topo':bTopo,'街道 OSM':bOsm},null,{position:'bottomright'}).addTo(lmap);
   trackLine=L.polyline(geo.map(function(d){return [d.lat,d.lng];}),{color:'#FC5200',weight:3,opacity:0.9}).addTo(lmap);
   DATA.forEach(function(d,idx){
     if(d.lat==null||d.lng==null)return;
@@ -193,8 +177,32 @@ function initMap(){
   });
   refreshMarkers();
   lmap.fitBounds(trackLine.getBounds(),{padding:[30,30]});
-  initProf();
-  window.addEventListener('resize',function(){setTimeout(drawGrids,120);});
+  lmap.on('moveend zoomend',syncChartToMap);
+}
+// zoom sync: the map view sets the transect's visible stretch of trail, and vice
+// versa. Both directions go through the points, so they agree by construction.
+function syncChartToMap(){
+  if(!chart||!lmap||lockZ)return;
+  var b=lmap.getBounds(),xs=[];
+  DATA.forEach(function(d){if(d.lat!=null&&active(d)&&b.contains([d.lat,d.lng]))xs.push(d.x);});
+  if(xs.length<2)return;                                     // nothing meaningful in view — leave the chart be
+  var lo=Math.min.apply(null,xs),hi=Math.max.apply(null,xs),pad=Math.max((hi-lo)*0.04,15);
+  lockC=true;
+  chart.zoomScale('x',{min:Math.max(0,lo-pad),max:Math.min(XMAX,hi+pad)},'none');
+  lockC=false;
+}
+function syncMapToChart(){
+  if(!chart||!lmap||lockC)return;
+  var sc=chart.scales.x,ll=[];
+  DATA.forEach(function(d){if(d.lat!=null&&active(d)&&d.x>=sc.min&&d.x<=sc.max)ll.push([d.lat,d.lng]);});
+  if(!ll.length)return;
+  lockZ=true;
+  lmap.fitBounds(L.latLngBounds(ll).pad(0.12),{animate:false});
+  lockZ=false;
+}
+function resetViews(){
+  if(chart&&chart.resetZoom){lockC=true;chart.resetZoom('none');lockC=false;}
+  if(lmap&&trackLine){lockZ=true;lmap.fitBounds(trackLine.getBounds(),{padding:[30,30]});lockZ=false;}
 }
 function refreshMarkers(){
   if(!lmap)return;
@@ -203,120 +211,12 @@ function refreshMarkers(){
     if(active(o.d)){if(!lmap.hasLayer(o.m))o.m.addTo(lmap);}
     else if(lmap.hasLayer(o.m))lmap.removeLayer(o.m);
   });
-  if(!prof)return;
-  profMk.forEach(function(o){
-    if(active(o.d)){if(!prof.hasLayer(o.m))o.m.addTo(prof);}
-    else if(prof.hasLayer(o.m))prof.removeLayer(o.m);
-  });
-}
-function pc(d){return AX==='lat'?[d.lat,LNG0+d.y*KEL]:[LAT0+d.y*KEL,d.lng];}   // point → profile coords
-function pElev(v){return AX==='lat'?(v-LNG0)/KEL:(v-LAT0)/KEL;}                  // profile coord → elevation
-function pAt(e){return AX==='lat'?[prof.getCenter().lat,LNG0+e*KEL]:[LAT0+e*KEL,prof.getCenter().lng];}
-function highlightProf(i){
-  if(!prof)return;
-  if(i==null||DATA[i]==null||DATA[i].lat==null||!active(DATA[i])){if(hiProf){prof.removeLayer(hiProf);hiProf=null;}return;}
-  var ll=pc(DATA[i]);
-  if(!hiProf){hiProf=L.circleMarker(ll,{radius:11,color:'#FC5200',weight:3,fillColor:'#FC5200',fillOpacity:0.15,interactive:false}).addTo(prof);}
-  else{hiProf.setLatLng(ll);if(!prof.hasLayer(hiProf))hiProf.addTo(prof);}
-}
-// Scale elevation onto the profile's free axis so 0→peak fills ~78% of the pane.
-// Both panes share one zoom, so degrees-per-pixel is common; measuring it off the
-// map and multiplying by the profile's own pixel size keeps the fit exact when the
-// two panes differ in size (stacked layout).
-function scaleProf(){
-  var b=lmap.getBounds(),sz=lmap.getSize(),c=lmap.getCenter();
-  if(AX==='lat'){                                   // side-by-side: elevation runs east-west
-    var dpp=(b.getEast()-b.getWest())/sz.x,span=dpp*(prof?prof.getSize().x:sz.x);
-    KEL=span*0.78/EMAX;LNG0=c.lng-span*0.39;PC=c.lng;
-  }else{                                            // stacked: elevation runs north-south
-    var dppy=(b.getNorth()-b.getSouth())/sz.y,spany=dppy*(prof?prof.getSize().y:sz.y);
-    KEL=spany*0.78/EMAX;LAT0=CLAT-spany*0.39;PC=c.lat;
-  }
-}
-function profView(){return AX==='lat'?[lmap.getCenter().lat,LNG0+EMAX*KEL/2]:[LAT0+EMAX*KEL/2,lmap.getCenter().lng];}
-function initProf(){
-  var geo=DATA.filter(function(d){return d.lat!=null&&d.y!=null;});
-  if(!geo.length)return;
-  EMAX=Math.max(500,Math.ceil(Math.max.apply(null,geo.map(function(d){return d.y;}))*1.06/250)*250);
-  CLAT=geo.reduce(function(a,d){return a+d.lat;},0)/geo.length;
-  prof=L.map('prof',{attributionControl:false,scrollWheelZoom:true,zoomControl:false});
-  L.control.zoom({position:'topright'}).addTo(prof);
-  prof.setView(lmap.getCenter(),lmap.getZoom(),{animate:false});
-  scaleProf();
-  syncing=true;prof.setView(profView(),lmap.getZoom(),{animate:false});syncing=false;
-  profLine=L.polyline(geo.map(pc),{color:'#3a3a36',weight:1.2,opacity:0.75}).addTo(prof);
-  DATA.forEach(function(d,idx){
-    if(d.lat==null||d.y==null)return;
-    var m=L.circleMarker(pc(d),{radius:d.fl?5.5:4.5,weight:d.fl?2:1.4,
-      color:d.fl?'#E8380D':'#ffffff',fillColor:d.g==='research'?'#587A30':'#90B821',fillOpacity:1});
-    m.bindPopup(popupHtml(d),{maxWidth:200});
-    m.on('mouseover',function(){highlightPoint(idx);highlightMarker(idx);});
-    m.on('mouseout',function(){highlightPoint(null);highlightMarker(null);});
-    profMk.push({m:m,d:d,i:idx});
-  });
-  lmap.on('move zoom',function(){syncPanes(lmap,prof);});
-  prof.on('move zoom',function(){syncPanes(prof,lmap);});
-  refreshMarkers();drawGrids();
-}
-function syncPanes(src,dst){                        // share the geographic axis + zoom; each pane keeps its own other axis
-  if(syncing||!dst)return;
-  syncing=true;
-  var s=src.getCenter(),d=dst.getCenter();
-  dst.setView(AX==='lat'?[s.lat,d.lng]:[d.lat,s.lng],src.getZoom(),{animate:false});
-  syncing=false;drawGrids();
-}
-function niceStep(span,n){
-  var raw=span/n,p=Math.pow(10,Math.floor(Math.log(raw)/Math.LN10)),r=raw/p;
-  return (r>=5?5:r>=2?2:1)*p;
-}
-function gline(horiz,px){return '<div class="'+(horiz?'h':'v')+'" style="'+(horiz?'top':'left')+':'+px+'px"></div>';}
-// clamp edge ticks inside the pane; `top` puts the x-labels above (map pane, where
-// Leaflet's attribution owns the bottom edge). Skip anything under the zoom control.
-function glab(horiz,px,txt,w,h,top){
-  if(horiz){var y=Math.min(Math.max(px,9),h-9);return (top&&y<62)?'':'<div class="lb" style="left:4px;top:'+y+'px">'+txt+'</div>';}
-  var x=Math.min(Math.max(px,26),w-26);
-  return (top&&x<58)?'':'<div class="lb x'+(top?' t':'')+'" style="left:'+x+'px">'+txt+'</div>';}
-function drawGrids(){
-  if(!lmap||!prof)return;
-  var mg=document.getElementById('mapGrid'),ml=document.getElementById('mapLab'),
-      pg=document.getElementById('profGrid'),pl=document.getElementById('profLab');
-  if(!mg||!pg)return;
-  var b=prof.getBounds(),mb=lmap.getBounds(),ms=lmap.getSize(),ps=prof.getSize(),
-      mh='',mlh='',ph='',plh='',horiz=AX==='lat';
-  // shared geographic axis — same ticks drawn in both panes, which is what ties them together
-  var lo=horiz?b.getSouth():mb.getWest(),hi=horiz?b.getNorth():mb.getEast(),
-      step=niceStep(hi-lo,5),dec=Math.max(0,-Math.floor(Math.log(step)/Math.LN10));
-  for(var g=Math.ceil(lo/step)*step;g<=hi;g+=step){
-    var mp=horiz?lmap.latLngToContainerPoint([g,lmap.getCenter().lng]).y:lmap.latLngToContainerPoint([lmap.getCenter().lat,g]).x,
-        pp=horiz?prof.latLngToContainerPoint([g,prof.getCenter().lng]).y:prof.latLngToContainerPoint([prof.getCenter().lat,g]).x,
-        txt=g.toFixed(dec)+'°';
-    mh+=gline(horiz,mp);ph+=gline(horiz,pp);
-    mlh+=glab(horiz,mp,txt,ms.x,ms.y,true);plh+=glab(horiz,pp,txt,ps.x,ps.y);
-  }
-  // elevation axis — on the profile's free axis
-  var e0=pElev(horiz?b.getWest():b.getSouth()),e1=pElev(horiz?b.getEast():b.getNorth()),es=niceStep(e1-e0,5);
-  for(var e=Math.max(0,Math.ceil(e0/es)*es);e<=e1;e+=es){
-    var q=prof.latLngToContainerPoint(pAt(e));
-    ph+=gline(!horiz,horiz?q.x:q.y);plh+=glab(!horiz,horiz?q.x:q.y,Math.round(e)+' m',ps.x,ps.y);
-  }
-  mg.innerHTML=mh;ml.innerHTML=mlh;pg.innerHTML=ph;pl.innerHTML=plh;
-}
-function fitPanes(){
-  if(!lmap||!trackLine)return;
-  lmap.fitBounds(trackLine.getBounds(),{padding:[30,30]});
-  if(!prof)return;
-  scaleProf();
-  profLine.setLatLngs(DATA.filter(function(d){return d.lat!=null&&d.y!=null;}).map(pc));
-  profMk.forEach(function(o){o.m.setLatLng(pc(o.d));});
-  syncing=true;prof.setView(profView(),lmap.getZoom(),{animate:false});syncing=false;
-  drawGrids();
 }
 function go(){
   fillFamilies();fillGenera('*');
   document.getElementById('famSel').onchange=function(){FAM=this.value;GEN='*';fillGenera(FAM);chart.update();refreshMarkers();};
   document.getElementById('genSel').onchange=function(){GEN=this.value;chart.update();refreshMarkers();};
-  document.getElementById('rz').onclick=function(){if(chart.resetZoom)chart.resetZoom();};
-  document.getElementById('rv').onclick=fitPanes;
+  document.getElementById('rz').onclick=resetViews;
   chart=new Chart(document.getElementById('t'),{type:'line',
     data:{datasets:[{data:DATA,borderColor:'#666666',borderWidth:1.5,fill:'start',backgroundColor:'rgba(178,178,178,0.20)',tension:0.3,
       pointBackgroundColor:pcol,pointBorderColor:pbord,pointBorderWidth:pbw,pointRadius:prad,pointStyle:pstyle,
@@ -324,7 +224,9 @@ function go(){
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'nearest',intersect:true},
       onClick:function(e,els){if(els.length){var p=DATA[els[0].index];if(!active(p))return;window.open(p.u,'_blank');}},
       plugins:{legend:{display:false},tooltip:{enabled:false,external:extTip},
-        zoom:{pan:{enabled:true,mode:'x'},zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'x'},limits:{x:{min:0,max:__XMAX__,minRange:40}}}},
+        zoom:{pan:{enabled:true,mode:'x',onPanComplete:syncMapToChart},
+              zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'x',onZoomComplete:syncMapToChart},
+              limits:{x:{min:0,max:__XMAX__,minRange:40}}}},
       scales:{x:{type:'linear',min:0,max:__XMAX__,title:{display:true,text:'沿步道水平距離 horizontal distance (__XUNIT__)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v/__USCALE__+' __XUNIT__';}}},
         y:{min:__YMIN__,max:__YMAX__,title:{display:true,text:'海拔 elevation (m)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v+' m';}}}}}});
   initMap();
@@ -335,22 +237,6 @@ if(window.Chart){go();}else{var w=setInterval(function(){if(window.Chart){clearI
 
 def transect_html(meta, pts):
     ys = [p["y"] for p in pts]
-    # The profile pane shares one geographic axis with the map, so pick whichever
-    # the track actually runs along: a north-south walk reads best side-by-side
-    # (elevation ← → , latitude shared vertically); an east-west traverse reads
-    # best stacked (elevation ↑↓, longitude shared horizontally).
-    lat = [p["lat"] for p in pts if p.get("lat") is not None]
-    lng = [p["lng"] for p in pts if p.get("lng") is not None]
-    if lat and lng:
-        mlat = sum(lat) / len(lat)
-        ns = (max(lat) - min(lat)) * 110540
-        ew = (max(lng) - min(lng)) * 111320 * math.cos(math.radians(mlat))
-    else:
-        ns, ew = 1.0, 0.0
-    profax = "lat" if ns >= ew else "lng"
-    panecls, axname = ("", "緯度") if profax == "lat" else ("stack", "經度")
-    axhint = ("左：地圖（經度 × 緯度）　右：海拔剖面（海拔 × 緯度）" if profax == "lat"
-              else "上：地圖（經度 × 緯度）　下：海拔剖面（經度 × 海拔）")
     nsp = len({p["s"] for p in pts})
     maxx = pts[-1]["x"] if pts else 0
     xmax = int(math.ceil(maxx / 25) * 25) or 25
@@ -381,9 +267,7 @@ def transect_html(meta, pts):
            "__XMAX__": str(xmax), "__USCALE__": str(uscale), "__XUNIT__": unit,
            "__C6LBL__": c6lbl, "__C6VAL__": c6val, "__C6SUB__": c6sub,
            "__YMIN__": str(int(min(ys)) - 8), "__YMAX__": str(int(max(ys)) + 8),
-           "__FOOT__": foot, "__DATA__": json.dumps(pts, ensure_ascii=False),
-           "__PROFAX__": profax, "__PANECLS__": panecls, "__AXNAME__": axname,
-           "__AXHINT__": axhint}
+           "__FOOT__": foot, "__DATA__": json.dumps(pts, ensure_ascii=False)}
     html = TPL
     for k, v in rep.items():
         html = html.replace(k, v)
