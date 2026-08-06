@@ -42,6 +42,18 @@ li a:hover{{background:#f5f4ef;color:{BR['green']}}}
 </div></body></html>"""
 
 
+def track_of(pts, limit=140):
+    """Downsampled [lat, lng] line for the landing-page map — enough to read the
+    route's shape without inlining every point into site/index.html."""
+    ll = [[round(p["lat"], 5), round(p["lng"], 5)] for p in pts if p.get("lat") is not None]
+    if len(ll) <= limit:
+        return ll
+    step = len(ll) / limit
+    keep = [ll[int(i * step)] for i in range(limit)]
+    keep[-1] = ll[-1]
+    return keep
+
+
 def enrich_points(pts, cfg):
     """Attach famSci/famZh/genSci/genZh/end/threat to each point. Taxonomy source
     follows cfg['taxonomy']: 'inat' (global, family from iNat ancestors) or the
@@ -96,7 +108,8 @@ def run_trek(cfg, obs, out):
                "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
                "d1": d0, "d2": d1, "days": ndays, "points": len(pts), "species": nsp,
                "trail_km": round(km, 1), "peak_m": round(max(ys)), "low_m": round(min(ys)),
-               "climb_m": round(pts[-1]["y"] - pts[0]["y"])},
+               "climb_m": round(pts[-1]["y"] - pts[0]["y"]),
+               "track": [track_of(pts)]},
               open(os.path.join(out, "journey.json"), "w"), ensure_ascii=False, indent=2)
     print(f"{cfg['label']}: {len(obs)} obs → 1 continuous transect → site/{cfg['id']}/")
     print(f"  {d0}–{d1} · {ndays} 天 · {len(pts)} pts · {nsp} spp · "
@@ -118,7 +131,7 @@ def main():
         return
 
     walks = W.segment(obs, cfg.get("walk_gap_min", 120))
-    seen, index = {}, []
+    seen, index, allpts, track = {}, [], [], []
     for w in walks:
         pts = P.build(w["obs"], cfg.get("scope"), CACHE)
         if not pts:
@@ -137,11 +150,24 @@ def main():
         open(os.path.join(wdir, "index.html"), "w").write(R.transect_html(meta, pts))
         index.append({"walk_id": wid, "date": w["date"], "start": w["start"],
                       "end": w["end"], "n": len(pts), "species": nsp})
+        allpts.append(pts)
+        track.append(track_of(pts))
 
     open(os.path.join(out, "index.html"), "w").write(journey_index_html(cfg, index))
-    json.dump({"id": cfg["id"], "label": cfg["label"], "generated_at":
-               datetime.datetime.now().isoformat(timespec="seconds"), "walks": index},
-              open(os.path.join(out, "journey.json"), "w"), ensure_ascii=False, indent=2)
+    flat = [p for w in allpts for p in w]
+    ys = [p["y"] for p in flat]
+    manifest = {"id": cfg["id"], "label": cfg["label"], "generated_at":
+                datetime.datetime.now().isoformat(timespec="seconds"), "walks": index}
+    if flat:   # journey-level summary, in the same vocabulary as a trek's
+        manifest.update({
+            "d1": index[0]["date"], "d2": index[-1]["date"],
+            "days": len({w["date"] for w in index}), "points": len(flat),
+            "species": len({p["s"] for p in flat}),
+            # each walk retraces the same trail, so the journey's length is one walk's,
+            # not the sum — take the longest
+            "trail_km": round(max(w[-1]["x"] for w in allpts) / 1000, 1),
+            "peak_m": round(max(ys)), "low_m": round(min(ys)), "track": track})
+    json.dump(manifest, open(os.path.join(out, "journey.json"), "w"), ensure_ascii=False, indent=2)
 
     print(f"{cfg['label']}: {len(obs)} obs → {len(index)} transect(s) → site/{cfg['id']}/")
     for w in index:

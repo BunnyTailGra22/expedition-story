@@ -2,21 +2,121 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Expedition Story · 旅程總覽</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>body{margin:0;background:#fff;color:#3a3a36;font-family:"Noto Sans TC",system-ui,sans-serif}
-.wrap{max-width:760px;margin:0 auto;padding:48px 26px}
+.wrap{max-width:880px;margin:0 auto;padding:48px 26px}
 h1{color:#587A30;font-weight:700;font-size:26px;margin:0 0 4px}
-.sub{color:#666;font-size:14px;margin:0 0 26px;line-height:1.6}
+.sub{color:#666;font-size:14px;margin:0 0 22px;line-height:1.6}
+.mapbox{position:relative;height:430px;border:0.5px solid #B2B2B2;border-radius:12px;overflow:hidden;margin:0 0 22px}
+#map{width:100%;height:100%;background:#eee}
+.sortbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px;font-size:12px;color:#B2B2B2}
+.sortbar span{margin-right:2px}
+.sortbar button{font-family:inherit;font-size:12px;color:#666;background:#fff;border:0.5px solid #B2B2B2;border-radius:20px;padding:5px 12px;cursor:pointer}
+.sortbar button:hover{background:#f5f4ef}
+.sortbar button.on{color:#fff;background:#587A30;border-color:#587A30}
 ul{list-style:none;padding:0;margin:0}
 li{border:0.5px solid #B2B2B2;border-radius:10px;margin-bottom:12px}
 li a{display:block;padding:16px 18px;color:#3a3a36;text-decoration:none}
-li a:hover{background:#f5f4ef}
+li a:hover,li.hi a{background:#f5f4ef}
 .tag{display:inline-block;font-size:11px;color:#587A30;border:0.5px solid #587A30;border-radius:20px;padding:2px 9px;margin-right:8px;vertical-align:middle}
 .nm{font-size:17px;font-weight:500;color:#587A30}
 .st{display:block;font-size:13px;color:#666;margin-top:5px}
-.foot{margin-top:28px;font-size:11.5px;color:#B2B2B2;line-height:1.7}</style></head><body><div class="wrap">
+.leaflet-popup-content{font-family:"Noto Sans TC",system-ui,sans-serif;margin:10px 12px}
+.pp .nm{font-size:15px}.pp .st{font-size:12px}
+.pp a{display:inline-block;margin-top:6px;color:#587A30;font-weight:500;text-decoration:none;font-size:12px}
+.foot{margin-top:28px;font-size:11.5px;color:#B2B2B2;line-height:1.7}
+@media(max-width:760px){.wrap{padding:28px 16px}.mapbox{height:320px}}</style></head><body><div class="wrap">
 <h1>Expedition Story</h1>
 <p class="sub">把任一段 iNaturalist 踏查（使用者 × 地點 × 日期區間）自動產成植被／生物多樣性海拔剖面圖。<br>
-共 3 趟旅程。</p>
-<ul><li><a href="nepal-2023-trek/index.html"><span class="tag">健行 trek</span><span class="nm">尼泊爾 2023 · 喜馬拉雅健行</span><span class="st">2023-10-01–2023-10-12 · 11 天 · 103 樣點 · 87 種 · 161.8 km · 最高 5628 m</span></a></li><li><a href="south3-2025-trek/index.html"><span class="tag">健行 trek</span><span class="nm">中央山脈南三段 2025 · 花蓮→南投八日縱走</span><span class="st">2025-10-04–2025-10-11 · 8 天 · 85 樣點 · 58 種 · 53.7 km · 最高 3591 m</span></a></li><li><a href="erge-2026-04-25/index.html"><span class="tag">踏查 survey</span><span class="nm">二格山稜線</span><span class="st">2026-04-25–2026-04-25 · 1 趟 walks · 93 樣點 · 63 物種觀察</span></a></li></ul>
+共 3 趟旅程。地圖：點選路線或標記開啟該趟旅程。</p>
+<div class="mapbox"><div id="map"></div></div>
+<div class="sortbar"><span>排序 sort by</span><button type="button" data-k="date" class=on>日期 date</button><button type="button" data-k="km">距離 distance</button><button type="button" data-k="days">天數 days</button><button type="button" data-k="obs">觀察數 observations</button><button type="button" data-k="spp">物種數 species</button></div>
+<ul id="list"><li data-id="nepal-2023-trek" data-i="0" data-date="2023-10-01" data-km="161.8" data-days="11" data-obs="103" data-spp="87"><a href="nepal-2023-trek/index.html"><span class="tag" style="color:#587A30;border-color:#587A30">健行 trek</span><span class="nm">尼泊爾 2023 · 喜馬拉雅健行</span><span class="st">2023-10-01–2023-10-12 · 11 天 · 103 樣點 · 87 種 · 161.8 km · 最高 5628 m</span></a></li><li data-id="south3-2025-trek" data-i="1" data-date="2025-10-04" data-km="53.7" data-days="8" data-obs="85" data-spp="58"><a href="south3-2025-trek/index.html"><span class="tag" style="color:#FC5200;border-color:#FC5200">健行 trek</span><span class="nm">中央山脈南三段 2025 · 花蓮→南投八日縱走</span><span class="st">2025-10-04–2025-10-11 · 8 天 · 85 樣點 · 58 種 · 53.7 km · 最高 3591 m</span></a></li><li data-id="erge-2026-04-25" data-i="2" data-date="2026-04-25" data-km="0.6" data-days="1" data-obs="93" data-spp="63"><a href="erge-2026-04-25/index.html"><span class="tag" style="color:#2E6F8F;border-color:#2E6F8F">踏查 survey</span><span class="nm">二格山稜線</span><span class="st">2026-04-25–2026-04-25 · 1 趟 walks · 93 樣點 · 63 種 · 0.6 km · 最高 659 m</span></a></li></ul>
 <p class="foot">資料來源 iNaturalist · 海拔 SRTM 30 m · 學名 TaiCoL（臺灣）／ iNaturalist（海外）。</p>
-</div></body></html>
+</div>
+<script>
+var J=[{"id": "nepal-2023-trek", "label": "尼泊爾 2023 · 喜馬拉雅健行", "stat": "2023-10-01–2023-10-12 · 11 天 · 103 樣點 · 87 種 · 161.8 km · 最高 5628 m", "c": "#587A30", "track": [[[27.69213, 86.728], [27.69252, 86.72799], [27.69354, 86.72773], [27.69403, 86.72709], [27.69548, 86.72598], [27.71856, 86.71371], [27.72677, 86.71434], [27.727, 86.71423], [27.72762, 86.71388], [27.72826, 86.71377], [27.73225, 86.7134], [27.73458, 86.71228], [27.7373, 86.71191], [27.7476, 86.71251], [27.75093, 86.71117], [27.75121, 86.71088], [27.75157, 86.71055], [27.7524, 86.71053], [27.75529, 86.71034], [27.78831, 86.71964], [27.78836, 86.71951], [27.79128, 86.71756], [27.79164, 86.71729], [27.79159, 86.71675], [27.7922, 86.71577], [27.79282, 86.71572], [27.79618, 86.71327], [27.79963, 86.71062], [27.80265, 86.7101], [27.80898, 86.71391], [27.81191, 86.71094], [27.81308, 86.70986], [27.81362, 86.7098], [27.81359, 86.70977], [27.81267, 86.70676], [27.8126, 86.7065], [27.81259, 86.70652], [27.81323, 86.70615], [27.81332, 86.70617], [27.814, 86.70529], [27.81409, 86.70355], [27.81224, 86.70326], [27.81295, 86.70223], [27.81329, 86.7019], [27.81372, 86.70143], [27.8138, 86.70137], [27.88575, 86.65891], [27.81241, 86.72442], [27.81247, 86.72595], [27.81401, 86.72785], [27.82554, 86.73367], [27.83174, 86.74611], [27.83268, 86.74712], [27.87447, 86.64282], [27.83399, 86.75154], [27.83439, 86.75264], [27.8352, 86.76414], [27.83469, 86.76718], [27.83467, 86.76718], [27.83466, 86.76719], [27.84556, 86.77786], [27.87341, 86.66902], [27.85202, 86.78408], [27.86216, 86.79797], [27.88552, 86.82468], [27.89614, 86.8286], [27.9083, 86.8867], [27.89974, 86.8298], [27.90484, 86.83483], [27.90069, 86.85928], [27.90063, 86.85992], [27.90904, 86.87383], [27.91054, 86.87632], [27.90559, 86.87274], [27.90006, 86.88015], [27.90041, 86.88438], [27.90095, 86.88662], [27.90103, 86.89055], [27.90053, 86.89311], [27.89571, 86.85667], [27.90066, 86.89708], [27.90066, 86.89719], [27.90069, 86.89721], [27.90065, 86.89725], [27.90037, 86.89965], [27.90246, 86.90689], [27.90413, 86.91679], [27.90391, 86.91878], [27.90288, 86.93194], [27.90281, 86.93209], [27.91171, 86.93413], [27.91069, 86.93443], [27.91022, 86.93453], [27.83773, 86.76839], [27.83542, 86.75556], [27.83189, 86.74522], [27.83011, 86.7426], [27.8282, 86.73669], [27.82692, 86.73594], [27.82268, 86.73383], [27.81714, 86.73107], [27.81494, 86.72796], [27.70203, 86.71871]]]}, {"id": "south3-2025-trek", "label": "中央山脈南三段 2025 · 花蓮→南投八日縱走", "stat": "2025-10-04–2025-10-11 · 8 天 · 85 樣點 · 58 種 · 53.7 km · 最高 3591 m", "c": "#FC5200", "track": [[[23.53616, 121.27425], [23.53619, 121.27312], [23.53652, 121.27287], [23.53749, 121.27251], [23.53771, 121.26887], [23.53529, 121.26741], [23.53459, 121.26713], [23.53363, 121.26651], [23.53236, 121.26781], [23.53053, 121.26542], [23.53058, 121.2645], [23.53336, 121.25534], [23.53844, 121.25365], [23.5506, 121.26024], [23.5506, 121.26024], [23.55597, 121.25482], [23.55668, 121.25302], [23.55668, 121.25302], [23.56543, 121.25139], [23.56524, 121.25117], [23.56549, 121.25135], [23.5653, 121.25123], [23.56532, 121.25123], [23.58017, 121.24475], [23.58017, 121.24475], [23.58017, 121.24475], [23.58017, 121.24475], [23.58214, 121.22932], [23.58227, 121.22846], [23.58227, 121.22845], [23.58085, 121.22523], [23.57981, 121.22228], [23.5798, 121.22229], [23.57962, 121.22011], [23.5803, 121.21937], [23.58017, 121.2192], [23.57879, 121.21748], [23.57746, 121.20541], [23.58865, 121.19628], [23.59081, 121.19397], [23.59939, 121.21208], [23.59938, 121.21208], [23.59938, 121.21208], [23.59938, 121.21208], [23.59938, 121.21208], [23.59698, 121.20749], [23.59221, 121.19343], [23.59054, 121.19303], [23.58139, 121.19103], [23.57854, 121.19276], [23.57867, 121.18901], [23.57912, 121.18739], [23.58142, 121.18282], [23.58108, 121.1811], [23.58725, 121.153], [23.59469, 121.14761], [23.59524, 121.14085], [23.62336, 121.1155], [23.62393, 121.11445], [23.62574, 121.11171], [23.62578, 121.11173], [23.62825, 121.10665], [23.62847, 121.09941], [23.62834, 121.0987], [23.62813, 121.09829], [23.63736, 121.08634], [23.64095, 121.08677], [23.62668, 121.09196], [23.6267, 121.09199], [23.6267, 121.09203], [23.62669, 121.0919], [23.62669, 121.0919], [23.62669, 121.09188], [23.61549, 121.08928], [23.59898, 121.09093], [23.59898, 121.09093], [23.59957, 121.09051], [23.59074, 121.08221], [23.59073, 121.08218], [23.59105, 121.05716], [23.59107, 121.05712], [23.59105, 121.05714], [23.58634, 121.03078], [23.59252, 121.00112], [23.5936, 120.9544]]]}, {"id": "erge-2026-04-25", "label": "二格山稜線", "stat": "2026-04-25–2026-04-25 · 1 趟 walks · 93 樣點 · 63 種 · 0.6 km · 最高 659 m", "c": "#2E6F8F", "track": [[[24.96602, 121.62499], [24.96624, 121.62499], [24.96625, 121.62494], [24.96632, 121.62486], [24.96632, 121.6249], [24.96631, 121.62487], [24.96637, 121.62481], [24.96635, 121.62476], [24.96633, 121.62471], [24.96633, 121.62471], [24.96633, 121.62466], [24.96633, 121.62466], [24.96636, 121.62464], [24.96639, 121.62463], [24.96638, 121.62455], [24.96638, 121.62454], [24.96641, 121.62449], [24.96642, 121.62447], [24.96643, 121.62444], [24.96646, 121.62436], [24.96647, 121.62432], [24.96649, 121.62429], [24.96647, 121.62426], [24.96654, 121.62421], [24.96657, 121.62412], [24.9666, 121.62405], [24.96662, 121.62404], [24.96662, 121.62404], [24.96665, 121.62401], [24.96665, 121.62401], [24.96667, 121.62392], [24.96671, 121.62389], [24.96675, 121.62384], [24.96676, 121.62383], [24.96677, 121.62382], [24.96679, 121.62378], [24.96683, 121.6237], [24.96682, 121.62343], [24.96683, 121.62338], [24.96686, 121.62338], [24.96689, 121.62349], [24.96686, 121.62335], [24.96686, 121.62335], [24.96689, 121.62326], [24.96689, 121.62326], [24.96688, 121.62319], [24.96691, 121.62318], [24.96692, 121.62305], [24.96696, 121.62306], [24.96698, 121.62303], [24.96699, 121.623], [24.96699, 121.62291], [24.96697, 121.62293], [24.96697, 121.62293], [24.96699, 121.62289], [24.96702, 121.62285], [24.96704, 121.62282], [24.96704, 121.62284], [24.96707, 121.62273], [24.96711, 121.62272], [24.96713, 121.62259], [24.96712, 121.6226], [24.96719, 121.62229], [24.96721, 121.62228], [24.96722, 121.62214], [24.96725, 121.62216], [24.96722, 121.62206], [24.96714, 121.62193], [24.9672, 121.62194], [24.9672, 121.62194], [24.96715, 121.62189], [24.96714, 121.62187], [24.96715, 121.62187], [24.96715, 121.62187], [24.96715, 121.62187], [24.96715, 121.6216], [24.96723, 121.62138], [24.96737, 121.6212], [24.96737, 121.6212], [24.96739, 121.62118], [24.96736, 121.62101], [24.9674, 121.62097], [24.9674, 121.62096], [24.96739, 121.62094], [24.96737, 121.62086], [24.96737, 121.62082], [24.96735, 121.62062], [24.96733, 121.62063], [24.96732, 121.62058], [24.96722, 121.62055], [24.96722, 121.62055], [24.96722, 121.62055], [24.96721, 121.62035]]]}];
+var lmap, lines=[], SORT='date', DIR=-1;      // date starts newest-first
+function num(li,k){return parseFloat(li.getAttribute('data-'+k));}
+function sortList(k){
+  var ul=document.getElementById('list'),items=[].slice.call(ul.children);
+  items.sort(function(a,b){
+    var va=k==='date'?a.getAttribute('data-date'):num(a,k),
+        vb=k==='date'?b.getAttribute('data-date'):num(b,k);
+    return (va<vb?-1:va>vb?1:0)*DIR;
+  });
+  items.forEach(function(li){ul.appendChild(li);});
+}
+function paintSort(){                              // arrow only on the active key
+  [].forEach.call(document.querySelectorAll('.sortbar button'),function(o){
+    var on=o.getAttribute('data-k')===SORT;
+    o.className=on?'on':'';
+    o.textContent=o.getAttribute('data-lbl')+(on?(DIR<0?' ↓':' ↑'):'');
+  });
+}
+function initSort(){
+  [].forEach.call(document.querySelectorAll('.sortbar button'),function(b){
+    b.setAttribute('data-lbl',b.textContent);
+    b.onclick=function(){
+      var k=b.getAttribute('data-k');
+      DIR=(k===SORT)?-DIR:-1;                     // a new key starts biggest / newest first
+      SORT=k;paintSort();sortList(k);
+    };
+  });
+  paintSort();sortList('date');
+}
+function popupHtml(j){
+  return '<div class="pp"><div class="nm" style="color:'+j.c+'">'+j.label+'</div>'+
+         '<div class="st">'+j.stat+'</div>'+
+         '<a href="'+j.id+'/index.html">開啟旅程 open →</a></div>';
+}
+function highlight(i,on){
+  var g=lines[i]; if(!g)return;
+  g.forEach(function(p){p.setStyle({weight:on?7:4,opacity:on?1:0.85});});
+  var li=document.querySelector('li[data-i="'+i+'"]');
+  if(li)li.className=on?'hi':'';
+}
+function initMap(){
+  if(!window.L){setTimeout(initMap,80);return;}
+  lmap=L.map('map',{scrollWheelZoom:true});
+  var bTopo=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        {maxZoom:17,attribution:'© OpenStreetMap、SRTM ｜ © OpenTopoMap (CC-BY-SA)'}),
+      bOsm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {maxZoom:19,attribution:'© OpenStreetMap contributors'}),
+      bLight=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        {maxZoom:19,subdomains:'abcd',attribution:'© OpenStreetMap contributors ｜ © CARTO'});
+  bTopo.addTo(lmap);
+  L.control.layers({'地形 topo':bTopo,'街道 OSM':bOsm,'淺色 light':bLight},null,{position:'bottomright'}).addTo(lmap);
+  var all=[];
+  J.forEach(function(j,i){
+    var segs=[];
+    (j.track||[]).forEach(function(t){
+      if(!t.length)return;
+      all=all.concat(t);
+      var pl=L.polyline(t,{color:j.c,weight:4,opacity:0.85}).addTo(lmap);
+      pl.bindPopup(popupHtml(j));
+      pl.on('mouseover',function(){highlight(i,true);});
+      pl.on('mouseout',function(){highlight(i,false);});
+      segs.push(pl);
+    });
+    lines[i]=segs;
+    var first=(j.track||[]).find(function(t){return t.length;});
+    if(first){
+      var m=L.circleMarker(first[0],{radius:7,color:'#fff',weight:2,fillColor:j.c,fillOpacity:1}).addTo(lmap);
+      m.bindPopup(popupHtml(j));
+      m.bindTooltip(j.label,{direction:'top'});
+      m.on('mouseover',function(){highlight(i,true);});
+      m.on('mouseout',function(){highlight(i,false);});
+    }
+  });
+  if(all.length)lmap.fitBounds(L.latLngBounds(all).pad(0.08));
+  else lmap.setView([23.7,121],7);
+  [].forEach.call(document.querySelectorAll('#list li'),function(li){
+    var i=parseInt(li.getAttribute('data-i'),10);
+    li.onmouseenter=function(){highlight(i,true);};
+    li.onmouseleave=function(){highlight(i,false);};
+  });
+}
+initSort();initMap();
+</script></body></html>

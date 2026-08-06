@@ -61,11 +61,16 @@ Reference for journey inputs, generated outputs, and the create-journey form.
 ## Generated output
 
 ```
-site/index.html                 global landing — lists every journey (treks first, then surveys)
+site/index.html                 global landing — overview map + sortable list of every journey
 site/<id>/index.html            trek: the transect   ·   survey: the journey index
 site/<id>/<walk>/index.html     survey only: one walk's transect (walk id = its date, e.g. 2026-04-25)
 site/<id>/journey.json          manifest (see below)
 ```
+
+`site/index.html` shows one **overview map** (OpenTopoMap, with OSM/light in the switcher) drawing every
+journey's track in its own colour — click a track or its start marker for a popup through to that
+journey — above a list that sorts by **date / distance / days / observations / species** (click a key
+again to flip direction). Hovering a row highlights its track and vice versa.
 
 Each transect page contains, top to bottom: title + summary cards + family/genus filters → **elevation
 transect** (Chart.js) → **observation map** (Leaflet, OSM base + light/topo switcher) → footer.
@@ -77,12 +82,18 @@ Both views share one point array and are linked three ways: hover, the 科/屬 f
 ```jsonc
 // trek
 { "id", "label", "mode": "trek", "generated_at",
-  "d1", "d2", "days", "points", "species", "trail_km", "peak_m", "low_m", "climb_m" }
+  "d1", "d2", "days", "points", "species", "trail_km", "peak_m", "low_m", "climb_m",
+  "track": [ [ [lat, lng], … ] ] }          // one segment, downsampled to ≤140 points
 
-// survey
+// survey — same summary vocabulary, so both modes sort together on the landing page
 { "id", "label", "generated_at",
-  "walks": [ { "walk_id", "date", "start", "end", "n", "species" }, … ] }
+  "walks": [ { "walk_id", "date", "start", "end", "n", "species" }, … ],
+  "d1", "d2", "days", "points", "species", "trail_km", "peak_m", "low_m",
+  "track": [ … one segment per walk … ] }
 ```
+
+A survey's `trail_km` is its **longest walk**, not the sum: repeat walks retrace one trail, so
+summing them would report a path nobody walked. `species` is distinct across the journey.
 
 `build_site_index.py` consumes these to build the global index.
 

@@ -19,7 +19,7 @@ lib/                        the engine (pure-stdlib Python)
   profile.py                one walk's obs → transect points (scope → QA → elev → distance)
   render.py                 points → self-contained HTML (transect chart + observation map)
 generate.py                 orchestrator: config → fetch → (trek | survey) → site/<id>/
-build_site_index.py         scans site/*/journey.json → site/index.html (global landing)
+build_site_index.py         scans site/*/journey.json → site/index.html (overview map + sortable list)
 new_journey.py              scaffolder: resolve place + write a config + probe (form/CLI)
 caches/                     cross-journey caches (gitignored): elevation / taicol / inat_taxa
 site/                       generated output (committed; this is what Pages serves)
@@ -77,7 +77,10 @@ Both the chart and the map render the **same** ordered array, so they link by in
 - **trek**: `{id, label, mode, generated_at, d1, d2, days, points, species, trail_km, peak_m, low_m, climb_m}`
 - **survey**: `{id, label, generated_at, walks:[{walk_id, date, start, end, n, species}, …]}`
 
-`build_site_index.py` reads these to list journeys (treks first, then surveys).
+`build_site_index.py` reads these to build the landing page: an OpenTopoMap overview drawing every
+journey's `track` (colour-coded, click → that journey) and a list sortable by date / distance / days /
+observations / species. Sorting is DOM reordering over `data-*` attributes, so the list still renders
+and links without JavaScript.
 
 ## Rendering
 

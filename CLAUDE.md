@@ -43,7 +43,8 @@ lib/                        # shared engine
 caches/                     # cross-journey shared: elevation.json, taicol.json, inat_taxa.json
 generate.py --journey <id>  # config -> fetch -> segment -> per-walk render -> site/<id>/
 site/<id>/journey.json      # walk manifest (P1)
-site/<id>/<walk>/index.html # per-walk transect (P3); site/index.html lists journeys
+site/<id>/<walk>/index.html # per-walk transect (P3)
+site/index.html             # landing: overview map (all tracks) + list sortable by date/km/days/obs/spp
 ```
 
 ## Phases
@@ -53,7 +54,9 @@ site/<id>/<walk>/index.html # per-walk transect (P3); site/index.html lists jour
 - **P4 [done]** generalization demos: (a) **trek mode** — `nepal-2023-trek` proves a point-to-point
   multi-day trek collapses to one continuous transect (103 pts, 161.8 km, 5628 m peak); added
   global `inat_taxa.py` (TaiCoL is Taiwan-only), adaptive m↔km axis, peak-vs-climb card.
-- **Next** global `site/index.html` listing all journeys; GitHub repo + Pages.
+- **P5 [done]** landing page `site/index.html`: OpenTopoMap overview of every journey's track
+  (click → that journey) + list sorted by date/distance/days/observations/species; journey.json
+  carries a downsampled `track` and one summary vocabulary for both modes.
 
 ## Reuse source (port, don't re-invent)
 `../2G 二格/iNAT in Erge/` already has working: GPS correction (build_profile.py),
