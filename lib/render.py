@@ -5,8 +5,11 @@
    for topo/OSM): obs-point track polyline + circular photo markers + popups.
 The two views are linked three ways: the 科/屬 filter drives both, hovering one
 highlights the other, and **zoom/pan is synced** — narrowing the transect to a
-stretch of trail fits the map to those points, and moving the map narrows the
-transect to whatever is in view. Mobile-responsive.
+stretch of trail fits the map to it, and navigating the map narrows the transect
+to the stretch on screen. Both directions go through the *track* (segments clipped
+to the view / interpolated between points), not through the observations, so the
+transect keeps following even where the view holds no observation at all.
+Mobile-responsive.
 (Track = obs points in time order; a real GPX route is a later tier.)"""
 import json, math
 
@@ -86,7 +89,7 @@ __NAV__
 <script>
 var DATA=__DATA__;
 var FAM='*', GEN='*', chart, lmap, markers=[], trackLine, hiRing=null, hiMk=null;
-var XMAX=__XMAX__, lockC=false, lockZ=false;   // guards so the two syncs can't ping-pong
+var XMAX=__XMAX__, MINR=40, lockC=false, lockZ=false;   // guards so the two syncs can't ping-pong
 function isMobile(){return window.matchMedia('(max-width:760px)').matches;}
 function gen(d){return d.genSci;}
 function active(d){return (FAM==='*'||d.famSci===FAM)&&(GEN==='*'||gen(d)===GEN);}
@@ -181,20 +184,71 @@ function initMap(){
 }
 // zoom sync: the map view sets the transect's visible stretch of trail, and vice
 // versa. Both directions go through the points, so they agree by construction.
+function geoPts(){return DATA.filter(function(d){return d.lat!=null&&d.lng!=null;});}
+// Which stretch of trail is on screen? Clip every track segment against the view
+// rectangle (Liang-Barsky, in lat/lng) and interpolate distance along what survives.
+// Going through the *track* rather than through observation points matters: zoom in
+// between two observations and there is nothing in view to average, which used to
+// freeze the transect.
+function visibleRange(){
+  var b=lmap.getBounds(),w=b.getWest(),e=b.getEast(),so=b.getSouth(),no=b.getNorth(),
+      g=geoPts(),lo=Infinity,hi=-Infinity;
+  for(var i=1;i<g.length;i++){
+    var a=g[i-1],c=g[i],dx=c.lng-a.lng,dy=c.lat-a.lat,t0=0,t1=1,ok=true,
+        ps=[-dx,dx,-dy,dy],qs=[a.lng-w,e-a.lng,a.lat-so,no-a.lat];
+    for(var k=0;k<4;k++){
+      var pk=ps[k],qk=qs[k];
+      if(pk===0){if(qk<0){ok=false;break;}continue;}
+      var r=qk/pk;
+      if(pk<0){if(r>t1){ok=false;break;}if(r>t0)t0=r;}
+      else{if(r<t0){ok=false;break;}if(r<t1)t1=r;}
+    }
+    if(!ok)continue;
+    var x0=a.x+(c.x-a.x)*t0,x1=a.x+(c.x-a.x)*t1;
+    lo=Math.min(lo,x0,x1);hi=Math.max(hi,x0,x1);
+  }
+  g.forEach(function(d){if(b.contains([d.lat,d.lng])){lo=Math.min(lo,d.x);hi=Math.max(hi,d.x);}});
+  return lo<=hi?[lo,hi]:null;
+}
+// the inverse: the trail between two distances, as latlngs (interpolated at the ends)
+function trackSpan(x0,x1){
+  var g=geoPts(),ll=[];
+  for(var i=1;i<g.length;i++){
+    var a=g[i-1],c=g[i],d=c.x-a.x;
+    if(c.x<x0||a.x>x1)continue;
+    var t0=d?Math.max(0,(x0-a.x)/d):0,t1=d?Math.min(1,(x1-a.x)/d):1;
+    if(t1<t0)continue;
+    ll.push([a.lat+(c.lat-a.lat)*t0,a.lng+(c.lng-a.lng)*t0]);
+    ll.push([a.lat+(c.lat-a.lat)*t1,a.lng+(c.lng-a.lng)*t1]);
+  }
+  return ll;
+}
+// zoomed in so far the trail has left the view: fall back to the nearest point on
+// it, so the transect keeps tracking where you are looking instead of freezing
+function nearestX(){
+  var c=lmap.getCenter(),g=geoPts(),bx=null,bd=Infinity;
+  g.forEach(function(d){var m=lmap.distance(c,[d.lat,d.lng]);if(m<bd){bd=m;bx=d.x;}});
+  return bx;
+}
 function syncChartToMap(){
   if(!chart||!lmap||lockZ)return;
-  var b=lmap.getBounds(),xs=[];
-  DATA.forEach(function(d){if(d.lat!=null&&active(d)&&b.contains([d.lat,d.lng]))xs.push(d.x);});
-  if(xs.length<2)return;                                     // nothing meaningful in view — leave the chart be
-  var lo=Math.min.apply(null,xs),hi=Math.max.apply(null,xs),pad=Math.max((hi-lo)*0.04,15);
+  var r=visibleRange();
+  if(!r){
+    var nx=nearestX();
+    if(nx==null)return;
+    var bb=lmap.getBounds(),half=lmap.distance(bb.getSouthWest(),bb.getNorthEast())/4;
+    r=[nx-half,nx+half];
+  }
+  var pad=Math.max((r[1]-r[0])*0.04,15),
+      min=Math.max(0,r[0]-pad),max=Math.min(XMAX,r[1]+pad);
+  if(max-min<MINR){var c=(min+max)/2;min=Math.max(0,c-MINR/2);max=min+MINR;}   // honour the zoom limit
   lockC=true;
-  chart.zoomScale('x',{min:Math.max(0,lo-pad),max:Math.min(XMAX,hi+pad)},'none');
+  chart.zoomScale('x',{min:min,max:max},'none');
   lockC=false;
 }
 function syncMapToChart(){
   if(!chart||!lmap||lockC)return;
-  var sc=chart.scales.x,ll=[];
-  DATA.forEach(function(d){if(d.lat!=null&&active(d)&&d.x>=sc.min&&d.x<=sc.max)ll.push([d.lat,d.lng]);});
+  var sc=chart.scales.x,ll=trackSpan(sc.min,sc.max);
   if(!ll.length)return;
   lockZ=true;
   lmap.fitBounds(L.latLngBounds(ll).pad(0.12),{animate:false});
@@ -226,8 +280,9 @@ function go(){
       plugins:{legend:{display:false},tooltip:{enabled:false,external:extTip},
         zoom:{pan:{enabled:true,mode:'x',onPanComplete:syncMapToChart},
               zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'x',onZoomComplete:syncMapToChart},
-              limits:{x:{min:0,max:__XMAX__,minRange:40}}}},
-      scales:{x:{type:'linear',min:0,max:__XMAX__,title:{display:true,text:'沿步道水平距離 horizontal distance (__XUNIT__)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v/__USCALE__+' __XUNIT__';}}},
+              limits:{x:{min:0,max:__XMAX__,minRange:MINR}}}},
+      scales:{x:{type:'linear',min:0,max:__XMAX__,title:{display:true,text:'沿步道水平距離 horizontal distance (__XUNIT__)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){var t=v/__USCALE__;   // km to 1 dp (no trailing .0), metres whole
+          return (__USCALE__>1?t.toFixed(1).replace(/\.0$/,''):Math.round(t))+' __XUNIT__';}}},
         y:{min:__YMIN__,max:__YMAX__,title:{display:true,text:'海拔 elevation (m)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v+' m';}}}}}});
   initMap();
 }

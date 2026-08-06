@@ -92,11 +92,15 @@ Both the chart and the map render the **same** ordered array, so they link by in
   a bottom-right switcher for OpenTopoMap (terrain + contours) and plain OSM.
 - **Linked hover**: hovering a chart point rings + raises its map marker; hovering a marker activates the
   chart point and pops its photo card. The 科/屬 filter syncs both and clears stale highlights.
-- **Linked zoom/pan**: moving the map narrows the transect to the points in view; zooming or panning the
-  transect fits the map to the points in that distance range. Both directions resolve through the point
-  array, so they agree by construction; `lockC`/`lockZ` stop the two syncs ping-ponging. "重置 reset"
-  restores both. Map→chart is exact; chart→map is limited by Leaflet's integer zoom levels, so a short
-  selection on a wide pane still shows neighbouring trail.
+- **Linked zoom/pan**: navigating the map narrows the transect to the stretch of trail on screen;
+  zooming or panning the transect fits the map to that stretch. Both directions resolve through the
+  **track**, not through the observations — `visibleRange()` clips each segment to the view
+  (Liang-Barsky in lat/lng) and interpolates distance along what survives, and `trackSpan()` does the
+  inverse. Deriving it from observations *inside* the view instead would strand the transect the moment
+  you zoom between two of them. Zoomed in past the trail entirely, `nearestX()` centres the window on
+  the closest point on the track rather than freezing. `lockC`/`lockZ` stop the two syncs ping-ponging,
+  and "重置 reset" restores both. Map→transect is exact; transect→map is limited by Leaflet's integer
+  zoom levels, so a short selection in a wide pane still shows neighbouring trail.
 
 Pages are **self-contained**: data is inlined; only libraries (Chart.js, Leaflet from CDN), map tiles,
 and photos are fetched live. This keeps every page a single portable file with no build step.
