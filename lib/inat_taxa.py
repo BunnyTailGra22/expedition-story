@@ -27,7 +27,9 @@ def enrich(tids, cache_path, locale="zh-TW"):
             print("inat taxa fetch failed:", e)
             continue
         for r in d.get("results", []):
-            anc = r.get("ancestors") or []
+            # the taxon itself closes the chain — an obs IDed at family/genus rank
+            # has no family/genus among its ancestors
+            anc = (r.get("ancestors") or []) + [r]
             fam, gen = _anc(anc, "family"), _anc(anc, "genus")
             cache[str(r["id"])] = {
                 "fam_sci": fam.get("name") if fam else None,
