@@ -9,6 +9,7 @@ generator runs locally or in CI, and the published pages are pure HTML/JS that c
 
 ```
 journeys/<id>/config.json   input: one file per journey (the only thing you author)
+journeys/<id>/track.gpx     optional input (trek): the recorded GPS route
 lib/                        the engine (pure-stdlib Python)
   walks.py                  iNat fetch (paginated) + segment obs into walks
   geo.py                    haversine + cumulative along-track distance
@@ -16,11 +17,13 @@ lib/                        the engine (pure-stdlib Python)
   elevation.py              SRTM 30 m sampling (Open Topo Data), disk-cached
   taicol.py                 Taiwan taxonomy (TaiCoL): 中拉 family/genus + endemism/Red List
   inat_taxa.py              global taxonomy: family/genus from iNat /v1/taxa ancestors
+  track.py                  GPX route: load + place obs on it by time + decimate + stats
   profile.py                one walk's obs → transect points (scope → QA → elev → distance)
   render.py                 points → self-contained HTML (transect chart + observation map)
 generate.py                 orchestrator: config → fetch → (trek | survey) → site/<id>/
 build_site_index.py         scans site/*/journey.json → site/index.html (overview map + sortable list)
 new_journey.py              scaffolder: resolve place + write a config + probe (form/CLI)
+merge_gpx.py                per-day GPX files → one track (one segment per day; --strip extensions)
 caches/                     cross-journey caches (gitignored): elevation / taicol / inat_taxa
 site/                       generated output (committed; this is what Pages serves)
 .github/workflows/          pages.yml (deploy) · create-journey.yml (the form)
@@ -90,7 +93,14 @@ and links without JavaScript.
   GPS-flagged points drawn as red diamonds, external photo tooltip, click → iNaturalist. The x-axis is
   **adaptive** (metres for a short ridge, km for a long trek); card 6 shows **peak + total ascent** for
   treks vs **net climb** for surveys.
-- **Observation map** (Leaflet): an orange track polyline through the points, circular photo markers
+- **Recorded route** (optional `gpx`, trek mode): `track.locate` interpolates the GPX at each
+  observation's timestamp — accepted if it lands within 250 m of the obs fix, else the nearest track
+  point within ±3 h (a circuit retraces its approach trail, so time picks the right pass). The obs then
+  takes the track's along-route distance and recorded elevation; the profile line, trail length, peak,
+  ascent (3 m dead-band) and the map line all come from the track (decimated to ~25 m), and zoom sync
+  runs through it. Without a GPX, the observations stand in for the route as below.
+- **Observation map** (Leaflet): an orange track polyline through the points (the GPX route when
+  present), circular photo markers
   (dots when a photo is missing), popups → iNaturalist. The base map is **OpenStreetMap**, with a
   bottom-right switcher for CARTO Positron (light) and OpenTopoMap (terrain + contours).
 - **Linked hover**: hovering a chart point rings + raises its map marker; hovering a marker activates the

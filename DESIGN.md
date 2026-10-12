@@ -88,13 +88,17 @@ network. Benefits: no build step, every page is one portable file, and it works 
 **Trade-off:** the page needs network at view time for tiles/photos (the same model the original chart
 already used for its CDN scripts).
 
-## The observation map is an MVP: obs-points, not a GPX route
+## The observation map: obs-points by default, a GPX route when supplied
 
-The orange track line connects observations **in time order** — it is *not* a recorded GPS track. On a
+By default the orange track line connects observations **in time order** — it is *not* a recorded GPS track. On a
 dense ridge it looks like the trail; on a sparse trek you see straight "shortcut" segments cutting across
 terrain. This is an accepted MVP limitation, stated on the page and in the docs. The honest fix is **Tier 2
 (ingest an optional `track.gpx`)**, which also makes the transect's distance axis accurate — but it needs a
-user-supplied GPX, so it's deferred rather than faked.
+user-supplied GPX, so it's opt-in rather than faked: a trek with `"gpx"` in its config gets the recorded
+route for the map line, the distance axis and the elevation profile (the device altimeter beats SRTM
+30 m on a ridge — 3189 m vs 3121 m at Okuhotaka), and each observation is placed on the route by its
+timestamp. Time, not nearest position, is the primary key because a circuit walks its approach trail
+twice; position only validates the match.
 
 Basemap is **OpenTopoMap** (free, contour aesthetic matching a Strava-style map, CC-BY-SA) rather than a
 keyed provider, to keep the tool dependency-free.

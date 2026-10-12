@@ -1,9 +1,11 @@
 """Turn one walk's observations into transect points:
 apply config scope (time_before / exclude ids) → GPS-correct → SRTM elevation →
-along-track distance. Returns a list of point dicts ready for taxonomy + render."""
-import os, datetime
+along-track distance. Returns a list of point dicts ready for taxonomy + render.
+Given a recorded track (lib/track.py), distance and elevation come from it instead:
+each observation is placed on the GPX route by time."""
+import os, datetime, statistics
 from datetime import timezone, timedelta
-from . import geo, gps, elevation
+from . import geo, gps, elevation, track as TR
 
 TW = timezone(timedelta(hours=8))
 
@@ -20,7 +22,7 @@ def _t(o):
         return None
 
 
-def build(walk_obs, scope, cache_dir):
+def build(walk_obs, scope, cache_dir, track=None):
     rows = []
     for o in walk_obs:
         t = _t(o)
@@ -50,9 +52,20 @@ def build(walk_obs, scope, cache_dir):
         return []
 
     gps.correct(rows)
-    coords = [(r["lat"], r["lng"]) for r in rows]
-    els = elevation.sample(coords, os.path.join(cache_dir, "elevation.json"))
-    dist = geo.cumdist(coords)
+    if track:
+        at = [TR.locate(track, r["_t"], r["lat"], r["lng"]) for r in rows]
+        dist, els = [a["x"] for a in at], [a["ele"] for a in at]
+        for r, a in zip(rows, at):
+            if r["fl"] and a["how"] == "time":   # a bad fix: the track knows where you were
+                r["lat"], r["lng"] = a["lat"], a["lng"]
+        near = [a for a in at if a["how"] == "near"]
+        print(f"  on GPX track: {len(at) - len(near)} by time, {len(near)} by nearest point · "
+              f"offset median {statistics.median(a['off'] for a in at):.0f} m, "
+              f"max {max(a['off'] for a in at):.0f} m")
+    else:
+        coords = [(r["lat"], r["lng"]) for r in rows]
+        els = elevation.sample(coords, os.path.join(cache_dir, "elevation.json"))
+        dist = geo.cumdist(coords)
 
     pts = []
     for i, r in enumerate(rows):
@@ -81,4 +94,8 @@ def build(walk_obs, scope, cache_dir):
             else:
                 p["y"] = 0
         p["y"] = round(p["y"], 1)
+    if track:   # time order is track order, but a nearest-point fallback can step back
+        pts.sort(key=lambda p: p["x"])
+        for i, p in enumerate(pts):
+            p["n"], p["x"] = i + 1, round(p["x"], 1)
     return pts

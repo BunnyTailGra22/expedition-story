@@ -62,6 +62,7 @@ Deployment is automatic: any push touching `site/**` redeploys GitHub Pages.
 |---|---|---|
 | **二格山稜線 2026-04-25** | survey | 93 樣點 / 63 種（長期物候典藏另存於 `../2G 二格/iNAT in Erge/`） |
 | **尼泊爾 2023 喜馬拉雅健行** | trek | 16-day query → one continuous transect · 103 pts / 87 spp / 161.8 km / peak 5628 m |
+| **槍・穗高 2026 · Yari-Hotaka Circuit** | trek + GPX | 5-day Garmin track · 89 pts / 72 spp / 53.0 km / peak 3189 m |
 
 ## Status / 狀態
 
@@ -71,7 +72,7 @@ Deployment is automatic: any push touching `site/**` redeploys GitHub Pages.
 | P4 | generalization: trek mode, overseas taxonomy (iNat), adaptive m↔km axis, global index, GitHub Pages | ✅ |
 | Map | observation map (Leaflet + OpenTopoMap) below the transect · linked hover (map ↔ profile) | ✅ |
 | Form | "Create journey" workflow_dispatch + `new_journey.py` scaffolder | ✅ |
-| Map · GPX | ingest an optional `track.gpx` for the real recorded route line (needs user-supplied GPX) | ⏳ |
+| Map · GPX | optional `track.gpx` (trek): real route line, along-route distance + recorded elevation, obs placed by time · `merge_gpx.py` | ✅ |
 
 ## Documentation
 
