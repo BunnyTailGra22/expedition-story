@@ -1,58 +1,93 @@
 name: Create journey
 
-# TEMP: regenerate yari-hotaka-circuit-2026-trek on this branch (no deploy).
-# Restored to the form workflow once the journey is generated.
+# A form-driven way to add a journey: Actions tab ▸ "Create journey" ▸ Run workflow.
+# Resolves the place, scaffolds the config, generates the site, commits, and deploys.
 
 on:
   workflow_dispatch:
+    inputs:
+      user_login:
+        description: "iNaturalist user"
+        required: true
+        default: "bunnytailgrass"
+      place:
+        description: "Place NAME (resolved via iNat) or numeric place_id"
+        required: true
+      d1:
+        description: "Start date (YYYY-MM-DD)"
+        required: true
+      d2:
+        description: "End date (YYYY-MM-DD)"
+        required: true
+      mode:
+        description: "Output mode"
+        type: choice
+        options: [trek, survey]
+        default: trek
+      taxonomy:
+        description: "Taxonomy source (auto = taicol in Taiwan, else inat)"
+        type: choice
+        options: [auto, inat, taicol]
+        default: auto
+      exclude_ids:
+        description: "Obs IDs to drop, comma-separated (optional; see run log for off-trail candidates)"
+        required: false
+        default: ""
+      label:
+        description: "Display label (optional; defaults to the place name)"
+        required: false
+        default: ""
+      id:
+        description: "URL slug (optional; derived if blank)"
+        required: false
+        default: ""
+      gap_min:
+        description: "Survey walk-gap minutes (survey mode only)"
+        required: false
+        default: "120"
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  regenerate:
+  create:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Probe observations
+      - name: Scaffold config
+        id: scaffold
+        env:  # pass inputs as env (not inline) to avoid shell injection
+          USER_LOGIN: ${{ inputs.user_login }}
+          PLACE: ${{ inputs.place }}
+          D1: ${{ inputs.d1 }}
+          D2: ${{ inputs.d2 }}
+          MODE: ${{ inputs.mode }}
+          TAXONOMY: ${{ inputs.taxonomy }}
+          EXCLUDE: ${{ inputs.exclude_ids }}
+          LABEL: ${{ inputs.label }}
+          JID: ${{ inputs.id }}
+          GAP: ${{ inputs.gap_min }}
         run: |
-          python3 - <<'PY'
-          import json, statistics, urllib.request, collections
-          from datetime import timezone, timedelta
-          from lib import walks as W, geo
-          cfg = json.load(open("journeys/yari-hotaka-circuit-2026-trek/config.json"))
-          pl = json.load(urllib.request.urlopen(f"https://api.inaturalist.org/v1/places/{cfg['place_id']}"))["results"][0]
-          print(f"place_id {cfg['place_id']} = {pl.get('display_name')}")
-          obs = W.fetch(cfg["user_login"], cfg["place_id"], cfg["d1"], cfg["d2"])
-          rows = []
-          for o in obs:
-              c = (o.get("geojson") or {}).get("coordinates")
-              t = W._t(o)
-              rows.append((o, t, c))
-          geo_rows = [r for r in rows if r[2]]
-          print(f"{len(obs)} obs · {len(geo_rows)} geo-located")
-          days = collections.Counter(t.astimezone(timezone(timedelta(hours=9))).date().isoformat() for _, t, _ in rows if t)
-          for d in sorted(days):
-              print(f"  {d} (JST): {days[d]} obs")
-          if geo_rows:
-              clat = statistics.median(r[2][1] for r in geo_rows)
-              clng = statistics.median(r[2][0] for r in geo_rows)
-              print(f"median centre {clat:.5f},{clng:.5f}")
-              print("id | time JST | lat,lng | km from centre | acc m | taxon")
-              for o, t, c in sorted(geo_rows, key=lambda r: r[1] or 0):
-                  km = geo.hav(c[1], c[0], clat, clng) / 1000
-                  tj = t.astimezone(timezone(timedelta(hours=9))).strftime("%m-%d %H:%M") if t else "?"
-                  name = ((o.get("taxon") or {}).get("name")) or "?"
-                  flag = "  <-- >10 km" if km > 10 else ""
-                  print(f"{o['id']} | {tj} | {c[1]:.5f},{c[0]:.5f} | {km:6.1f} | {o.get('positional_accuracy')} | {name}{flag}")
-          PY
+          python3 new_journey.py \
+            --user "$USER_LOGIN" --place "$PLACE" \
+            --d1 "$D1" --d2 "$D2" --mode "$MODE" --taxonomy "$TAXONOMY" \
+            --exclude "$EXCLUDE" --label "$LABEL" --id "$JID" --gap "$GAP"
 
-      - name: Generate journey
-        run: python3 generate.py --journey yari-hotaka-circuit-2026-trek
+      - name: Generate transect + map
+        run: python3 generate.py --journey "${{ steps.scaffold.outputs.journey_id }}"
 
       - name: Rebuild global index
         run: python3 build_site_index.py
@@ -61,6 +96,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A site
-          git commit -m "Generate yari-hotaka-circuit-2026-trek (TEMP regen workflow)" || echo "nothing to commit"
+          git add -A
+          git commit -m "Create journey ${{ steps.scaffold.outputs.journey_id }} (via form)" \
+            || { echo "nothing to commit"; exit 1; }
           git push
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4
