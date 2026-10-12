@@ -28,7 +28,7 @@ not a trail profile.
 ## Architecture
 ```
 journeys/<id>/config.json   # per-journey input: user_login, place_id, d1, d2, walk_gap_min,
-                            #   scope, snapshot, brand, mode("trek"?), taxonomy("inat"|"taicol")
+                            #   scope, snapshot, brand, mode("trek"?), taxonomy("inat"|"taicol"), gpx?
 lib/                        # shared engine
   walks.py                  # fetch(user,place,d1,d2) + segment(obs, gap_min) -> walks
   gps.py                    # accuracy-based QC: snap >100 m-accuracy fixes to time-interp position
@@ -36,6 +36,8 @@ lib/                        # shared engine
   taicol.py                 # Taiwan-scope: TaiCoL 中拉 family/genus + endemism/Red List, cached
   inat_taxa.py              # global-scope: family/genus (中拉) from iNat /v1/taxa ancestors, cached
   geo.py / profile.py       # haversine cumulative distance / per-walk point build (carries lat/lng)
+  track.py                  # optional GPX route (trek): obs placed by time → route distance + recorded
+                            #   elevation; profile line + map line from the track (merge_gpx.py merges days)
   render.py                 # page template: transect (adaptive m↔km axis, optional nav, peak vs
                             #   climb) + observation map below (Leaflet, OSM base + light/topo
                             #   switcher, obs-point track + photo markers). Transect ↔ map are linked
@@ -57,6 +59,10 @@ site/index.html             # landing: overview map (all tracks) + list sortable
 - **P5 [done]** landing page `site/index.html`: OpenTopoMap overview of every journey's track
   (click → that journey) + list sorted by date/distance/days/observations/species; journey.json
   carries a downsampled `track` and one summary vocabulary for both modes.
+- **P6 [done]** GPX route tier: optional `"gpx"` (trek) — `lib/track.py` places each obs on the recorded
+  route by time; distance, elevation profile, peak/ascent and the map line come from the track.
+  `merge_gpx.py` merges per-day files (`--strip` drops HR/cadence for the public repo copy).
+  First user: `yari-hotaka-circuit-2026-trek` (5 Garmin days, 53.0 km, 3189 m).
 
 ## Reuse source (port, don't re-invent)
 `../2G 二格/iNAT in Erge/` already has working: GPS correction (build_profile.py),

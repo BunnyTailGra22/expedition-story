@@ -23,6 +23,7 @@ Reference for journey inputs, generated outputs, and the create-journey form.
 
   "mode": "trek",                   // optional · "trek" | absent (= survey)
   "taxonomy": "inat",               // optional · "inat" | "taicol" (default: taicol)
+  "gpx": "track.gpx",               // optional · trek only · recorded route, relative to journeys/<id>/
   "walk_gap_min": 120,              // optional · survey segmentation gap, minutes (default 120)
 
   "scope": {                        // optional · data cleaning
@@ -46,6 +47,7 @@ Reference for journey inputs, generated outputs, and the create-journey form.
 | `mode` | `"trek"` \| absent | — | `trek` = one continuous transect. Absent = survey (one transect per walk + index). |
 | `taxonomy` | `"inat"` \| `"taicol"` | — | Family/genus source. Omitted ⇒ `taicol`. Use `inat` outside Taiwan. |
 | `walk_gap_min` | integer | — | Survey only. New walk on new day **or** gap > this (default 120). |
+| `gpx` | string \| string[] | — | Trek only. GPX file(s) in `journeys/<id>/` (merge per-day files with `merge_gpx.py --strip`). The recorded route then sets distance, elevation and the map line; each observation is placed on it by time. |
 | `scope.exclude_obs_ids` | string[] | — | Observation ids to drop (off-trail outliers, bad points). |
 | `scope.time_before` | `"HH:MM"` | — | Drop observations at/after this local (CST) time. |
 | `snapshot` | string | — | Cosmetic footer label. |

@@ -10,7 +10,8 @@ to the stretch on screen. Both directions go through the *track* (segments clipp
 to the view / interpolated between points), not through the observations, so the
 transect keeps following even where the view holds no observation at all.
 Mobile-responsive.
-(Track = obs points in time order; a real GPX route is a later tier.)"""
+Track = the recorded GPX route when the journey has one (meta["track"]: the profile
+is drawn from it and observations sit on it); otherwise obs points in time order."""
 import json, math
 
 TPL = """<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8">
@@ -82,12 +83,14 @@ __NAV__
 </div>
 <div class="ctrl"><span>縮放：雙指 / 滾輪　平移：拖曳　點選點位 → iNaturalist　剖面圖與地圖同步縮放</span><button id="rz" type="button">重置 reset</button></div>
 <div class="chartbox"><canvas id="t" role="img" aria-label="__TITLE__ 海拔剖面圖"></canvas></div>
-<div class="seclbl">觀測點地圖 observation map<span>與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</span></div>
+<div class="seclbl">觀測點地圖 observation map<span>__MAPNOTE__與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</span></div>
 <div class="mapbox"><div id="map"></div></div>
 <p class="foot">__FOOT__</p>
 </div>
 <script>
 var DATA=__DATA__;
+var TRACK=__TRACK__;   // recorded GPX route [[lat,lng,x,ele],…], or null → the obs points stand in
+var TR=TRACK?TRACK.map(function(a){return {lat:a[0],lng:a[1],x:a[2]};}):null;
 var FAM='*', GEN='*', chart, lmap, markers=[], trackLine, hiRing=null, hiMk=null;
 var XMAX=__XMAX__, MINR=40, lockC=false, lockZ=false;   // guards so the two syncs can't ping-pong
 function isMobile(){return window.matchMedia('(max-width:760px)').matches;}
@@ -102,7 +105,7 @@ function extTip(ctx){
   var tip=ctx.tooltip, mob=isMobile();
   var el=document.getElementById('ctt');
   if(!el){el=document.createElement('div');el.id='ctt';document.body.appendChild(el);}
-  if(tip.opacity===0){el.style.opacity=0;highlightMarker(null);return;}
+  if(tip.opacity===0||!tip.dataPoints.length){el.style.opacity=0;highlightMarker(null);return;}
   var d=tip.dataPoints[0].raw;
   if(!active(d)){el.style.opacity=0;highlightMarker(null);return;}
   highlightMarker(tip.dataPoints[0].dataIndex);
@@ -158,7 +161,7 @@ function highlightPoint(i){
 }
 function initMap(){
   if(!window.L){setTimeout(initMap,80);return;}
-  var geo=DATA.filter(function(d){return d.lat!=null&&d.lng!=null;});
+  var geo=geoPts();
   if(!geo.length)return;
   lmap=L.map('map',{scrollWheelZoom:true});
   var bLight=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
@@ -183,8 +186,8 @@ function initMap(){
   lmap.on('moveend zoomend',syncChartToMap);
 }
 // zoom sync: the map view sets the transect's visible stretch of trail, and vice
-// versa. Both directions go through the points, so they agree by construction.
-function geoPts(){return DATA.filter(function(d){return d.lat!=null&&d.lng!=null;});}
+// versa. Both directions go through the track, so they agree by construction.
+function geoPts(){return TR||DATA.filter(function(d){return d.lat!=null&&d.lng!=null;});}
 // Which stretch of trail is on screen? Clip every track segment against the view
 // rectangle (Liang-Barsky, in lat/lng) and interpolate distance along what survives.
 // Going through the *track* rather than through observation points matters: zoom in
@@ -271,13 +274,19 @@ function go(){
   document.getElementById('famSel').onchange=function(){FAM=this.value;GEN='*';fillGenera(FAM);chart.update();refreshMarkers();};
   document.getElementById('genSel').onchange=function(){GEN=this.value;chart.update();refreshMarkers();};
   document.getElementById('rz').onclick=resetViews;
-  chart=new Chart(document.getElementById('t'),{type:'line',
-    data:{datasets:[{data:DATA,borderColor:'#666666',borderWidth:1.5,fill:'start',backgroundColor:'rgba(178,178,178,0.20)',tension:0.3,
+  // dataset 0 is always the observations (hover/click/linking index into it); with a
+  // GPX route its own line is dataset 1, drawn beneath, and the obs line is hidden
+  var ds=[{data:DATA,borderColor:'#666666',borderWidth:1.5,fill:'start',backgroundColor:'rgba(178,178,178,0.20)',tension:0.3,
       pointBackgroundColor:pcol,pointBorderColor:pbord,pointBorderWidth:pbw,pointRadius:prad,pointStyle:pstyle,
-      pointHitRadius:function(c){return active(c.raw)?10:0;},pointHoverRadius:function(c){return active(c.raw)?prad(c)+2:0;}}]},
+      pointHitRadius:function(c){return active(c.raw)?10:0;},pointHoverRadius:function(c){return active(c.raw)?prad(c)+2:0;},order:1}];
+  if(TRACK){ds[0].showLine=false;ds[0].fill=false;
+    ds.push({data:TRACK.map(function(a){return {x:a[2],y:a[3]};}),borderColor:'#666666',borderWidth:1.2,fill:'start',
+      backgroundColor:'rgba(178,178,178,0.20)',tension:0,pointRadius:0,pointHitRadius:0,pointHoverRadius:0,order:2});}
+  chart=new Chart(document.getElementById('t'),{type:'line',
+    data:{datasets:ds},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'nearest',intersect:true},
-      onClick:function(e,els){if(els.length){var p=DATA[els[0].index];if(!active(p))return;window.open(p.u,'_blank');}},
-      plugins:{legend:{display:false},tooltip:{enabled:false,external:extTip},
+      onClick:function(e,els){els=els.filter(function(x){return x.datasetIndex===0;});if(els.length){var p=DATA[els[0].index];if(!active(p))return;window.open(p.u,'_blank');}},
+      plugins:{legend:{display:false},tooltip:{enabled:false,external:extTip,filter:function(it){return it.datasetIndex===0;}},
         zoom:{pan:{enabled:true,mode:'x',onPanComplete:syncMapToChart},
               zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'x',onZoomComplete:syncMapToChart},
               limits:{x:{min:0,max:__XMAX__,minRange:MINR}}}},
@@ -291,9 +300,10 @@ if(window.Chart){go();}else{var w=setInterval(function(){if(window.Chart){clearI
 
 
 def transect_html(meta, pts):
+    trk = meta.get("track")      # [[lat, lng, x, ele], ...] recorded GPX route, or None
     ys = [p["y"] for p in pts]
     nsp = len({p["s"] for p in pts})
-    maxx = pts[-1]["x"] if pts else 0
+    maxx = trk[-1][2] if trk else (pts[-1]["x"] if pts else 0)
     xmax = int(math.ceil(maxx / 25) * 25) or 25
     # adaptive distance unit: metres for a short ridge walk, km for a long trek
     if maxx >= 2000:
@@ -302,8 +312,11 @@ def transect_html(meta, pts):
         uscale, unit, dist = 1, "m", str(int(round(maxx)))
     e0, e1 = int(round(ys[0])), int(round(ys[-1]))
     climb = e1 - e0
+    if trk:                  # the profile line is the track: scale the axis to it
+        ys = ys + [a[3] for a in trk]
     if meta.get("trek"):  # out-and-back trek: peak + total ascent, not net start→end
-        ascent = round(sum(max(0.0, ys[i] - ys[i - 1]) for i in range(1, len(ys))))
+        ascent = round(meta["ascent"] if meta.get("ascent") is not None else
+                       sum(max(0.0, ys[i] - ys[i - 1]) for i in range(1, len(ys))))
         c6lbl, c6val, c6sub = "最高海拔 peak", f"{int(round(max(ys)))} m", f"總爬升 +{ascent} m"
     else:
         c6lbl = "爬升 climb"
@@ -314,15 +327,18 @@ def transect_html(meta, pts):
     tax = ("科/屬中拉名：iNaturalist 分類（地區俗名 zh-TW）" if meta.get("taxonomy") == "inat"
            else "科/屬中拉名與特有/保育：TaiCoL 臺灣物種名錄")
     foot = (f"資料來源 iNaturalist API（觀察者 {meta.get('user','')}，地點 place_id {meta.get('place_id','')}）· "
-            f"海拔 SRTM 30 m（雙線性內插）· GPS &gt;100 m 之點位置與高程以鄰近可靠點時間內插 · "
-            f"{tax}"
+            + ("距離與海拔：GPX 實測軌跡（裝置高度計）· 觀察點依拍攝時間對齊軌跡 · " if trk else
+               "海拔 SRTM 30 m（雙線性內插）· GPS &gt;100 m 之點位置與高程以鄰近可靠點時間內插 · ")
+            + tax
             + (f" · 快照 {meta['snapshot']}" if meta.get("snapshot") else "") + "。")
     rep = {"__TITLE__": meta["title"], "__SUBT__": meta["subtitle"], "__NAV__": nav,
            "__N__": str(len(pts)), "__SP__": str(nsp), "__DIST__": dist, "__DUNIT__": unit,
            "__XMAX__": str(xmax), "__USCALE__": str(uscale), "__XUNIT__": unit,
            "__C6LBL__": c6lbl, "__C6VAL__": c6val, "__C6SUB__": c6sub,
            "__YMIN__": str(int(min(ys)) - 8), "__YMAX__": str(int(max(ys)) + 8),
-           "__FOOT__": foot, "__DATA__": json.dumps(pts, ensure_ascii=False)}
+           "__FOOT__": foot, "__DATA__": json.dumps(pts, ensure_ascii=False),
+           "__MAPNOTE__": "橘線為 GPX 實測軌跡　" if trk else "",
+           "__TRACK__": json.dumps(trk, separators=(",", ":")) if trk else "null"}
     html = TPL
     for k, v in rep.items():
         html = html.replace(k, v)

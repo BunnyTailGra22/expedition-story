@@ -9,7 +9,7 @@ import argparse, json, os, sys, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from lib import walks as W, profile as P, taicol as T, render as R, inat_taxa as IT
+from lib import walks as W, profile as P, taicol as T, render as R, inat_taxa as IT, track as TR
 
 CACHE = os.path.join(HERE, "caches")
 BR = {"green": "#587A30", "gray": "#666", "gray2": "#B2B2B2"}
@@ -85,8 +85,14 @@ def run_trek(cfg, obs, out):
     """Trek mode: the whole multi-day journey is ONE continuous path → a single
     elevation transect (x = cumulative along-track distance over the whole trek).
     Deliberately overrides the per-walk 'no cross-day merge' rule for point-to-point
-    treks (see CLAUDE.md)."""
-    pts = P.build(obs, cfg.get("scope"), CACHE)
+    treks (see CLAUDE.md). With cfg['gpx'] the recorded route drives distance,
+    elevation and the map line; without it the observations stand in for the route."""
+    trk = None
+    if cfg.get("gpx"):
+        g = cfg["gpx"]
+        trk = TR.load([os.path.join(HERE, "journeys", cfg["id"], f)
+                       for f in ([g] if isinstance(g, str) else g)])
+    pts = P.build(obs, cfg.get("scope"), CACHE, track=trk)
     if not pts:
         print(f"{cfg['label']}: no usable points after scope.")
         return
@@ -96,24 +102,31 @@ def run_trek(cfg, obs, out):
     d0, d1 = dts[0].strftime("%Y-%m-%d"), dts[-1].strftime("%Y-%m-%d")
     ndays = len({t.date() for t in dts})
     nsp = len({p["s"] for p in pts})
-    ys, km = [p["y"] for p in pts], pts[-1]["x"] / 1000
+    if trk:
+        st, line = TR.stats(trk), TR.decimate(trk)
+        km, peak, low = st["km"], st["peak"], st["low"]
+        climb, route = st["end"] - st["start"], [{"lat": a[0], "lng": a[1]} for a in line]
+    else:
+        ys, km = [p["y"] for p in pts], pts[-1]["x"] / 1000
+        peak, low, climb, route, line = max(ys), min(ys), pts[-1]["y"] - pts[0]["y"], pts, None
     meta = {"title": cfg["label"],
             "subtitle": f"{d0} – {d1} · {ndays} 天 · {len(pts)} 樣點 · {nsp} 種 · "
-                        f"連續路徑剖面 single continuous transect",
+                        f"連續路徑剖面 single continuous transect"
+                        + (" · GPX 實測軌跡 recorded track" if trk else ""),
             "user": cfg["user_login"], "place_id": cfg["place_id"],
             "snapshot": cfg.get("snapshot"), "trek": True,
-            "taxonomy": cfg.get("taxonomy")}
+            "taxonomy": cfg.get("taxonomy"),
+            "track": line, "ascent": st["ascent"] if trk else None}
     open(os.path.join(out, "index.html"), "w").write(R.transect_html(meta, pts))
     json.dump({"id": cfg["id"], "label": cfg["label"], "mode": "trek",
                "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
                "d1": d0, "d2": d1, "days": ndays, "points": len(pts), "species": nsp,
-               "trail_km": round(km, 1), "peak_m": round(max(ys)), "low_m": round(min(ys)),
-               "climb_m": round(pts[-1]["y"] - pts[0]["y"]),
-               "track": [track_of(pts)]},
+               "trail_km": round(km, 1), "peak_m": round(peak), "low_m": round(low),
+               "climb_m": round(climb), "track": [track_of(route)]},
               open(os.path.join(out, "journey.json"), "w"), ensure_ascii=False, indent=2)
     print(f"{cfg['label']}: {len(obs)} obs → 1 continuous transect → site/{cfg['id']}/")
-    print(f"  {d0}–{d1} · {ndays} 天 · {len(pts)} pts · {nsp} spp · "
-          f"{km:.1f} km · {round(pts[0]['y'])}→{round(pts[-1]['y'])} m")
+    print(f"  {d0}–{d1} · {ndays} 天 · {len(pts)} pts · {nsp} spp · {km:.1f} km · "
+          f"{round(low)}–{round(peak)} m" + (f" · +{round(st['ascent'])} m · GPX" if trk else ""))
 
 
 def main():
