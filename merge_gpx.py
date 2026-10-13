@@ -8,14 +8,18 @@ device extensions kept), so the result round-trips into Garmin/Strava/etc.
 --strip drops per-point <extensions> (heart rate, cadence, temperature): use it
 for the copy committed under journeys/<id>/ — the engine needs only lat/lon/ele/time,
 and the repo is public.
+
+--every N keeps at most one point per N seconds (each segment's last point kept):
+a watch on 1-second recording writes ~36k points a day, too heavy to commit.
 """
-import argparse, re, sys
+import argparse, datetime, re, sys
 
 SEG = re.compile(r"<trkseg>.*?</trkseg>", re.S)
 TIME = re.compile(r"<time>([^<]+)</time>")
 EXT = re.compile(r"\s*<extensions>.*?</extensions>", re.S)
 ROOT = re.compile(r"<gpx\b[^>]*>", re.S)
 XMLNS = re.compile(r'xmlns(?::[\w.-]+)?="[^"]*"')
+TRKPT = re.compile(r"\s*<trkpt\b.*?</trkpt>", re.S)
 
 
 def read(path):
@@ -29,12 +33,27 @@ def read(path):
             [(TIME.search(s).group(1) if TIME.search(s) else "", s) for s in segs])
 
 
+def thin(seg, every):
+    """Drop points closer than `every` seconds to the last one kept."""
+    pts = TRKPT.findall(seg)
+    keep, last = [], None
+    for i, p in enumerate(pts):
+        m = TIME.search(p)
+        t = datetime.datetime.fromisoformat(m.group(1).replace("Z", "+00:00")) if m else None
+        if t is None or last is None or (t - last).total_seconds() >= every or i == len(pts) - 1:
+            keep.append(p)
+            last = t or last
+    head, tail = seg[:seg.find("<trkpt")], seg[seg.rfind("</trkpt>") + len("</trkpt>"):]
+    return head.rstrip() + "".join(keep) + tail
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("gpx", nargs="+")
     ap.add_argument("-o", "--out", required=True)
     ap.add_argument("--name", default="merged track")
     ap.add_argument("--strip", action="store_true", help="drop per-point <extensions>")
+    ap.add_argument("--every", type=float, default=0, help="keep one point per N seconds")
     a = ap.parse_args()
 
     parsed = [read(p) for p in a.gpx]
@@ -44,6 +63,8 @@ def main():
                             + [d for decl, _ in parsed for d in decl
                                if d.startswith("xmlns:") and not d.startswith("xmlns:xsi=")]))
     segs = sorted((s for _, ss in parsed for s in ss), key=lambda s: s[0])
+    if a.every:
+        segs = [(t, thin(s, a.every)) for t, s in segs]
     body = "\n    ".join(EXT.sub("", s) if a.strip else s for _, s in segs)
     name = a.name.replace("&", "&amp;").replace("<", "&lt;")
     gpx = f"""<?xml version="1.0" encoding="UTF-8"?>
@@ -61,7 +82,8 @@ def main():
 """
     open(a.out, "w", encoding="utf-8").write(gpx)
     print(f"{a.out}: {len(segs)} segment(s) from {len(a.gpx)} file(s), "
-          f"{gpx.count('<trkpt')} points{' (extensions stripped)' if a.strip else ''}")
+          f"{gpx.count('<trkpt')} points{' (extensions stripped)' if a.strip else ''}"
+          f"{f', one per {a.every:g} s' if a.every else ''}")
 
 
 if __name__ == "__main__":

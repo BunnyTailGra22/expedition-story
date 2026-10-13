@@ -23,7 +23,7 @@ lib/                        the engine (pure-stdlib Python)
 generate.py                 orchestrator: config → fetch → (trek | survey) → site/<id>/
 build_site_index.py         scans site/*/journey.json → site/index.html (overview map + sortable list)
 new_journey.py              scaffolder: resolve place + write a config + probe (form/CLI)
-merge_gpx.py                per-day GPX files → one track (one segment per day; --strip extensions)
+merge_gpx.py                per-day GPX files → one track (one segment per day; --strip extensions, --every N s)
 caches/                     cross-journey caches (gitignored): elevation / taicol / inat_taxa
 site/                       generated output (committed; this is what Pages serves)
 .github/workflows/          pages.yml (deploy) · create-journey.yml (the form)
