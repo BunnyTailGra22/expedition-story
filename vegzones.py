@@ -71,7 +71,13 @@ def main():
         else:
             ax.scatter([x], [e], s=34, facecolor=BLUE, edgecolor="white", linewidth=0.8, zorder=3)
     if tw.get("peak"):
-        ax.text(0.97, tw["top"] - top * 0.008, tw["peak"], ha="right", va="top", fontsize=9.5, color=MUTED)
+        room = top - tw["top"] > top * 0.05     # label above the column when there is space for it
+        ax.text(0.97, tw["top"] + (top * 0.006 if room else -top * 0.008), tw["peak"], ha="right",
+                va="bottom" if room else "top", fontsize=9.5, color=MUTED)
+    if cfg.get("summit"):                       # the route's GPS high point, above the highest observation
+        sy, sl = cfg["summit"]["y"], cfg["summit"]["label"]
+        ax.plot([x0, x1], [sy, sy], color=MUTED, linewidth=1, linestyle=(0, (3, 3)))
+        ax.text(x1, sy + top * 0.006, sl, ha="right", va="bottom", fontsize=9.5, color=MUTED)
 
     for x, label in ((0.5, tw["label"]), (1.65, ov["label"]), ((x0 + x1) / 2, cfg["obs_label"])):
         ax.text(x, top * 1.015, label, ha="center", va="bottom", fontsize=12, color=INK, fontweight="bold")
