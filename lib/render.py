@@ -59,11 +59,12 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 .ins-note{font-size:12px;color:var(--gray);line-height:1.6;margin:0 0 8px}
 .ins-list{margin:0 0 6px;padding-left:20px;font-size:13.5px;line-height:1.7}
 .tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:0.5px solid var(--gray2);border-radius:10px}
-.tbl table{border-collapse:collapse;width:100%;min-width:720px;font-size:13px;line-height:1.55}
+.tbl table{border-collapse:collapse;width:100%;min-width:720px;table-layout:fixed;font-size:13px;line-height:1.55}
+.tbl table.t-fam{min-width:900px}
 .tbl th{background:#f5f4ef;color:var(--gray);font-weight:500;text-align:left;padding:8px 10px;white-space:nowrap}
 .tbl td{padding:8px 10px;border-top:0.5px solid #e4e2da;vertical-align:top}
 .tbl td b{color:var(--green)}
-.tbl td:last-child{white-space:nowrap}
+.t-fam td:last-child{white-space:nowrap}
 .mapbox{position:relative;width:100%;height:480px;border-radius:12px;overflow:hidden;border:0.5px solid var(--gray2)}
 #map{width:100%;height:100%;background:#eee}
 .mk{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);background:#f1efe8}
