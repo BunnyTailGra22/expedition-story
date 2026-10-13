@@ -1,0 +1,21 @@
+{
+  "id": "nanhu-2022-trek",
+  "label": "南湖大山 2022 · Mt. Nanhu",
+  "user_login": "bunnytailgrass",
+  "place_id": 7887,
+  "d1": "2022-06-03",
+  "d2": "2022-06-06",
+  "mode": "trek",
+  "taxonomy": "taicol",
+  "gpx": "track.gpx",
+  "scope": {
+    "exclude_obs_ids": [
+      "120491983",
+      "120494471",
+      "120496593"
+    ]
+  },
+  "snapshot": "2022/06 · 南湖大山",
+  "elevation": "srtm30m",
+  "brand": "sow"
+}
