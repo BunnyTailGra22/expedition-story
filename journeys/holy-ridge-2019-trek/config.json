@@ -1,0 +1,21 @@
+{
+  "id": "holy-ridge-2019-trek",
+  "label": "雪霸聖稜線 2019 · Holy Ridge",
+  "user_login": "bunnytailgrass",
+  "place_id": 7887,
+  "d1": "2019-09-12",
+  "d2": "2019-09-15",
+  "mode": "trek",
+  "taxonomy": "taicol",
+  "gpx": "track.gpx",
+  "scope": {
+    "exclude_obs_ids": [
+      "32825633",
+      "32825236",
+      "32825151"
+    ]
+  },
+  "snapshot": "2019/09 · 雪霸聖稜線",
+  "elevation": "srtm30m",
+  "brand": "sow"
+}

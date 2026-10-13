@@ -129,6 +129,7 @@ use steps 1, 3, 4 and 6.
 | **中央山脈南一段 2025 · South Section One** | trek + GPX | 5 days · 46 pts / 39 spp / 52.3 km / peak 3677 m |
 | **中央山脈南二段 2024 · South Section Two** | trek + GPX | 8 days · 70 pts / 49 spp / 86.9 km / peak 3652 m |
 | **中央山脈南三段 2025 · South Section Three** | trek + GPX | 8 days · 85 pts / 58 spp / 101.3 km / peak 3623 m (D6 morning and D8 after 11:36 not recorded: battery) |
+| **雪霸聖稜線 2019 · Holy Ridge** | trek + GPX | 4 days · 27 pts / 19 spp / 46.8 km / peak 3866 m (O 型：武陵 → 雪山北峰 → 北稜角 → 翠池 → 雪山主峰 → 雪山登山口) |
 | **南湖大山 2020 · Mt. Nanhu** | trek + GPX | 5 days (4 with observations) · 30 pts / 26 spp / 35.9 km / peak 3752 m (D3 and the D5 descent not recorded; GPS altitude smoothed) |
 | **路過島峰 2023 · Island Peak, Nepal** | trek + GPX | 11 days · 98 pts / 84 spp / 131.8 km / peak 6062 m · 植群帶對照 |
 | **槍・穗高 2026 · Yari-Hotaka Circuit** | trek + GPX | 5 days · 89 pts / 72 spp / 53.0 km / peak 3189 m · 植群帶對照 |
