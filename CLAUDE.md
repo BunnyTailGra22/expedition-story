@@ -99,3 +99,8 @@ photo tooltip, intersect:true hover). Port these into `lib/` parameterized by co
 - **Local CLI** (same scaffolder): `python3 new_journey.py --user U --place "Yushan" --d1 …
   --d2 … --mode trek`, then `python3 generate.py --journey <id> && python3 build_site_index.py`.
 - **Regenerate one**: `python3 generate.py --journey erge-2026-04-25`
+- **Insights** (third/fourth section): `python3 insights_data.py --journey <id> [--zones 3300,3100,2500] [--month N]`
+  prints the facts (zone × genus, status, 花果期) → curate `journeys/<id>/insights_spec.py` →
+  `python3 build_insights.py --journey <id>` writes `insights.html` (`--check` diffs) → rerun `generate.py`.
+- **Overseas zones**: write `vegzones.json` + `vegzones.html`, run `python3 vegzones.py --journey <id>` after
+  `generate.py`, then `generate.py` again. Full inputs → process → outputs: README "Workflow".

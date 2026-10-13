@@ -10,6 +10,8 @@ generator runs locally or in CI, and the published pages are pure HTML/JS that c
 ```
 journeys/<id>/config.json   input: one file per journey (the only thing you author)
 journeys/<id>/track.gpx     optional input (trek): the recorded GPS route
+journeys/<id>/insights_spec.py → insights.html   curated 「AI彙整，待查證」 section (inlined by generate.py)
+journeys/<id>/vegzones.json · .html · .png       overseas 植群帶對照: zones, summary, figure
 lib/                        the engine (pure-stdlib Python)
   walks.py                  iNat fetch (paginated) + segment obs into walks
   geo.py                    haversine + cumulative along-track distance
@@ -24,7 +26,10 @@ generate.py                 orchestrator: config → fetch → (trek | survey) �
 build_site_index.py         scans site/*/journey.json → site/index.html (overview map + sortable list)
 new_journey.py              scaffolder: resolve place + write a config + probe (form/CLI)
 merge_gpx.py                per-day GPX files → one track (one segment per day; --strip extensions, --every N s)
-caches/                     cross-journey caches (gitignored): elevation / taicol / inat_taxa
+insights_data.py            authoring: facts for the insights — zone × genus, status, 花果期 → report + caches/insights/<id>.json
+build_insights.py           authoring: insights_spec.py → insights.html (habitat and family tables; --check diffs)
+vegzones.py                 authoring (matplotlib): vegzones.json + page elevations → vegzones.png
+caches/                     cross-journey caches (gitignored): elevation / taicol / inat_taxa / phenology / insights
 site/                       generated output (committed; this is what Pages serves)
 .github/workflows/          pages.yml (deploy) · create-journey.yml (the form)
 ```
