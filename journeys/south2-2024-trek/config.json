@@ -1,0 +1,20 @@
+{
+  "id": "south2-2024-trek",
+  "label": "中央山脈南二段 2024 · South Section Two",
+  "user_login": "bunnytailgrass",
+  "place_id": 7887,
+  "d1": "2024-04-15",
+  "d2": "2024-04-22",
+  "mode": "trek",
+  "taxonomy": "taicol",
+  "snapshot": "2024/04 · 中央山脈南二段",
+  "elevation": "srtm30m",
+  "brand": "sow",
+  "scope": {
+    "exclude_obs_ids": [
+      "208035809",
+      "208036113",
+      "208037758"
+    ]
+  }
+}

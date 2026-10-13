@@ -1,0 +1,299 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>中央山脈南二段 2024 · South Section Two</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--green:#587A30;--green2:#90B821;--gray:#666;--gray2:#B2B2B2;--yellow:#FFD900;--red:#E8380D;--ink:#3a3a36}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:"Noto Sans TC",system-ui,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 26px 34px}
+.nav{font-size:13px;margin:0 0 14px}.nav a{color:var(--green);text-decoration:none}
+h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
+.sub{font-size:14px;color:var(--gray);margin:0 0 20px}
+.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:0 0 20px}
+.card{background:#f5f4ef;border-radius:10px;padding:11px 12px}
+.card .lbl{font-size:12px;color:var(--gray)}.card .val{font-size:22px;font-weight:500}
+.card .sub2{font-size:11px;color:var(--gray2);margin-top:2px}
+.card select{width:100%;font-family:inherit;font-size:13px;color:var(--ink);background:#fff;border:0.5px solid var(--gray2);border-radius:6px;padding:7px 6px;margin-top:3px;cursor:pointer}
+@media(max-width:760px){.wrap{padding:24px 16px}.cards{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){h1{font-size:20px}.cards{grid-template-columns:repeat(2,1fr)}.card .val{font-size:19px}}
+.legend{display:flex;flex-wrap:wrap;gap:15px;font-size:13px;color:var(--gray);margin:0 0 8px}
+.legend i{display:inline-block;vertical-align:middle;margin-right:6px}
+.dot{width:11px;height:11px;border-radius:50%}.diam{width:10px;height:10px;background:var(--green);border:1.5px solid var(--red);transform:rotate(45deg)}
+.ctrl{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 0 8px;font-size:12px;color:var(--gray2)}
+.ctrl button{font-family:inherit;font-size:12px;color:var(--gray);background:#fff;border:0.5px solid var(--gray2);border-radius:6px;padding:5px 10px;cursor:pointer}
+.chartbox{position:relative;width:100%;height:450px;touch-action:none}
+.ctt{position:fixed;opacity:0;transition:opacity .12s;background:#fff;z-index:30;font-size:12px;line-height:1.45;border:0.5px solid var(--gray2);border-radius:8px;padding:8px}
+.ctt.float{width:178px;pointer-events:none}
+.ctt.float img{width:100%;height:118px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;background:#f1efe8}
+.ctt.sheet{left:0;right:0;bottom:0;width:100%;border:none;border-top:0.5px solid var(--gray2);border-radius:12px 12px 0 0;box-shadow:0 -2px 14px rgba(0,0,0,.10);padding:12px 16px;display:flex;gap:12px;align-items:center;pointer-events:auto}
+.ctt.sheet img{width:88px;height:88px;flex:0 0 auto;object-fit:cover;border-radius:8px;background:#f1efe8}
+.ctt .nm{font-weight:700;color:var(--green);font-size:14px}.ctt .sci{font-style:italic;color:var(--gray)}.ctt .fam{color:var(--gray)}.ctt .lnk{display:inline-block;margin-top:6px;color:var(--green);font-weight:500;text-decoration:none}
+.foot{margin-top:20px;font-size:11.5px;color:var(--gray2);line-height:1.6}
+.sec{font-size:18px;font-weight:700;color:var(--green);margin:34px 0 4px;padding-top:14px;border-top:0.5px solid var(--gray2)}
+.sec span{font-size:13px;font-weight:400;color:var(--gray);margin-left:8px}
+.secnote{font-size:12px;color:var(--gray2);margin:0 0 10px}
+.toc{font-size:13px;margin:-12px 0 18px}.toc a{color:var(--green);text-decoration:none;margin-right:14px}
+.ins h3{font-size:15px;font-weight:700;color:var(--ink);margin:22px 0 8px}
+.ins-key{margin:0;padding-left:22px;font-size:14px;line-height:1.75}.ins-key li{margin-bottom:8px}.ins-key b{color:var(--green)}
+.ins-note{font-size:12px;color:var(--gray);line-height:1.6;margin:0 0 8px}
+.ins-fig{display:block;width:100%;height:auto;border:0.5px solid var(--gray2);border-radius:10px;margin:4px 0 14px;background:#fff}
+.ins-list{margin:0 0 6px;padding-left:20px;font-size:13.5px;line-height:1.7}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:0.5px solid var(--gray2);border-radius:10px}
+.tbl table{border-collapse:collapse;width:100%;min-width:720px;table-layout:fixed;font-size:13px;line-height:1.55}
+.tbl table.t-fam{min-width:900px}
+.tbl th{background:#f5f4ef;color:var(--gray);font-weight:500;text-align:left;padding:8px 10px;white-space:nowrap}
+.tbl td{padding:8px 10px;border-top:0.5px solid #e4e2da;vertical-align:top}
+.tbl td b{color:var(--green)}
+.t-fam td:last-child{white-space:nowrap}
+.mapbox{position:relative;width:100%;height:480px;border-radius:12px;overflow:hidden;border:0.5px solid var(--gray2)}
+#map{width:100%;height:100%;background:#eee}
+.mk{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);background:#f1efe8}
+.mk img{width:100%;height:100%;object-fit:cover;display:block}
+.mk.fl{border-color:var(--red)}
+.dotmk{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.dotmk.fl{border-color:var(--red)}
+.leaflet-popup-content{font-family:"Noto Sans TC",system-ui,sans-serif;margin:10px 12px;width:180px!important}
+.pp img{width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;background:#f1efe8}
+.pp .nm{font-weight:700;color:var(--green);font-size:14px}.pp .sci{font-style:italic;color:var(--gray);font-size:12px}
+.pp .fam{color:var(--gray);font-size:12px}.pp .lnk{display:inline-block;margin-top:6px;color:var(--green);font-weight:500;text-decoration:none;font-size:12px}
+@media(max-width:760px){.mapbox{height:360px}}
+</style></head><body><div class="wrap">
+<div class="nav"><a href="../index.html">← 旅程索引 journeys</a></div>
+<h1>中央山脈南二段 2024 · South Section Two</h1>
+<p class="sub">2024-04-15 – 2024-04-22 · 8 天 · 70 樣點 · 49 種 · 連續路徑剖面 single continuous transect</p>
+<div class="cards">
+  <div class="card"><div class="lbl">觀察數 observations</div><div class="val">70</div></div>
+  <div class="card"><div class="lbl">物種數 species</div><div class="val">49</div></div>
+  <div class="card"><div class="lbl">科別 family</div><select id="famSel" autocomplete="off"></select></div>
+  <div class="card"><div class="lbl">屬別 genus</div><select id="genSel" autocomplete="off"></select></div>
+  <div class="card"><div class="lbl">步道長 trail</div><div class="val">48.5 km</div></div>
+  <div class="card"><div class="lbl">最高海拔 peak</div><div class="val">3615 m</div><div class="sub2">總爬升 +2831 m</div></div>
+</div>
+<h2 class="sec" id="profile">地形/高程剖面圖<span>Topographic Cross-Section / Elevation Profile</span></h2>
+<div class="legend">
+  <span><i class="dot" style="background:var(--green)"></i>研究等級 research</span>
+  <span><i class="dot" style="background:var(--green2)"></i>需鑑定 needs-ID</span>
+  <span><i class="diam"></i>GPS &gt;100 m · 位置/高程內插 interpolated</span>
+</div>
+<div class="ctrl"><span>縮放：雙指 / 滾輪　平移：拖曳　點選點位 → iNaturalist　剖面圖與地圖同步縮放</span><button id="rz" type="button">重置 reset</button></div>
+<div class="chartbox"><canvas id="t" role="img" aria-label="中央山脈南二段 2024 · South Section Two 海拔剖面圖"></canvas></div>
+<h2 class="sec" id="obsmap">觀測點地圖<span>Observation map</span></h2>
+<p class="secnote">與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</p>
+<div class="mapbox"><div id="map"></div></div>
+<p class="foot">資料來源 iNaturalist API（觀察者 bunnytailgrass，地點 place_id 7887）· 海拔 SRTM 30 m（雙線性內插）· GPS &gt;100 m 之點位置與高程以鄰近可靠點時間內插 · 科/屬中拉名與特有/保育：TaiCoL 臺灣物種名錄 · 快照 2024/04 · 中央山脈南二段。</p>
+</div>
+<script>
+var DATA=[{"n": 1, "t": "09:48", "s": "Rhododendron pseudochrysanthum", "c": "玉山杜鵑", "g": "research", "a": 7.0, "x": 0.0, "y": 2962.0, "fl": 0, "lat": 23.264113, "lng": 120.983064, "tid": 524497, "u": "https://www.inaturalist.org/observations/207335251", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/366731823/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 2, "t": "09:50", "s": "Pieris japonica taiwanensis", "c": "台灣馬醉木", "g": "research", "a": 3.0, "x": 28.1, "y": 2974.0, "fl": 0, "lat": 23.264363, "lng": 120.983101, "tid": 578151, "u": "https://www.inaturalist.org/observations/207335323", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/366775513/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Pieris", "genZh": "馬醉木屬", "end": false, "threat": null}, {"n": 3, "t": "10:29", "s": "Pinus taiwanensis", "c": "臺灣二葉松", "g": "research", "a": 4.0, "x": 535.8, "y": 3125.0, "fl": 0, "lat": 23.266889, "lng": 120.987241, "tid": 135654, "u": "https://www.inaturalist.org/observations/207357979", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/366775655/medium.jpg", "famSci": "Pinaceae", "famZh": "松科", "genSci": "Pinus", "genZh": "松屬", "end": true, "threat": null}, {"n": 4, "t": "10:35", "s": "Abies kawakamii", "c": "台灣冷杉", "g": "research", "a": 4.0, "x": 599.8, "y": 3132.0, "fl": 0, "lat": 23.267354, "lng": 120.986872, "tid": 120846, "u": "https://www.inaturalist.org/observations/207358108", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/366775807/medium.jpg", "famSci": "Pinaceae", "famZh": "松科", "genSci": "Abies", "genZh": "冷杉屬", "end": true, "threat": "NT"}, {"n": 5, "t": "10:37", "s": "Rhododendron pseudochrysanthum", "c": "玉山杜鵑", "g": "research", "a": 4.0, "x": 637.2, "y": 3133.0, "fl": 0, "lat": 23.267622, "lng": 120.986648, "tid": 524497, "u": "https://www.inaturalist.org/observations/207358214", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/366776010/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 6, "t": "11:33", "s": "Juniperus squamata", "c": "玉山圓柏", "g": "research", "a": 4.0, "x": 1060.4, "y": 3296.0, "fl": 0, "lat": 23.271422, "lng": 120.986862, "tid": 135885, "u": "https://www.inaturalist.org/observations/207359064", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/366777212/medium.jpg", "famSci": "Cupressaceae", "famZh": "柏科", "genSci": "Juniperus", "genZh": "刺柏屬", "end": false, "threat": null}, {"n": 7, "t": "12:08", "s": "Berberis kawakamii", "c": "臺灣小檗", "g": "research", "a": 5.0, "x": 1210.6, "y": 3324.0, "fl": 0, "lat": 23.272673, "lng": 120.986305, "tid": 711498, "u": "https://www.inaturalist.org/observations/207358592", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/366776509/medium.jpg", "famSci": "Berberidaceae", "famZh": "小檗科", "genSci": "Berberis", "genZh": "小檗屬", "end": true, "threat": "NNT"}, {"n": 8, "t": "12:14", "s": "Gentiana scabrida punctulata", "c": "黑斑龍膽", "g": "research", "a": 4.0, "x": 1360.4, "y": 3344.0, "fl": 0, "lat": 23.274005, "lng": 120.986093, "tid": 918119, "u": "https://www.inaturalist.org/observations/207359304", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/366777826/medium.jpg", "famSci": "Gentianaceae", "famZh": "龍膽科", "genSci": "Gentiana", "genZh": "龍膽屬", "end": true, "threat": null}, {"n": 9, "t": "12:55", "s": "Gentiana arisanensis", "c": "阿里山龍膽", "g": "research", "a": 5.0, "x": 1984.4, "y": 3463.0, "fl": 0, "lat": 23.279608, "lng": 120.985757, "tid": 604079, "u": "https://www.inaturalist.org/observations/207359549", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/366777854/medium.jpg", "famSci": "Gentianaceae", "famZh": "龍膽科", "genSci": "Gentiana", "genZh": "龍膽屬", "end": true, "threat": null}, {"n": 10, "t": "06:33", "s": "Trochalopteron morrisonianum", "c": "台灣噪眉", "g": "research", "a": 5.0, "x": 3229.4, "y": 3360.0, "fl": 0, "lat": 23.283891, "lng": 120.99702, "tid": 339867, "u": "https://www.inaturalist.org/observations/208034240", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368039975/medium.jpg", "famSci": "Leiothrichidae", "famZh": "噪眉科", "genSci": "Trochalopteron", "genZh": "圓翅噪眉屬", "end": true, "threat": "NT"}, {"n": 11, "t": "09:15", "s": "Juniperus formosana", "c": "刺柏", "g": "research", "a": 2.0, "x": 5908.0, "y": 3348.0, "fl": 0, "lat": 23.294049, "lng": 121.0208, "tid": 135914, "u": "https://www.inaturalist.org/observations/208034306", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368040070/medium.jpg", "famSci": "Cupressaceae", "famZh": "柏科", "genSci": "Juniperus", "genZh": "刺柏屬", "end": false, "threat": null}, {"n": 12, "t": "11:36", "s": "Lycopodium clavatum", "c": "石松", "g": "needs_id", "a": 3.0, "x": 7321.1, "y": 3406.0, "fl": 0, "lat": 23.299868, "lng": 121.033101, "tid": 77914, "u": "https://www.inaturalist.org/observations/208034363", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368040152/medium.jpg", "famSci": "Lycopodiaceae", "famZh": "石松科", "genSci": "Lycopodium", "genZh": "石松屬", "end": false, "threat": null}, {"n": 13, "t": "11:54", "s": "Sabina", "c": "圓柏組", "g": "needs_id", "a": 5.0, "x": 7836.9, "y": 3422.0, "fl": 0, "lat": 23.304371, "lng": 121.034315, "tid": 701533, "u": "https://www.inaturalist.org/observations/208034411", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368040301/medium.jpg", "famSci": "Entomobryidae", "famZh": "長角跳蟲科", "genSci": "Salina", "genZh": "", "end": false, "threat": null}, {"n": 14, "t": "13:51", "s": "Euploea sylvester swinhoei", "c": "斯氏紫斑蝶", "g": "research", "a": 4.0, "x": 10386.6, "y": 2780.0, "fl": 0, "lat": 23.326288, "lng": 121.026977, "tid": 781801, "u": "https://www.inaturalist.org/observations/208034433", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368040386/medium.jpg", "famSci": "Nymphalidae", "famZh": "蛺蝶科", "genSci": "Euploea", "genZh": "紫斑蝶屬", "end": false, "threat": null}, {"n": 15, "t": "14:06", "s": "Rhododendron pseudochrysanthum", "c": "玉山杜鵑", "g": "research", "a": 4.0, "x": 10641.2, "y": 2710.0, "fl": 0, "lat": 23.328543, "lng": 121.026547, "tid": 524497, "u": "https://www.inaturalist.org/observations/208034490", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368040627/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 16, "t": "14:09", "s": "Aconitum fukutomei", "c": "台灣烏頭", "g": "research", "a": 9.0, "x": 10674.4, "y": 2706.0, "fl": 0, "lat": 23.328317, "lng": 121.026334, "tid": 702063, "u": "https://www.inaturalist.org/observations/208034636", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368040744/medium.jpg", "famSci": "Ranunculaceae", "famZh": "毛茛科", "genSci": "Aconitum", "genZh": "烏頭屬", "end": false, "threat": "NNT"}, {"n": 17, "t": "14:10", "s": "Photinia niitakayamensis", "c": "玉山假沙梨", "g": "research", "a": 3.0, "x": 10688.9, "y": 2707.0, "fl": 0, "lat": 23.328431, "lng": 121.026265, "tid": 578647, "u": "https://www.inaturalist.org/observations/208034692", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368040861/medium.jpg", "famSci": "Rosaceae", "famZh": "薔薇科", "genSci": "Photinia", "genZh": "石楠屬", "end": false, "threat": null}, {"n": 18, "t": "14:18", "s": "Elaeagnus", "c": "胡頹子屬", "g": "needs_id", "a": 4.0, "x": 10728.8, "y": 2709.0, "fl": 0, "lat": 23.328483, "lng": 121.025879, "tid": 64696, "u": "https://www.inaturalist.org/observations/208034818", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368041050/medium.jpg", "famSci": "Elaeagnaceae", "famZh": "胡頹子科", "genSci": "Elaeagnus", "genZh": "胡頹子屬", "end": false, "threat": null}, {"n": 19, "t": "15:00", "s": "Tsuga chinensis formosana", "c": "臺灣鐵杉", "g": "research", "a": 3.0, "x": 10761.4, "y": 2705.0, "fl": 0, "lat": 23.328211, "lng": 121.025762, "tid": 563452, "u": "https://www.inaturalist.org/observations/208034960", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368042074/medium.jpg", "famSci": "Pinaceae", "famZh": "松科", "genSci": "Tsuga", "genZh": "鐵杉屬", "end": true, "threat": null}, {"n": 20, "t": "08:13", "s": "Rhododendron pseudochrysanthum", "c": "玉山杜鵑", "g": "casual", "a": 2.0, "x": 13487.0, "y": 3258.0, "fl": 0, "lat": 23.34786, "lng": 121.009802, "tid": 524497, "u": "https://www.inaturalist.org/observations/208035471", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368080362/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 21, "t": "09:17", "s": "Rhododendron rubropilosum", "c": "紅毛杜鵑", "g": "needs_id", "a": 2.0, "x": 14885.9, "y": 3061.0, "fl": 0, "lat": 23.356949, "lng": 121.000328, "tid": 713172, "u": "https://www.inaturalist.org/observations/208035719", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368042471/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": false, "threat": null}, {"n": 22, "t": "14:12", "s": "Berberis kawakamii", "c": "臺灣小檗", "g": "research", "a": 2.0, "x": 15898.5, "y": 3209.0, "fl": 0, "lat": 23.359442, "lng": 120.990787, "tid": 711498, "u": "https://www.inaturalist.org/observations/208035782", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368042600/medium.jpg", "famSci": "Berberidaceae", "famZh": "小檗科", "genSci": "Berberis", "genZh": "小檗屬", "end": true, "threat": "NNT"}, {"n": 23, "t": "15:54", "s": "Pieris japonica taiwanensis", "c": "台灣馬醉木", "g": "research", "a": 4.0, "x": 18194.6, "y": 2968.0, "fl": 0, "lat": 23.379093, "lng": 120.997694, "tid": 578151, "u": "https://www.inaturalist.org/observations/208035883", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368042925/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Pieris", "genZh": "馬醉木屬", "end": false, "threat": null}, {"n": 24, "t": "06:39", "s": "Pinus", "c": "松屬", "g": "needs_id", "a": 2.0, "x": 19558.9, "y": 3260.0, "fl": 0, "lat": 23.391358, "lng": 120.998049, "tid": 47561, "u": "https://www.inaturalist.org/observations/208035917", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368042992/medium.jpg", "famSci": "Pinaceae", "famZh": "松科", "genSci": "Pinus", "genZh": "松屬", "end": false, "threat": null}, {"n": 25, "t": "06:40", "s": "Abies kawakamii", "c": "台灣冷杉", "g": "research", "a": 4.0, "x": 19560.3, "y": 3260.0, "fl": 0, "lat": 23.391346, "lng": 120.998054, "tid": 120846, "u": "https://www.inaturalist.org/observations/208035960", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368043115/medium.jpg", "famSci": "Pinaceae", "famZh": "松科", "genSci": "Abies", "genZh": "冷杉屬", "end": true, "threat": "NT"}, {"n": 26, "t": "06:56", "s": "Rhododendron pseudochrysanthum", "c": "玉山杜鵑", "g": "research", "a": 4.0, "x": 19801.2, "y": 3231.0, "fl": 0, "lat": 23.391593, "lng": 121.000399, "tid": 524497, "u": "https://www.inaturalist.org/observations/208036306", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368044086/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 27, "t": "07:37", "s": "Byasa polyeuctes termessus", "c": "大紅紋鳳蝶", "g": "research", "a": 4.0, "x": 20174.9, "y": 3177.0, "fl": 0, "lat": 23.394132, "lng": 121.002799, "tid": 792237, "u": "https://www.inaturalist.org/observations/208036420", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368044164/medium.jpg", "famSci": "Papilionidae", "famZh": "鳳蝶科", "genSci": "Byasa", "genZh": "麝鳳蝶屬", "end": false, "threat": null}, {"n": 28, "t": "07:59", "s": "Tsuga chinensis formosana", "c": "臺灣鐵杉", "g": "research", "a": 4.0, "x": 20452.0, "y": 3198.0, "fl": 0, "lat": 23.395814, "lng": 121.004802, "tid": 563452, "u": "https://www.inaturalist.org/observations/208037207", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368045574/medium.jpg", "famSci": "Pinaceae", "famZh": "松科", "genSci": "Tsuga", "genZh": "鐵杉屬", "end": true, "threat": null}, {"n": 29, "t": "08:28", "s": "Rhododendron pseudochrysanthum", "c": "玉山杜鵑", "g": "research", "a": 4.0, "x": 20694.2, "y": 3179.0, "fl": 0, "lat": 23.396198, "lng": 121.007137, "tid": 524497, "u": "https://www.inaturalist.org/observations/208037325", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368045650/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 30, "t": "09:07", "s": "Shortia rotundifolia", "c": "倒卵葉裂緣花", "g": "research", "a": 4.0, "x": 21139.9, "y": 3049.0, "fl": 0, "lat": 23.395614, "lng": 121.011458, "tid": 704173, "u": "https://www.inaturalist.org/observations/208037384", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368045797/medium.jpg", "famSci": "Diapensiaceae", "famZh": "岩梅科", "genSci": "Shortia", "genZh": "裂緣花屬", "end": false, "threat": "NNT"}, {"n": 31, "t": "10:54", "s": "Picea morrisonicola", "c": "臺灣雲杉", "g": "needs_id", "a": 9.0, "x": 21749.7, "y": 2955.0, "fl": 0, "lat": 23.397898, "lng": 121.016891, "tid": 135799, "u": "https://www.inaturalist.org/observations/208037485", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368046066/medium.jpg", "famSci": "Pinaceae", "famZh": "松科", "genSci": "Picea", "genZh": "雲杉屬", "end": true, "threat": "VU"}, {"n": 32, "t": "11:03", "s": "Rhododendron rubropilosum", "c": "紅毛杜鵑", "g": "needs_id", "a": 4.0, "x": 21877.0, "y": 2937.0, "fl": 0, "lat": 23.398731, "lng": 121.017746, "tid": 713172, "u": "https://www.inaturalist.org/observations/208037563", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368046252/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": false, "threat": null}, {"n": 33, "t": "06:58", "s": "Quercus spinosa", "c": "高山櫟", "g": "research", "a": 4.0, "x": 25341.1, "y": 2958.0, "fl": 0, "lat": 23.429807, "lng": 121.02014, "tid": 706704, "u": "https://www.inaturalist.org/observations/208037674", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368046448/medium.jpg", "famSci": "Fagaceae", "famZh": "殼斗科", "genSci": "Quercus", "genZh": "櫟屬", "end": false, "threat": null}, {"n": 34, "t": "07:35", "s": "Rhododendron pseudochrysanthum", "c": "玉山杜鵑", "g": "research", "a": 4.0, "x": 25773.7, "y": 3085.0, "fl": 0, "lat": 23.430937, "lng": 121.016083, "tid": 524497, "u": "https://www.inaturalist.org/observations/208037829", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368046907/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 35, "t": "07:40", "s": "Pinus taiwanensis", "c": "臺灣二葉松", "g": "research", "a": 2.0, "x": 25813.3, "y": 3099.0, "fl": 0, "lat": 23.430917, "lng": 121.015695, "tid": 135654, "u": "https://www.inaturalist.org/observations/208037941", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368047192/medium.jpg", "famSci": "Pinaceae", "famZh": "松科", "genSci": "Pinus", "genZh": "松屬", "end": true, "threat": null}, {"n": 36, "t": "09:11", "s": "Juniperus formosana", "c": "刺柏", "g": "research", "a": 8.0, "x": 26115.3, "y": 3112.0, "fl": 0, "lat": 23.433399, "lng": 121.014494, "tid": 135914, "u": "https://www.inaturalist.org/observations/208038074", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368047321/medium.jpg", "famSci": "Cupressaceae", "famZh": "柏科", "genSci": "Juniperus", "genZh": "刺柏屬", "end": false, "threat": null}, {"n": 37, "t": "09:40", "s": "Corvus macrorhynchos", "c": "巨嘴鴉", "g": "research", "a": 4.0, "x": 26294.6, "y": 3108.0, "fl": 0, "lat": 23.434478, "lng": 121.0158, "tid": 8026, "u": "https://www.inaturalist.org/observations/208038216", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368047444/medium.jpg", "famSci": "Corvidae", "famZh": "鴉科", "genSci": "Corvus", "genZh": "鴉屬", "end": false, "threat": null}, {"n": 38, "t": "10:29", "s": "Rhododendron rubropilosum", "c": "紅毛杜鵑", "g": "needs_id", "a": 718.0, "x": 26971.1, "y": 3040.0, "fl": 1, "lat": 23.437588, "lng": 121.021499, "tid": 713172, "u": "https://www.inaturalist.org/observations/208055117", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368080582/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": false, "threat": null}, {"n": 39, "t": "13:22", "s": "Strobus", "c": "", "g": "needs_id", "a": 4.0, "x": 29366.5, "y": 3231.0, "fl": 0, "lat": 23.4486, "lng": 121.04168, "tid": 1606836, "u": "https://www.inaturalist.org/observations/208055197", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368080884/medium.jpg", "famSci": "Strombidae", "famZh": "鳳凰螺科", "genSci": "Strombus", "genZh": "鳳凰螺屬", "end": false, "threat": null}, {"n": 40, "t": "05:51", "s": "Rhododendron rubropilosum taiwanalpinum", "c": "臺灣高山杜鵑", "g": "research", "a": 4.0, "x": 31469.5, "y": 3358.0, "fl": 0, "lat": 23.465577, "lng": 121.050768, "tid": 737910, "u": "https://www.inaturalist.org/observations/208230846", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368776221/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 41, "t": "06:47", "s": "Anaphalis nagasawae", "c": "永澤籟簫", "g": "research", "a": 2.0, "x": 32149.8, "y": 3508.0, "fl": 0, "lat": 23.469938, "lng": 121.046089, "tid": 794786, "u": "https://www.inaturalist.org/observations/208426936", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368776625/medium.jpg", "famSci": "Asteraceae", "famZh": "菊科", "genSci": "Anaphalis", "genZh": "籟簫屬", "end": true, "threat": null}, {"n": 42, "t": "08:30", "s": "Argentina leuconota", "c": "玉山金梅", "g": "research", "a": 4.0, "x": 33101.9, "y": 3517.0, "fl": 0, "lat": 23.477582, "lng": 121.041883, "tid": 956449, "u": "https://www.inaturalist.org/observations/208426974", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368776746/medium.jpg", "famSci": "Rosaceae", "famZh": "薔薇科", "genSci": "Potentilla", "genZh": "翻白草屬", "end": false, "threat": null}, {"n": 43, "t": "09:04", "s": "Trichophorum subcapitatum", "c": "玉山針藺", "g": "research", "a": 2.0, "x": 33673.7, "y": 3615.0, "fl": 0, "lat": 23.481323, "lng": 121.045729, "tid": 437092, "u": "https://www.inaturalist.org/observations/208427035", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368776815/medium.jpg", "famSci": "Cyperaceae", "famZh": "莎草科", "genSci": "Trichophorum", "genZh": "針藺屬", "end": false, "threat": null}, {"n": 44, "t": "10:02", "s": "Gaultheria borneensis", "c": "高山白珠樹", "g": "research", "a": 4.0, "x": 34036.0, "y": 3610.0, "fl": 0, "lat": 23.482853, "lng": 121.048866, "tid": 603446, "u": "https://www.inaturalist.org/observations/208427067", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368776857/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Gaultheria", "genZh": "白珠樹屬", "end": false, "threat": null}, {"n": 45, "t": "12:13", "s": "Rhododendron pseudochrysanthum", "c": "玉山杜鵑", "g": "research", "a": 3.0, "x": 34663.2, "y": 3353.0, "fl": 0, "lat": 23.488108, "lng": 121.046632, "tid": 524497, "u": "https://www.inaturalist.org/observations/208427091", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368776949/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 46, "t": "12:25", "s": "Rhododendron rubropilosum", "c": "紅毛杜鵑", "g": "needs_id", "a": 4.0, "x": 34822.9, "y": 3277.0, "fl": 0, "lat": 23.488238, "lng": 121.045071, "tid": 713172, "u": "https://www.inaturalist.org/observations/208427190", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368777149/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": false, "threat": null}, {"n": 47, "t": "12:29", "s": "Pieris japonica taiwanensis", "c": "台灣馬醉木", "g": "research", "a": 4.0, "x": 34930.5, "y": 3244.0, "fl": 0, "lat": 23.488669, "lng": 121.044127, "tid": 578151, "u": "https://www.inaturalist.org/observations/208427335", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368777427/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Pieris", "genZh": "馬醉木屬", "end": false, "threat": null}, {"n": 48, "t": "12:50", "s": "Selliguea quasidivaricata", "c": "玉山茀蕨", "g": "needs_id", "a": 4.0, "x": 35235.7, "y": 3207.0, "fl": 0, "lat": 23.48999, "lng": 121.041504, "tid": 137067, "u": "https://www.inaturalist.org/observations/208427492", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368777767/medium.jpg", "famSci": "Polypodiaceae", "famZh": "水龍骨科", "genSci": "Selliguea", "genZh": "修蕨屬", "end": false, "threat": null}, {"n": 49, "t": "14:31", "s": "Primula miyabeana", "c": "玉山櫻草", "g": "research", "a": 7.0, "x": 36305.0, "y": 3008.0, "fl": 0, "lat": 23.488907, "lng": 121.031086, "tid": 736995, "u": "https://www.inaturalist.org/observations/208427545", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368777962/medium.jpg", "famSci": "Primulaceae", "famZh": "報春花科", "genSci": "Primula", "genZh": "櫻草屬", "end": true, "threat": null}, {"n": 50, "t": "14:38", "s": "Cirsium arisanense", "c": "阿里山薊", "g": "needs_id", "a": 4.0, "x": 36360.9, "y": 3008.0, "fl": 0, "lat": 23.48861, "lng": 121.030643, "tid": 709059, "u": "https://www.inaturalist.org/observations/208427593", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368778071/medium.jpg", "famSci": "Asteraceae", "famZh": "菊科", "genSci": "Cirsium", "genZh": "薊屬", "end": true, "threat": null}, {"n": 51, "t": "16:18", "s": "Berberis kawakamii", "c": "臺灣小檗", "g": "research", "a": 4.0, "x": 36755.9, "y": 2856.0, "fl": 0, "lat": 23.486545, "lng": 121.027492, "tid": 711498, "u": "https://www.inaturalist.org/observations/208427640", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368778147/medium.jpg", "famSci": "Berberidaceae", "famZh": "小檗科", "genSci": "Berberis", "genZh": "小檗屬", "end": true, "threat": "NNT"}, {"n": 52, "t": "06:47", "s": "Pteridium", "c": "蕨屬", "g": "needs_id", "a": 2.0, "x": 38119.2, "y": 2826.0, "fl": 0, "lat": 23.485313, "lng": 121.014191, "tid": 52683, "u": "https://www.inaturalist.org/observations/208427726", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368778469/medium.jpg", "famSci": "Dennstaedtiaceae", "famZh": "碗蕨科", "genSci": "Pteridium", "genZh": "蕨屬", "end": false, "threat": null}, {"n": 53, "t": "09:29", "s": "Rhododendron pseudochrysanthum", "c": "玉山杜鵑", "g": "research", "a": 4.0, "x": 38879.3, "y": 3294.0, "fl": 0, "lat": 23.490436, "lng": 121.009257, "tid": 524497, "u": "https://www.inaturalist.org/observations/208427799", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368778588/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 54, "t": "09:32", "s": "Abies kawakamii", "c": "台灣冷杉", "g": "research", "a": 4.0, "x": 38899.6, "y": 3296.0, "fl": 0, "lat": 23.49027, "lng": 121.009339, "tid": 120846, "u": "https://www.inaturalist.org/observations/208427877", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368778790/medium.jpg", "famSci": "Pinaceae", "famZh": "松科", "genSci": "Abies", "genZh": "冷杉屬", "end": true, "threat": "NT"}, {"n": 55, "t": "09:46", "s": "Rhododendron rubropilosum taiwanalpinum", "c": "臺灣高山杜鵑", "g": "research", "a": 4.0, "x": 38976.5, "y": 3298.0, "fl": 0, "lat": 23.490171, "lng": 121.010085, "tid": 737910, "u": "https://www.inaturalist.org/observations/208427927", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368778882/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 56, "t": "12:16", "s": null, "c": "", "g": "needs_id", "a": 6.0, "x": 39631.5, "y": 2962.0, "fl": 0, "lat": 23.49297, "lng": 121.004433, "tid": null, "u": "https://www.inaturalist.org/observations/208427962", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368778950/medium.jpg", "famSci": "?", "famZh": "", "genSci": "?", "genZh": "", "end": false, "threat": null}, {"n": 57, "t": "12:46", "s": "Brahmaea wallichii insulata", "c": "枯球籮紋蛾", "g": "research", "a": 4.0, "x": 40102.8, "y": 2744.0, "fl": 0, "lat": 23.496648, "lng": 121.002137, "tid": 714887, "u": "https://www.inaturalist.org/observations/208427972", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368778983/medium.jpg", "famSci": "Brahmaeidae", "famZh": "籮紋蛾科", "genSci": "Brahmaea", "genZh": "籮紋蛾屬", "end": true, "threat": null}, {"n": 58, "t": "12:56", "s": "Pinales", "c": "松柏目", "g": "needs_id", "a": 3.0, "x": 40310.6, "y": 2660.0, "fl": 0, "lat": 23.498241, "lng": 121.001073, "tid": 47375, "u": "https://www.inaturalist.org/observations/208427990", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368779020/medium.jpg", "famSci": "?", "famZh": "", "genSci": "Pinales", "genZh": "", "end": false, "threat": null}, {"n": 59, "t": "13:42", "s": "Fragaria hayatae", "c": "臺灣草莓", "g": "research", "a": 4.0, "x": 40819.3, "y": 2579.0, "fl": 0, "lat": 23.502616, "lng": 120.999612, "tid": 1125546, "u": "https://www.inaturalist.org/observations/208428010", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368779052/medium.jpg", "famSci": "Rosaceae", "famZh": "薔薇科", "genSci": "Fragaria", "genZh": "草莓屬", "end": true, "threat": null}, {"n": 60, "t": "13:53", "s": "Digitalis purpurea", "c": "毛地黃", "g": "research", "a": 5.0, "x": 40969.4, "y": 2593.0, "fl": 0, "lat": 23.503778, "lng": 120.998863, "tid": 53983, "u": "https://www.inaturalist.org/observations/208428242", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368786009/medium.jpg", "famSci": "Plantaginaceae", "famZh": "車前科", "genSci": "Digitalis", "genZh": "毛地黃屬", "end": false, "threat": null}, {"n": 61, "t": "14:01", "s": "Viola adenothrix", "c": "喜岩堇菜", "g": "research", "a": 3.0, "x": 41465.6, "y": 2528.0, "fl": 0, "lat": 23.507295, "lng": 120.995867, "tid": 745977, "u": "https://www.inaturalist.org/observations/208431704", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368786104/medium.jpg", "famSci": "Violaceae", "famZh": "菫菜科", "genSci": "Viola", "genZh": "堇菜屬", "end": false, "threat": null}, {"n": 62, "t": "14:04", "s": "Ellisiophyllum pinnatum", "c": "海螺菊", "g": "research", "a": 4.0, "x": 41469.9, "y": 2531.0, "fl": 0, "lat": 23.507323, "lng": 120.995896, "tid": 602157, "u": "https://www.inaturalist.org/observations/208431846", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368786231/medium.jpg", "famSci": "Plantaginaceae", "famZh": "車前科", "genSci": "Ellisiophyllum", "genZh": "海螺菊屬", "end": false, "threat": null}, {"n": 63, "t": "14:05", "s": "Oxalis corniculata", "c": "黃花酢醬草", "g": "research", "a": 4.0, "x": 41505.8, "y": 2525.0, "fl": 0, "lat": 23.507607, "lng": 120.99573, "tid": 53168, "u": "https://www.inaturalist.org/observations/208431872", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368786311/medium.jpg", "famSci": "Oxalidaceae", "famZh": "酢醬草科", "genSci": "Oxalis", "genZh": "酢漿草屬", "end": false, "threat": null}, {"n": 64, "t": "14:12", "s": "Nubelaria arisanensis", "c": "阿里山繁縷", "g": "research", "a": 6.0, "x": 41890.1, "y": 2459.0, "fl": 0, "lat": 23.509823, "lng": 120.992838, "tid": 1039787, "u": "https://www.inaturalist.org/observations/208431911", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368786406/medium.jpg", "famSci": "Caryophyllaceae", "famZh": "石竹科", "genSci": "Nubelaria", "genZh": "", "end": true, "threat": null}, {"n": 65, "t": "14:14", "s": "Rhododendron oldhamii", "c": "金毛杜鵑", "g": "research", "a": 4.0, "x": 41942.6, "y": 2451.0, "fl": 0, "lat": 23.509957, "lng": 120.992344, "tid": 602160, "u": "https://www.inaturalist.org/observations/208431937", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368786560/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}, {"n": 66, "t": "14:21", "s": "Strobilanthes rankanensis", "c": "蘭崁馬藍", "g": "research", "a": 4.0, "x": 42341.5, "y": 2377.0, "fl": 0, "lat": 23.511727, "lng": 120.988942, "tid": 701494, "u": "https://www.inaturalist.org/observations/208431994", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368786625/medium.jpg", "famSci": "Acanthaceae", "famZh": "爵床科", "genSci": "Strobilanthes", "genZh": "馬藍屬", "end": true, "threat": null}, {"n": 67, "t": "14:29", "s": "Mazus goodeniifolius", "c": "阿里山通泉草", "g": "needs_id", "a": 4.0, "x": 42685.1, "y": 2331.0, "fl": 0, "lat": 23.514329, "lng": 120.987122, "tid": 842100, "u": "https://www.inaturalist.org/observations/208432141", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368786835/medium.jpg", "famSci": "Mazaceae", "famZh": "通泉草科", "genSci": "Mazus", "genZh": "通泉草屬", "end": false, "threat": null}, {"n": 68, "t": "14:42", "s": "Woodwardia unigemmata", "c": "頂芽狗脊蕨", "g": "research", "a": 4.0, "x": 43143.8, "y": 2320.0, "fl": 0, "lat": 23.517918, "lng": 120.984905, "tid": 567716, "u": "https://www.inaturalist.org/observations/208432163", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/368786874/medium.jpg", "famSci": "Blechnaceae", "famZh": "烏毛蕨科", "genSci": "Woodwardia", "genZh": "狗脊蕨屬", "end": false, "threat": null}, {"n": 69, "t": "15:46", "s": "Heterophasia auricularis", "c": "白耳畫眉", "g": "research", "a": 4.0, "x": 44224.1, "y": 2097.0, "fl": 0, "lat": 23.525099, "lng": 120.977768, "tid": 15100, "u": "https://www.inaturalist.org/observations/208616980", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/369123266/medium.jpg", "famSci": "Leiothrichidae", "famZh": "噪眉科", "genSci": "Heterophasia", "genZh": "奇鶥屬", "end": true, "threat": null}, {"n": 70, "t": "07:16", "s": "Rhododendron breviperulatum", "c": "南澳杜鵑", "g": "needs_id", "a": 7.0, "x": 48541.1, "y": 1616.0, "fl": 0, "lat": 23.555465, "lng": 120.951381, "tid": 713170, "u": "https://www.inaturalist.org/observations/208617011", "ph": "https://inaturalist-open-data.s3.amazonaws.com/photos/369123427/medium.jpg", "famSci": "Ericaceae", "famZh": "杜鵑花科", "genSci": "Rhododendron", "genZh": "杜鵑花屬", "end": true, "threat": null}];
+var TRACK=null;   // recorded GPX route [[lat,lng,x,ele],…], or null → the obs points stand in
+var TR=TRACK?TRACK.map(function(a){return {lat:a[0],lng:a[1],x:a[2]};}):null;
+var FAM='*', GEN='*', chart, lmap, markers=[], trackLine, hiRing=null, hiMk=null;
+var XMAX=48550, MINR=40, lockC=false, lockZ=false;   // guards so the two syncs can't ping-pong
+function isMobile(){return window.matchMedia('(max-width:760px)').matches;}
+function gen(d){return d.genSci;}
+function active(d){return (FAM==='*'||d.famSci===FAM)&&(GEN==='*'||gen(d)===GEN);}
+function pcol(c){var d=c.raw;return d.g==='research'?'#587A30':'#90B821';}
+function pbord(c){return c.raw.fl?'#E8380D':'#ffffff';}
+function pbw(c){return c.raw.fl?2.5:1;}
+function prad(c){var d=c.raw;if(!active(d))return 0;return d.fl?5.5:4;}
+function pstyle(c){return c.raw.fl?'rectRot':'circle';}
+function extTip(ctx){
+  var tip=ctx.tooltip, mob=isMobile();
+  var el=document.getElementById('ctt');
+  if(!el){el=document.createElement('div');el.id='ctt';document.body.appendChild(el);}
+  if(tip.opacity===0||!tip.dataPoints.length){el.style.opacity=0;highlightMarker(null);return;}
+  var d=tip.dataPoints[0].raw;
+  if(!active(d)){el.style.opacity=0;highlightMarker(null);return;}
+  highlightMarker(tip.dataPoints[0].dataIndex);
+  var img=d.ph?('<img src="'+d.ph+'" alt="">'):'';
+  var link=mob?('<a class="lnk" href="'+d.u+'" target="_blank" rel="noopener">iNaturalist ↗</a>'):'';
+  var bd=(d.end?'<span style="color:#3B6D11">⬥臺灣特有</span> ':'')+(d.threat?'<span style="color:#A32D2D">'+(['CR','EN','VU','NT'].indexOf(d.threat)>=0?'IUCN ':'紅皮書 ')+d.threat+'</span>':'');
+  el.innerHTML=img+'<div><div class="nm">'+(d.c||'—')+'</div><div class="sci">'+d.s+
+    '</div><div class="fam">'+(d.famZh||'')+' '+(d.famSci||'')+'</div><div class="fam">'+(d.genZh||'')+' '+(d.genSci||'')+'</div>'+
+    (bd?'<div class="fam">'+bd+'</div>':'')+(d.fl?'<div class="fam" style="color:#E8380D">GPS ±'+Math.round(d.a)+'m</div>':'')+link+'</div>';
+  if(mob){el.className='ctt sheet';el.style.left='0';el.style.right='0';el.style.bottom='0';el.style.top='auto';el.style.width='';}
+  else{el.className='ctt float';var r=ctx.chart.canvas.getBoundingClientRect();var left=r.left+tip.caretX+16;if(left+186>window.innerWidth)left=r.left+tip.caretX-186;if(left<4)left=4;var top=r.top+tip.caretY-30;if(top<4)top=4;el.style.left=left+'px';el.style.top=top+'px';el.style.right='auto';el.style.bottom='auto';}
+  el.style.opacity=1;
+}
+function fillFamilies(){var fc={},fz={};DATA.forEach(function(d){fc[d.famSci]=(fc[d.famSci]||0)+1;fz[d.famSci]=d.famZh;});
+  var keys=Object.keys(fc).sort(function(a,b){return fc[b]-fc[a];});
+  var h='<option value="*">全部 all ('+keys.length+' 科)</option>';
+  keys.forEach(function(k){h+='<option value="'+k+'">'+(fz[k]?fz[k]+' ':'')+k+' · '+fc[k]+'</option>';});
+  document.getElementById('famSel').innerHTML=h;}
+function fillGenera(fam){var gc={},gz={};DATA.forEach(function(d){if(fam==='*'||d.famSci===fam){gc[d.genSci]=(gc[d.genSci]||0)+1;gz[d.genSci]=d.genZh;}});
+  var keys=Object.keys(gc).sort();var h='<option value="*">全部 all ('+keys.length+' 屬)</option>';
+  keys.forEach(function(k){h+='<option value="'+k+'">'+(gz[k]?gz[k]+' ':'')+k+' · '+gc[k]+'</option>';});
+  document.getElementById('genSel').innerHTML=h;}
+function markerIcon(d){
+  if(d.ph){var u=d.ph.replace('medium','square');
+    return L.divIcon({className:'',iconSize:[38,38],iconAnchor:[19,19],html:'<div class="mk'+(d.fl?' fl':'')+'"><img src="'+u+'" alt=""></div>'});}
+  var col=d.g==='research'?'#587A30':'#90B821';
+  return L.divIcon({className:'',iconSize:[14,14],iconAnchor:[7,7],html:'<div class="dotmk'+(d.fl?' fl':'')+'" style="background:'+col+'"></div>'});
+}
+function popupHtml(d){
+  var img=d.ph?('<img src="'+d.ph+'" alt="">'):'';
+  var bd=(d.end?'<span style="color:#3B6D11">⬥臺灣特有</span> ':'')+(d.threat?'<span style="color:#A32D2D">'+(['CR','EN','VU','NT'].indexOf(d.threat)>=0?'IUCN ':'紅皮書 ')+d.threat+'</span>':'');
+  return '<div class="pp">'+img+'<div class="nm">'+(d.c||'—')+'</div><div class="sci">'+d.s+'</div><div class="fam">'+(d.famZh||'')+' '+(d.famSci||'')+'</div>'+(bd?'<div class="fam">'+bd+'</div>':'')+(d.fl?'<div class="fam" style="color:#E8380D">GPS ±'+Math.round(d.a)+'m · 位置內插</div>':'')+'<a class="lnk" href="'+d.u+'" target="_blank" rel="noopener">iNaturalist ↗</a></div>';
+}
+// linked hover: highlight the map marker for chart point i (orange halo)
+function highlightMarker(i){
+  if(!lmap)return;
+  if(hiMk){hiMk.setZIndexOffset(0);hiMk=null;}                 // drop previous raise
+  if(i==null||DATA[i]==null||DATA[i].lat==null||!active(DATA[i])){if(hiRing){lmap.removeLayer(hiRing);hiRing=null;}return;}
+  var d=DATA[i],ll=[d.lat,d.lng];
+  if(!hiRing){hiRing=L.circleMarker(ll,{radius:23,color:'#FC5200',weight:4,fillColor:'#FC5200',fillOpacity:0.12,interactive:false}).addTo(lmap);}
+  else{hiRing.setLatLng(ll);if(!lmap.hasLayer(hiRing))hiRing.addTo(lmap);}
+  var mo=markers.find(function(o){return o.i===i;});           // raise hovered photo above its neighbours
+  if(mo){mo.m.setZIndexOffset(1000);hiMk=mo.m;}
+}
+// linked hover: drive the chart's point + photo card for map marker i
+function highlightPoint(i){
+  if(!chart)return;
+  if(i==null||DATA[i]==null||!active(DATA[i])){chart.setActiveElements([]);chart.tooltip.setActiveElements([],{x:0,y:0});chart.update('none');return;}
+  var el=chart.getDatasetMeta(0).data[i];
+  chart.setActiveElements([{datasetIndex:0,index:i}]);
+  chart.tooltip.setActiveElements([{datasetIndex:0,index:i}],{x:el.x,y:el.y});
+  chart.update('none');
+}
+function initMap(){
+  if(!window.L){setTimeout(initMap,80);return;}
+  var geo=geoPts();
+  if(!geo.length)return;
+  lmap=L.map('map',{scrollWheelZoom:true});
+  var bLight=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        {maxZoom:19,subdomains:'abcd',attribution:'© OpenStreetMap contributors ｜ © CARTO'}),
+      bTopo=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        {maxZoom:17,attribution:'© OpenStreetMap、SRTM ｜ © OpenTopoMap (CC-BY-SA)'}),
+      bOsm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {maxZoom:19,attribution:'© OpenStreetMap contributors'});
+  bOsm.addTo(lmap);
+  L.control.layers({'街道 OSM':bOsm,'淺色 light':bLight,'地形 topo':bTopo},null,{position:'bottomright'}).addTo(lmap);
+  trackLine=L.polyline(geo.map(function(d){return [d.lat,d.lng];}),{color:'#FC5200',weight:3,opacity:0.9}).addTo(lmap);
+  DATA.forEach(function(d,idx){
+    if(d.lat==null||d.lng==null)return;
+    var m=L.marker([d.lat,d.lng],{icon:markerIcon(d)});
+    m.bindPopup(popupHtml(d),{maxWidth:200});
+    m.on('mouseover',function(){highlightPoint(idx);});
+    m.on('mouseout',function(){highlightPoint(null);});
+    markers.push({m:m,d:d,i:idx});
+  });
+  refreshMarkers();
+  lmap.fitBounds(trackLine.getBounds(),{padding:[30,30]});
+  lmap.on('moveend zoomend',syncChartToMap);
+}
+// zoom sync: the map view sets the transect's visible stretch of trail, and vice
+// versa. Both directions go through the track, so they agree by construction.
+function geoPts(){return TR||DATA.filter(function(d){return d.lat!=null&&d.lng!=null;});}
+// Which stretch of trail is on screen? Clip every track segment against the view
+// rectangle (Liang-Barsky, in lat/lng) and interpolate distance along what survives.
+// Going through the *track* rather than through observation points matters: zoom in
+// between two observations and there is nothing in view to average, which used to
+// freeze the transect.
+function visibleRange(){
+  var b=lmap.getBounds(),w=b.getWest(),e=b.getEast(),so=b.getSouth(),no=b.getNorth(),
+      g=geoPts(),lo=Infinity,hi=-Infinity;
+  for(var i=1;i<g.length;i++){
+    var a=g[i-1],c=g[i],dx=c.lng-a.lng,dy=c.lat-a.lat,t0=0,t1=1,ok=true,
+        ps=[-dx,dx,-dy,dy],qs=[a.lng-w,e-a.lng,a.lat-so,no-a.lat];
+    for(var k=0;k<4;k++){
+      var pk=ps[k],qk=qs[k];
+      if(pk===0){if(qk<0){ok=false;break;}continue;}
+      var r=qk/pk;
+      if(pk<0){if(r>t1){ok=false;break;}if(r>t0)t0=r;}
+      else{if(r<t0){ok=false;break;}if(r<t1)t1=r;}
+    }
+    if(!ok)continue;
+    var x0=a.x+(c.x-a.x)*t0,x1=a.x+(c.x-a.x)*t1;
+    lo=Math.min(lo,x0,x1);hi=Math.max(hi,x0,x1);
+  }
+  g.forEach(function(d){if(b.contains([d.lat,d.lng])){lo=Math.min(lo,d.x);hi=Math.max(hi,d.x);}});
+  return lo<=hi?[lo,hi]:null;
+}
+// the inverse: the trail between two distances, as latlngs (interpolated at the ends)
+function trackSpan(x0,x1){
+  var g=geoPts(),ll=[];
+  for(var i=1;i<g.length;i++){
+    var a=g[i-1],c=g[i],d=c.x-a.x;
+    if(c.x<x0||a.x>x1)continue;
+    var t0=d?Math.max(0,(x0-a.x)/d):0,t1=d?Math.min(1,(x1-a.x)/d):1;
+    if(t1<t0)continue;
+    ll.push([a.lat+(c.lat-a.lat)*t0,a.lng+(c.lng-a.lng)*t0]);
+    ll.push([a.lat+(c.lat-a.lat)*t1,a.lng+(c.lng-a.lng)*t1]);
+  }
+  return ll;
+}
+// zoomed in so far the trail has left the view: fall back to the nearest point on
+// it, so the transect keeps tracking where you are looking instead of freezing
+function nearestX(){
+  var c=lmap.getCenter(),g=geoPts(),bx=null,bd=Infinity;
+  g.forEach(function(d){var m=lmap.distance(c,[d.lat,d.lng]);if(m<bd){bd=m;bx=d.x;}});
+  return bx;
+}
+function syncChartToMap(){
+  if(!chart||!lmap||lockZ)return;
+  var r=visibleRange();
+  if(!r){
+    var nx=nearestX();
+    if(nx==null)return;
+    var bb=lmap.getBounds(),half=lmap.distance(bb.getSouthWest(),bb.getNorthEast())/4;
+    r=[nx-half,nx+half];
+  }
+  var pad=Math.max((r[1]-r[0])*0.04,15),
+      min=Math.max(0,r[0]-pad),max=Math.min(XMAX,r[1]+pad);
+  if(max-min<MINR){var c=(min+max)/2;min=Math.max(0,c-MINR/2);max=min+MINR;}   // honour the zoom limit
+  lockC=true;
+  chart.zoomScale('x',{min:min,max:max},'none');
+  lockC=false;
+}
+function syncMapToChart(){
+  if(!chart||!lmap||lockC)return;
+  var sc=chart.scales.x,ll=trackSpan(sc.min,sc.max);
+  if(!ll.length)return;
+  lockZ=true;
+  lmap.fitBounds(L.latLngBounds(ll).pad(0.12),{animate:false});
+  lockZ=false;
+}
+function resetViews(){
+  if(chart&&chart.resetZoom){lockC=true;chart.resetZoom('none');lockC=false;}
+  if(lmap&&trackLine){lockZ=true;lmap.fitBounds(trackLine.getBounds(),{padding:[30,30]});lockZ=false;}
+}
+function refreshMarkers(){
+  if(!lmap)return;
+  highlightMarker(null);
+  markers.forEach(function(o){
+    if(active(o.d)){if(!lmap.hasLayer(o.m))o.m.addTo(lmap);}
+    else if(lmap.hasLayer(o.m))lmap.removeLayer(o.m);
+  });
+}
+function go(){
+  fillFamilies();fillGenera('*');
+  document.getElementById('famSel').onchange=function(){FAM=this.value;GEN='*';fillGenera(FAM);chart.update();refreshMarkers();};
+  document.getElementById('genSel').onchange=function(){GEN=this.value;chart.update();refreshMarkers();};
+  document.getElementById('rz').onclick=resetViews;
+  // dataset 0 is always the observations (hover/click/linking index into it); with a
+  // GPX route its own line is dataset 1, drawn beneath, and the obs line is hidden
+  var ds=[{data:DATA,borderColor:'#666666',borderWidth:1.5,fill:'start',backgroundColor:'rgba(178,178,178,0.20)',tension:0.3,
+      pointBackgroundColor:pcol,pointBorderColor:pbord,pointBorderWidth:pbw,pointRadius:prad,pointStyle:pstyle,
+      pointHitRadius:function(c){return active(c.raw)?10:0;},pointHoverRadius:function(c){return active(c.raw)?prad(c)+2:0;},order:1}];
+  if(TRACK){ds[0].showLine=false;ds[0].fill=false;
+    ds.push({data:TRACK.map(function(a){return {x:a[2],y:a[3]};}),borderColor:'#666666',borderWidth:1.2,fill:'start',
+      backgroundColor:'rgba(178,178,178,0.20)',tension:0,pointRadius:0,pointHitRadius:0,pointHoverRadius:0,order:2});}
+  chart=new Chart(document.getElementById('t'),{type:'line',
+    data:{datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'nearest',intersect:true},
+      onClick:function(e,els){els=els.filter(function(x){return x.datasetIndex===0;});if(els.length){var p=DATA[els[0].index];if(!active(p))return;window.open(p.u,'_blank');}},
+      plugins:{legend:{display:false},tooltip:{enabled:false,external:extTip,filter:function(it){return it.datasetIndex===0;}},
+        zoom:{pan:{enabled:true,mode:'x',onPanComplete:syncMapToChart},
+              zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'x',onZoomComplete:syncMapToChart},
+              limits:{x:{min:0,max:48550,minRange:MINR}}}},
+      scales:{x:{type:'linear',min:0,max:48550,title:{display:true,text:'沿步道水平距離 horizontal distance (km)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){var t=v/1000;   // km to 1 dp (no trailing .0), metres whole
+          return (1000>1?t.toFixed(1).replace(/\.0$/,''):Math.round(t))+' km';}}},
+        y:{min:1608,max:3623,title:{display:true,text:'海拔 elevation (m)',color:'#666'},grid:{color:'rgba(178,178,178,0.30)'},ticks:{color:'#666',callback:function(v){return v+' m';}}}}}});
+  initMap();
+}
+if(window.Chart){go();}else{var w=setInterval(function(){if(window.Chart){clearInterval(w);go();}},60);}
+</script></body></html>
