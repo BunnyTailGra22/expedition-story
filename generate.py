@@ -54,6 +54,13 @@ def track_of(pts, limit=140):
     return keep
 
 
+def insights_of(cfg):
+    """Optional hand-curated journeys/<id>/insights.html fragment → the page's
+    third section (洞見 Insights), below the profile and the map."""
+    p = os.path.join(HERE, "journeys", cfg["id"], "insights.html")
+    return open(p, encoding="utf-8").read() if os.path.exists(p) else None
+
+
 def enrich_points(pts, cfg):
     """Attach famSci/famZh/genSci/genZh/end/threat to each point. Taxonomy source
     follows cfg['taxonomy']: 'inat' (global, family from iNat ancestors) or the
@@ -116,7 +123,8 @@ def run_trek(cfg, obs, out):
             "user": cfg["user_login"], "place_id": cfg["place_id"],
             "snapshot": cfg.get("snapshot"), "trek": True,
             "taxonomy": cfg.get("taxonomy"),
-            "track": line, "ascent": st["ascent"] if trk else None}
+            "track": line, "ascent": st["ascent"] if trk else None,
+            "insights": insights_of(cfg)}
     open(os.path.join(out, "index.html"), "w").write(R.transect_html(meta, pts))
     json.dump({"id": cfg["id"], "label": cfg["label"], "mode": "trek",
                "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),

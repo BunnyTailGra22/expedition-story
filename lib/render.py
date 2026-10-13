@@ -50,8 +50,20 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 .ctt.sheet img{width:88px;height:88px;flex:0 0 auto;object-fit:cover;border-radius:8px;background:#f1efe8}
 .ctt .nm{font-weight:700;color:var(--green);font-size:14px}.ctt .sci{font-style:italic;color:var(--gray)}.ctt .fam{color:var(--gray)}.ctt .lnk{display:inline-block;margin-top:6px;color:var(--green);font-weight:500;text-decoration:none}
 .foot{margin-top:20px;font-size:11.5px;color:var(--gray2);line-height:1.6}
-.seclbl{font-size:15px;font-weight:500;color:var(--green);margin:30px 0 6px}
-.seclbl span{font-size:12px;font-weight:400;color:var(--gray2);margin-left:8px}
+.sec{font-size:18px;font-weight:700;color:var(--green);margin:34px 0 4px;padding-top:14px;border-top:0.5px solid var(--gray2)}
+.sec span{font-size:13px;font-weight:400;color:var(--gray);margin-left:8px}
+.secnote{font-size:12px;color:var(--gray2);margin:0 0 10px}
+.toc{font-size:13px;margin:-12px 0 18px}.toc a{color:var(--green);text-decoration:none;margin-right:14px}
+.ins h3{font-size:15px;font-weight:700;color:var(--ink);margin:22px 0 8px}
+.ins-key{margin:0;padding-left:22px;font-size:14px;line-height:1.75}.ins-key li{margin-bottom:8px}.ins-key b{color:var(--green)}
+.ins-note{font-size:12px;color:var(--gray);line-height:1.6;margin:0 0 8px}
+.ins-list{margin:0 0 6px;padding-left:20px;font-size:13.5px;line-height:1.7}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:0.5px solid var(--gray2);border-radius:10px}
+.tbl table{border-collapse:collapse;width:100%;min-width:720px;font-size:13px;line-height:1.55}
+.tbl th{background:#f5f4ef;color:var(--gray);font-weight:500;text-align:left;padding:8px 10px;white-space:nowrap}
+.tbl td{padding:8px 10px;border-top:0.5px solid #e4e2da;vertical-align:top}
+.tbl td b{color:var(--green)}
+.tbl td:last-child{white-space:nowrap}
 .mapbox{position:relative;width:100%;height:480px;border-radius:12px;overflow:hidden;border:0.5px solid var(--gray2)}
 #map{width:100%;height:100%;background:#eee}
 .mk{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);background:#f1efe8}
@@ -68,7 +80,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 __NAV__
 <h1>__TITLE__</h1>
 <p class="sub">__SUBT__</p>
-<div class="cards">
+__TOC__<div class="cards">
   <div class="card"><div class="lbl">觀察數 observations</div><div class="val">__N__</div></div>
   <div class="card"><div class="lbl">物種數 species</div><div class="val">__SP__</div></div>
   <div class="card"><div class="lbl">科別 family</div><select id="famSel" autocomplete="off"></select></div>
@@ -76,6 +88,7 @@ __NAV__
   <div class="card"><div class="lbl">步道長 trail</div><div class="val">__DIST__ __DUNIT__</div></div>
   <div class="card"><div class="lbl">__C6LBL__</div><div class="val">__C6VAL__</div><div class="sub2">__C6SUB__</div></div>
 </div>
+<h2 class="sec" id="profile">地形/高程剖面圖<span>Topographic Cross-Section / Elevation Profile</span></h2>
 <div class="legend">
   <span><i class="dot" style="background:var(--green)"></i>研究等級 research</span>
   <span><i class="dot" style="background:var(--green2)"></i>需鑑定 needs-ID</span>
@@ -83,9 +96,10 @@ __NAV__
 </div>
 <div class="ctrl"><span>縮放：雙指 / 滾輪　平移：拖曳　點選點位 → iNaturalist　剖面圖與地圖同步縮放</span><button id="rz" type="button">重置 reset</button></div>
 <div class="chartbox"><canvas id="t" role="img" aria-label="__TITLE__ 海拔剖面圖"></canvas></div>
-<div class="seclbl">觀測點地圖 observation map<span>__MAPNOTE__與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</span></div>
+<h2 class="sec" id="obsmap">觀測點地圖<span>Observation map</span></h2>
+<p class="secnote">__MAPNOTE__與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</p>
 <div class="mapbox"><div id="map"></div></div>
-<p class="foot">__FOOT__</p>
+__INSIGHTS__<p class="foot">__FOOT__</p>
 </div>
 <script>
 var DATA=__DATA__;
@@ -331,7 +345,13 @@ def transect_html(meta, pts):
                "海拔 SRTM 30 m（雙線性內插）· GPS &gt;100 m 之點位置與高程以鄰近可靠點時間內插 · ")
             + tax
             + (f" · 快照 {meta['snapshot']}" if meta.get("snapshot") else "") + "。")
+    ins = meta.get("insights")
+    insights = (f'<h2 class="sec" id="insights">洞見<span>Insights</span></h2>\n<div class="ins">{ins}</div>\n'
+                if ins else "")
+    toc = ('<div class="toc"><a href="#profile">剖面圖</a><a href="#obsmap">觀測點地圖</a>'
+           '<a href="#insights">洞見 Insights</a></div>\n' if ins else "")
     rep = {"__TITLE__": meta["title"], "__SUBT__": meta["subtitle"], "__NAV__": nav,
+           "__TOC__": toc, "__INSIGHTS__": insights,
            "__N__": str(len(pts)), "__SP__": str(nsp), "__DIST__": dist, "__DUNIT__": unit,
            "__XMAX__": str(xmax), "__USCALE__": str(uscale), "__XUNIT__": unit,
            "__C6LBL__": c6lbl, "__C6VAL__": c6val, "__C6SUB__": c6sub,
