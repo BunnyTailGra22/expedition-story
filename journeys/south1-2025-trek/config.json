@@ -2,12 +2,19 @@
   "id": "south1-2025-trek",
   "label": "中央山脈南一段 2025 · South Section One",
   "user_login": "bunnytailgrass",
-  "place_id": 7888,
+  "place_id": 7887,
   "d1": "2025-03-24",
   "d2": "2025-03-28",
   "mode": "trek",
   "taxonomy": "taicol",
   "gpx": "track.gpx",
+  "scope": {
+    "exclude_obs_ids": [
+      "267445641",
+      "267446497",
+      "267446880"
+    ]
+  },
   "snapshot": "2025/03 · 中央山脈南一段",
   "elevation": "srtm30m",
   "brand": "sow"
