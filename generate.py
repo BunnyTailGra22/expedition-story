@@ -56,7 +56,7 @@ def track_of(pts, limit=140):
 
 def insights_of(cfg):
     """Optional hand-curated journeys/<id>/insights.html fragment → the page's
-    third section (洞見 Insights), below the profile and the map."""
+    third section (AI彙整，待查證), below the profile and the map."""
     p = os.path.join(HERE, "journeys", cfg["id"], "insights.html")
     return open(p, encoding="utf-8").read() if os.path.exists(p) else None
 

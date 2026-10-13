@@ -64,7 +64,7 @@ site/index.html             # landing: overview map (all tracks) + list sortable
   `merge_gpx.py` merges per-day files (`--strip` drops HR/cadence for the public repo copy;
   `--every N` thins a 1-second recording to one point per N s).
   First user: `yari-hotaka-circuit-2026-trek` (5 Garmin days, 53.0 km, 3189 m).
-- **P7 [done]** page sections: 地形/高程剖面圖 · 觀測點地圖 · 洞見 Insights. A trek may add a hand-curated
+- **P7 [done]** page sections: 地形/高程剖面圖 · 觀測點地圖 · AI彙整，待查證 (insights). A trek may add a hand-curated
   `journeys/<id>/insights.html` (habitat × genus, family table with ecology / 花果期 / 特有·IUCN·紅皮書, three key
   findings); `generate.py` inlines it as the third section. First user: `south1-2025-trek`.
 

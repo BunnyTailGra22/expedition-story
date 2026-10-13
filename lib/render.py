@@ -347,10 +347,10 @@ def transect_html(meta, pts):
             + tax
             + (f" · 快照 {meta['snapshot']}" if meta.get("snapshot") else "") + "。")
     ins = meta.get("insights")
-    insights = (f'<h2 class="sec" id="insights">洞見<span>Insights</span></h2>\n<div class="ins">{ins}</div>\n'
+    insights = (f'<h2 class="sec" id="insights">AI彙整，待查證</h2>\n<div class="ins">{ins}</div>\n'
                 if ins else "")
     toc = ('<div class="toc"><a href="#profile">剖面圖</a><a href="#obsmap">觀測點地圖</a>'
-           '<a href="#insights">洞見 Insights</a></div>\n' if ins else "")
+           '<a href="#insights">AI彙整，待查證</a></div>\n' if ins else "")
     rep = {"__TITLE__": meta["title"], "__SUBT__": meta["subtitle"], "__NAV__": nav,
            "__TOC__": toc, "__INSIGHTS__": insights,
            "__N__": str(len(pts)), "__SP__": str(nsp), "__DIST__": dist, "__DUNIT__": unit,
