@@ -213,7 +213,7 @@ function extTip(ctx){
   var img=d.ph?('<img src="'+d.ph+'" alt="">'):'';
   var link=mob?('<a class="lnk" href="'+d.u+'" target="_blank" rel="noopener">iNaturalist ↗</a>'):'';
   var bd=(d.end?'<span style="color:#3B6D11">⬥臺灣特有</span> ':'')+(d.threat?'<span style="color:#A32D2D">'+(['CR','EN','VU','NT'].indexOf(d.threat)>=0?'IUCN ':'紅皮書 ')+d.threat+'</span>':'');
-  el.innerHTML=img+'<div><div class="nm">'+(d.c||'—')+'</div><div class="sci">'+d.s+
+  el.innerHTML=img+'<div><div class="nm">'+(d.c||'—')+'</div><div class="sci">'+(d.s||'未鑑定')+
     '</div><div class="fam">'+(d.famZh||'')+' '+(d.famSci||'')+'</div><div class="fam">'+(d.genZh||'')+' '+(d.genSci||'')+'</div>'+
     (bd?'<div class="fam">'+bd+'</div>':'')+(d.fl?'<div class="fam" style="color:#E8380D">GPS ±'+Math.round(d.a)+'m</div>':'')+link+'</div>';
   if(mob){el.className='ctt sheet';el.style.left='0';el.style.right='0';el.style.bottom='0';el.style.top='auto';el.style.width='';}
@@ -238,7 +238,7 @@ function markerIcon(d){
 function popupHtml(d){
   var img=d.ph?('<img src="'+d.ph+'" alt="">'):'';
   var bd=(d.end?'<span style="color:#3B6D11">⬥臺灣特有</span> ':'')+(d.threat?'<span style="color:#A32D2D">'+(['CR','EN','VU','NT'].indexOf(d.threat)>=0?'IUCN ':'紅皮書 ')+d.threat+'</span>':'');
-  return '<div class="pp">'+img+'<div class="nm">'+(d.c||'—')+'</div><div class="sci">'+d.s+'</div><div class="fam">'+(d.famZh||'')+' '+(d.famSci||'')+'</div>'+(bd?'<div class="fam">'+bd+'</div>':'')+(d.fl?'<div class="fam" style="color:#E8380D">GPS ±'+Math.round(d.a)+'m · 位置內插</div>':'')+'<a class="lnk" href="'+d.u+'" target="_blank" rel="noopener">iNaturalist ↗</a></div>';
+  return '<div class="pp">'+img+'<div class="nm">'+(d.c||'—')+'</div><div class="sci">'+(d.s||'未鑑定')+'</div><div class="fam">'+(d.famZh||'')+' '+(d.famSci||'')+'</div>'+(bd?'<div class="fam">'+bd+'</div>':'')+(d.fl?'<div class="fam" style="color:#E8380D">GPS ±'+Math.round(d.a)+'m · 位置內插</div>':'')+'<a class="lnk" href="'+d.u+'" target="_blank" rel="noopener">iNaturalist ↗</a></div>';
 }
 // linked hover: highlight the map marker for chart point i (orange halo)
 function highlightMarker(i){
