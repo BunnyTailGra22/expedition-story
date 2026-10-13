@@ -71,6 +71,8 @@ site/index.html             # landing: overview map (all tracks) + list sortable
   median-filters the elevation (ascent +6703 m raw → +4160 m; SRTM along the track +3855 m).
   `north3-2021-trek` on 8 Garmin files (D3 split in two; 74.4 km, 3350 m); `"gpx_smooth_s": 120` takes the
   ascent from +11934 m raw to +6503 m (SRTM along the track +5569 m).
+  `nanhu-2022-trek` on 3 Garmin files (41.0 km, 3725 m; only D3 04:05–05:12 missing, hut → below the summit).
+  Barometric altitude (raw/smoothed ascent 1.14, like south1's 1.13), so no `gpx_smooth_s`.
 - **P7 [done]** page sections: 地形/高程剖面圖 · 觀測點地圖 · AI彙整，待查證 (insights). A trek may add a hand-curated
   `journeys/<id>/insights.html` (habitat × genus, family table with ecology / 花果期 / 特有·IUCN·紅皮書, three key
   findings); `generate.py` inlines it as the third section. First user: `south1-2025-trek`.
