@@ -8,6 +8,7 @@
   "mode": "trek",
   "taxonomy": "taicol",
   "gpx": "track.gpx",
+  "gpx_smooth_s": 120,
   "scope": {
     "exclude_obs_ids": [
       "73168377",

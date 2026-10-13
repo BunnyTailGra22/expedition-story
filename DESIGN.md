@@ -100,6 +100,12 @@ route for the map line, the distance axis and the elevation profile (the device 
 timestamp. Time, not nearest position, is the primary key because a circuit walks its approach trail
 twice; position only validates the match.
 
+The recorded elevation is kept as-is by default. A watch without a barometer logs GPS-derived altitude,
+whose metre-scale jitter the 3 m ascent dead-band sums into a fictitious climb (南湖 2020: +6703 m on
+35.9 km). Such a journey opts into `"gpx_smooth_s"`, a centred moving median in time: it removes the
+jitter and single-fix spikes but keeps summits (3753 → 3752 m), which a mean or a DEM would flatten.
+It is opt-in so the barometric tracks, already within 2–10 % of their smoothed ascent, stay untouched.
+
 Basemap is **OpenTopoMap** (free, contour aesthetic matching a Strava-style map, CC-BY-SA) rather than a
 keyed provider, to keep the tool dependency-free.
 

@@ -91,8 +91,15 @@ def enrich_points(pts, cfg):
     else:
         species = {p["s"]: p["c"] for p in pts if p["s"]}
         tx = T.enrich(species, os.path.join(CACHE, "taicol.json"))
+        # TaiCoL has no family for names it doesn't list (a pine subgenus, a juniper
+        # section): take family / genus from the iNaturalist lineage instead
+        gaps = [p["tid"] for p in pts if p.get("tid") and p["s"] and not tx.get(p["s"], {}).get("fam_sci")]
+        it = IT.enrich(gaps, os.path.join(CACHE, "inat_taxa.json")) if gaps else {}
         for p in pts:
-            e = tx.get(p["s"], {})
+            e = dict(tx.get(p["s"], {}))
+            if not e.get("fam_sci"):
+                i = it.get(str(p.get("tid")), {})
+                e.update({k: i.get(k) for k in ("fam_sci", "fam_zh", "gen_sci", "gen_zh") if i.get(k)})
             p["famSci"] = e.get("fam_sci") or "?"
             p["famZh"] = e.get("fam_zh") or ""
             p["genSci"] = e.get("gen_sci") or ((p["s"] or "?").split(" ")[0])
@@ -111,7 +118,7 @@ def run_trek(cfg, obs, out):
     if cfg.get("gpx"):
         g = cfg["gpx"]
         trk = TR.load([os.path.join(HERE, "journeys", cfg["id"], f)
-                       for f in ([g] if isinstance(g, str) else g)])
+                       for f in ([g] if isinstance(g, str) else g)], cfg.get("gpx_smooth_s", 0))
     pts = P.build(obs, cfg.get("scope"), CACHE, track=trk)
     if not pts:
         print(f"{cfg['label']}: no usable points after scope.")

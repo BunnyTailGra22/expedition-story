@@ -17,6 +17,10 @@ def _curl(u):
 _STATUS_RANK = {"accepted": 0, "not-accepted": 1, "misapplied": 2}
 
 
+def _bare(name):
+    return " ".join(w for w in (name or "").lower().split() if w not in ("subsp.", "var.", "f.", "ssp."))
+
+
 def _match(sci):
     """Scientific name -> its TaiCoL taxon via /v2/nameMatch, or None. The fuzzy
     /v2/taxon?scientific_name= search can return several accepted taxa (Quercus glauca
@@ -25,7 +29,10 @@ def _match(sci):
         d = json.loads(_curl("https://api.taicol.tw/v2/nameMatch?name=" + urllib.parse.quote(sci)))
     except Exception:
         return None
-    hits = [h for h in d.get("data", []) if isinstance(h, dict) and h.get("taxon_id")]
+    # nameMatch is fuzzy (Sabina → the springtail Salina, Strobus → the conch Strombus):
+    # keep only hits whose name is the query itself, ignoring rank connectors
+    hits = [h for h in d.get("data", []) if isinstance(h, dict) and h.get("taxon_id")
+            and _bare(h.get("matched_name")) == _bare(sci)]
     if not hits:
         return None
     best = min(hits, key=lambda h: _STATUS_RANK.get(h.get("taicol_name_status"), 9))
