@@ -65,6 +65,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 <div class="nav"><a href="../index.html">← 旅程索引 journeys</a></div>
 <h1>中央山脈南三段 2025 · 花蓮→南投八日縱走</h1>
 <p class="sub">2025-10-04 – 2025-10-11 · 8 天 · 85 樣點 · 58 種 · 連續路徑剖面 single continuous transect</p>
+<div class="toc"><a href="#profile">剖面圖</a><a href="#obsmap">觀測點地圖</a><a href="#insights">AI彙整，待查證</a></div>
 <div class="cards">
   <div class="card"><div class="lbl">觀察數 observations</div><div class="val">85</div></div>
   <div class="card"><div class="lbl">物種數 species</div><div class="val">58</div></div>
@@ -84,6 +85,101 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 <h2 class="sec" id="obsmap">觀測點地圖<span>Observation map</span></h2>
 <p class="secnote">與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</p>
 <div class="mapbox"><div id="map"></div></div>
+<h2 class="sec" id="insights">AI彙整，待查證</h2>
+<div class="ins"><!-- Insights for south3-2025-trek. Hand-curated HTML fragment, inlined by generate.py
+     into the page's third section (AI彙整，待查證). Data: TaiCoL (特有 / IUCN / 紅皮書 / 原生), iNaturalist Taiwan Flowers / Fruits annotations (花果期), GPX elevation (棲地). -->
+<ol class="ins-key">
+  <li><b>八天走過四個植群帶，越高特有比例越高。</b>85 筆紀錄分布在 1,532–3,591 m：≥3,300 m 的高山灌叢與岩屑地（D5–D7 稜線）特有種占 67%（10/15），冷杉林、鐵杉林兩帶約 35%，1,500–2,500 m 的闊葉林與檜木霧林帶 43%。全程 57 個種級類群中特有 26 種（46%），高於南一段（34%）。</li>
+  <li><b>10 月上旬正值高山秋季花果期。</b>依 iNaturalist 臺灣花果標註，約 14 個類群正值花期（台灣烏頭、玉山小米草、梅花草、疏花風輪菜、一枝黃花、玉山抱莖籟簫、永澤籟簫、紫花鳳仙花、玉玲花等），約 20 個類群結果中（玉山小檗、高山白珠樹、巒大花楸、高山莢蒾、異葉紅珠等）；與南一段 3 月下旬多為營養體的紀錄正好互補。</li>
+  <li><b>保育關注集中在中高海拔；只有一種外來種。</b>紅皮書 NVU：早田氏鼠尾草；NNT：臺灣小檗、高山懸鉤子、台灣烏頭，以及兩種特有蝴蝶（玉山蔭蝶、永澤蛇目蝶）；IUCN NT：臺灣冷杉。另有 3 筆座標被模糊、未上圖：紅檜（IUCN EN）、臺灣黃喉貂（紅皮書 NVU、保育類 III）、玉山石竹（NVU）。唯一外來種是歸化的毛地黃（D1，2,411–2,651 m 兩筆），值得持續留意擴散。</li>
+</ol>
+
+<h3>依棲地 × 屬</h3>
+<p class="ins-note">棲地依 GPS 軌跡記錄的海拔劃分（參考蘇鴻傑 1984 植群海拔帶）。＊為特有種（TaiCoL）。</p>
+<div class="tbl"><table class="t-hab">
+<colgroup><col style="width:22%"><col style="width:46%"><col style="width:32%"></colgroup>
+<thead><tr><th>棲地（筆數・海拔）</th><th>屬：物種</th><th>特性</th></tr></thead>
+<tbody>
+<tr><td><b>A 高山灌叢與岩屑草生地</b><br>19 筆・3,350–3,591 m<br>D5–D7 稜線（km 30–41）</td><td>籟簫屬：永澤籟簫＊（3）<br>小檗屬：玉山小檗＊（2）<br>龍膽屬：阿里山龍膽＊、玉山龍膽＊<br>委陵菜屬：玉山金梅（2）<br>刺柏屬：玉山圓柏、刺柏<br>艾屬：細葉山艾＊；金絲桃屬：玉山金絲桃＊；婆婆納屬：玉山水苦蕒＊；毛蓮菜屬：玉山毛蓮菜＊<br>杜鵑花屬：玉山杜鵑＊；白珠樹屬：高山白珠樹；玉山箭竹<br>蝶：永澤蛇目蝶＊</td><td>森林線以上的圓柏灌叢、箭竹草原與岩屑地，以低矮、匍匐的灌木和草本為主。特有 10/15，四帶中最高</td></tr>
+<tr><td><b>B 冷杉林與林緣草坡</b><br>21 筆・3,100–3,283 m</td><td>杜鵑花屬：玉山杜鵑＊（2）、紅毛杜鵑（2）<br>櫟屬：高山櫟（3）<br>冷杉屬：臺灣冷杉＊；鐵杉屬：臺灣鐵杉＊；松屬：華山松<br>小檗屬：臺灣小檗＊；馬醉木屬；白珠樹屬<br>林緣草本：疏花風輪菜＊、梅花草、玉山小米草、台灣烏頭、一枝黃花、玉山抱莖籟簫、虎杖<br>蝶：永澤蛇目蝶＊</td><td>亞高山針葉林與向陽岩坡；高山櫟長在稜線岩壁。10 月林緣草坡花最多，有 6 種正值花期。特有 6/17</td></tr>
+<tr><td><b>C 鐵杉／冷杉／松林與林緣</b><br>21 筆・2,610–2,895 m<br>D1–D3 與 D8</td><td>松屬：臺灣二葉松＊、華山松；冷杉屬：臺灣冷杉＊<br>杜鵑花屬：紅毛杜鵑；馬醉木屬（2）<br>小檗屬：臺灣小檗＊；花楸屬：巒大花楸＊；懸鉤子屬：高山懸鉤子<br>草本：玉山龍膽＊、台灣烏頭、高山翻白草、異葉紅珠、長穗鬼督郵＊、楮頭紅、毛地黃（外來）<br>蕨：蕨；藤本：台灣常春藤<br>蝶：玉山蔭蝶＊</td><td>針葉林與步道林緣，草本與灌木混生；外來的毛地黃出現在這一帶的步道旁。特有 7/20</td></tr>
+<tr><td><b>D 闊葉林與檜木霧林帶</b><br>24 筆・1,532–2,462 m<br>D1–D2、D7–D8 兩端</td><td>鳳仙花屬：紫花鳳仙花＊（2）；野牡丹科：楮頭紅（2）<br>莢蒾屬：假繡球、高山莢蒾<br>苦苣苔科：玉玲花＊；十齒花科：佩羅特木＊；鼠尾草屬：早田氏鼠尾草＊<br>杜鵑花屬：台灣杜鵑＊；肉桂屬：臺灣肉桂＊；懸鉤子屬：小葉懸鉤子＊<br>化香樹屬、鐵杉屬（臺灣鐵杉＊）、松屬（華山松）<br>蕨：稀子蕨、瓦氏鳳尾蕨、韓氏羅曼蕨＊；海螺菊、長梗盤花麻<br>苔：塔苔；菌：乳菇屬</td><td>潮濕的霧林帶，林下多蕨類、苔蘚與耐陰草本，特有種意外地多（9/21），集中在林下草本與灌木</td></tr>
+</tbody></table></div>
+
+<h3>依科別：屬、種、生態、花果期、保育等級</h3>
+<p class="ins-note">狀態：特＝特有；IUCN 等級；紅＝臺灣紅皮書（NLC 無危、NNT 接近受脅、NVU 易危、NA 不適用）。除毛地黃外，依 TaiCoL 皆為原生種。花／果期為 iNaturalist 臺灣全島花果標註的高峰月份；<b>粗體</b>表示踏查時（10 月）正在花期或果期。名稱以 iNaturalist（圖上名稱）為主。</p>
+<div class="tbl"><table class="t-fam">
+<colgroup><col style="width:9%"><col style="width:10%"><col style="width:20%"><col style="width:32%"><col style="width:16%"><col style="width:13%"></colgroup>
+<thead><tr><th>科</th><th>屬</th><th>種（筆・海拔）</th><th>生態特色</th><th>花／果期</th><th>狀態</th></tr></thead>
+<tbody>
+<tr><td rowspan="4"><b>松科</b></td><td>冷杉屬</td><td>臺灣冷杉（2・2,837–3,233 m）</td><td>亞高山針葉林優勢種，常成純林</td><td>毬果秋熟</td><td>特・NT・紅 NLC</td></tr>
+<tr><td>鐵杉屬</td><td>臺灣鐵杉（2・2,462–3,106 m）</td><td>鐵杉林帶優勢樹，林下多箭竹</td><td>毬果秋熟</td><td>特・LC・紅 NLC</td></tr>
+<tr><td rowspan="2">松屬</td><td>華山松（3・2,312–3,235 m）</td><td>中高海拔零星分布的五針松</td><td>毬果隔年秋熟</td><td>LC</td></tr>
+<tr><td>臺灣二葉松（1・2,895 m）</td><td>陽性先驅樹，耐旱耐火，向陽坡常成純林</td><td>毬果隔年秋熟</td><td>特・LC・紅 NLC</td></tr>
+<tr><td rowspan="2"><b>柏科</b></td><td rowspan="2">刺柏屬</td><td>玉山圓柏（2・2,885–3,486 m）</td><td>森林線附近的優勢灌木或小喬木，高處常呈匍匐狀；TaiCoL 名「香青」</td><td>—</td><td>LC・紅 NLC</td></tr>
+<tr><td>刺柏（1・3,437 m）</td><td>針葉三枚輪生、尖端銳刺，長在向陽岩坡</td><td>—</td><td>LC・紅 NLC</td></tr>
+<tr><td rowspan="5"><b>杜鵑花科</b></td><td rowspan="3">杜鵑花屬</td><td>玉山杜鵑（3・3,232–3,421 m）</td><td>高山灌叢主角，冷杉林緣與稜線常成片</td><td>花 3–5</td><td>特・紅 NLC</td></tr>
+<tr><td>紅毛杜鵑（3・2,792–3,246 m）</td><td>枝葉有紅褐色剛毛，長在向陽林緣</td><td>花 4–6</td><td>紅 NLC</td></tr>
+<tr><td>台灣杜鵑（1・1,920 m）</td><td>中海拔林緣大型灌木</td><td>花 4</td><td>特・紅 NLC</td></tr>
+<tr><td>馬醉木屬</td><td>馬醉木（3・2,660–3,283 m）</td><td>全株有毒，草食動物少吃，向陽灌叢常見</td><td>花 1–4／果 4–8</td><td>LC・紅 NLC</td></tr>
+<tr><td>白珠樹屬</td><td>高山白珠樹（2・3,153–3,438 m）</td><td>高山匍匐小灌木，漿果狀果實</td><td>花 5–7／<b>果 6–10</b></td><td>紅 NLC</td></tr>
+<tr><td rowspan="6"><b>菊科</b></td><td rowspan="2">籟簫屬</td><td>永澤籟簫（3・3,435–3,590 m）</td><td>高山裸岩與岩屑地，全株白綿毛</td><td>花 6–8／<b>果 8–12</b></td><td>特</td></tr>
+<tr><td>玉山抱莖籟簫（2・2,895–3,100 m）</td><td>高山草坡與林緣，葉基抱莖</td><td><b>花 7–11</b></td><td>紅 NLC</td></tr>
+<tr><td>艾屬</td><td>細葉山艾（1・3,590 m）</td><td>高山岩屑地的芳香小灌木</td><td>花 6–9</td><td>特・紅 NLC</td></tr>
+<tr><td>毛蓮菜屬</td><td>玉山毛蓮菜（1・3,386 m）</td><td>高山草地，黃色頭花</td><td>花 7–8／果 8–9</td><td>特・紅 NLC</td></tr>
+<tr><td>一枝黃花屬</td><td>一枝黃花（1・3,213 m）</td><td>林緣草坡的秋花草本</td><td><b>花 7–9（尾聲）</b></td><td>紅 NLC</td></tr>
+<tr><td>兔兒風屬</td><td>長穗鬼督郵（1・2,610 m）</td><td>林下草本，葉基生成蓮座狀</td><td>花 4–7</td><td>特・紅 NLC</td></tr>
+<tr><td rowspan="2"><b>小檗科</b></td><td rowspan="2">小檗屬</td><td>臺灣小檗（2・2,860–3,188 m）</td><td>中高海拔林緣的常綠帶刺灌木</td><td>花 3–5／果 5–9</td><td>特・<b>紅 NNT</b></td></tr>
+<tr><td>玉山小檗（2・3,435–3,591 m）</td><td>高山灌叢的帶刺灌木，秋季結紅果</td><td>花 6–7／<b>果 7–10</b></td><td>特・紅 NLC</td></tr>
+<tr><td rowspan="2"><b>龍膽科</b></td><td rowspan="2">龍膽屬</td><td>阿里山龍膽（1・3,438 m）</td><td>高山草地小草本</td><td>花 4–7</td><td>特・紅 NLC</td></tr>
+<tr><td>玉山龍膽（2・2,872–3,367 m）</td><td>高山草地與岩縫，花藍紫色</td><td>花 6–8</td><td>特・紅 NLC</td></tr>
+<tr><td rowspan="5"><b>薔薇科</b></td><td rowspan="2">委陵菜屬</td><td>玉山金梅（2・3,459–3,590 m）</td><td>高山岩屑草地，葉背銀白</td><td>花 6–7</td><td>紅 NLC</td></tr>
+<tr><td>高山翻白草（1・2,658 m）</td><td>林緣向陽草地的匍匐草本</td><td>花 4–5</td><td>紅 NLC</td></tr>
+<tr><td rowspan="2">懸鉤子屬</td><td>高山懸鉤子（1・2,706 m）</td><td>高山岩屑地的匍匐小灌木</td><td>花 5–7／果 7–9</td><td><b>紅 NNT</b></td></tr>
+<tr><td>小葉懸鉤子（臺灣莓）（1・2,227 m）</td><td>林緣匍匐小灌木</td><td>花 5–7／果 7–9</td><td>特・紅 NLC</td></tr>
+<tr><td>花楸屬</td><td>巒大花楸（1・2,874 m）</td><td>中高海拔落葉小喬木，秋季紅果紅葉</td><td>花 5–6／果 7</td><td>特・紅 NLC</td></tr>
+<tr><td rowspan="4"><b>車前科</b></td><td>毛地黃屬</td><td>毛地黃（2・2,411–2,651 m）</td><td>歐洲原產的觀賞植物，歸化於中高海拔林道與步道旁</td><td>花 4–6</td><td><b>外來（歸化）</b>・紅 NA</td></tr>
+<tr><td>海螺菊屬</td><td>海螺菊（1・1,968 m）</td><td>林下潮濕地的匍匐小草本</td><td>花 4–7</td><td>紅 NLC</td></tr>
+<tr><td>腰只花屬</td><td>異葉紅珠（腰只花）（1・2,654 m）</td><td>匍匐草本，紅色漿果宿存很久</td><td>花 3–4／<b>果 3–12</b></td><td>紅 NLC</td></tr>
+<tr><td>婆婆納屬</td><td>玉山水苦蕒（1・3,589 m）</td><td>高山岩屑地小草本</td><td>花 6–7／<b>果 7–12</b></td><td>特・紅 NLC</td></tr>
+<tr><td rowspan="2"><b>唇形科</b></td><td>風輪菜屬</td><td>疏花風輪菜（1・3,273 m）</td><td>高山林緣草坡</td><td><b>花 7–10</b></td><td>特・紅 NLC</td></tr>
+<tr><td>鼠尾草屬</td><td>早田氏鼠尾草（1・1,891 m）</td><td>中海拔林緣草本</td><td>花 3–4、6–7</td><td>特・<b>紅 NVU</b></td></tr>
+<tr><td><b>毛茛科</b></td><td>烏頭屬</td><td>台灣烏頭（2・2,865–3,273 m）</td><td>高山草坡，全株有劇毒</td><td><b>花 8–9（尾聲）</b></td><td><b>紅 NNT</b></td></tr>
+<tr><td><b>衛矛科</b></td><td>梅花草屬</td><td>梅花草（1・3,273 m）</td><td>高山濕潤草地，白色五瓣花</td><td><b>花 8–9</b></td><td>LC・紅 NLC</td></tr>
+<tr><td><b>列當科</b></td><td>小米草屬</td><td>玉山小米草（1・3,273 m）</td><td>高山草地的半寄生小草本</td><td><b>花 6–10</b></td><td>紅 NLC</td></tr>
+<tr><td><b>金絲桃科</b></td><td>金絲桃屬</td><td>玉山金絲桃（1・3,589 m）</td><td>高山草地與岩縫</td><td>花 7–8</td><td>特・紅 NLC</td></tr>
+<tr><td><b>殼斗科</b></td><td>櫟屬</td><td>高山櫟（3・3,111–3,232 m）</td><td>高海拔稜線岩壁的常綠櫟類，葉緣有刺</td><td>—</td><td>LC・紅 NLC</td></tr>
+<tr><td><b>禾本科</b></td><td>玉山箭竹屬</td><td>玉山箭竹（1・3,471 m）</td><td>高山草原與針葉林下的優勢竹類</td><td>—</td><td>紅 NLC</td></tr>
+<tr><td><b>蓼科</b></td><td>虎杖屬</td><td>虎杖（1・3,208 m）</td><td>崩塌地與步道旁的先驅草本</td><td>花 8–9／<b>果 8–11</b></td><td>紅 NLC</td></tr>
+<tr><td rowspan="2"><b>五福花科</b></td><td rowspan="2">莢蒾屬</td><td>假繡球（1・2,137 m）</td><td>林下灌木，花序外圈有大型不孕花</td><td>花 3–4／果 6–7</td><td>LC・紅 NLC</td></tr>
+<tr><td>高山莢蒾（1・2,411 m）</td><td>中高海拔林緣常綠灌木</td><td>花 3–5／<b>果 7–10</b></td><td>紅 NLC</td></tr>
+<tr><td><b>鳳仙花科</b></td><td>鳳仙花屬</td><td>紫花鳳仙花（2・1,532–1,627 m）</td><td>中海拔林下潮濕處與溪溝</td><td><b>花 6–11</b></td><td>特・紅 NLC</td></tr>
+<tr><td><b>野牡丹科</b></td><td>肉穗野牡丹屬</td><td>楮頭紅（3・1,790–2,653 m）</td><td>林下潮濕地小草本</td><td><b>花 5–10／果 6–10</b></td><td>紅 NLC</td></tr>
+<tr><td><b>苦苣苔科</b></td><td>異裂苣苔屬</td><td>玉玲花（1・1,596 m）</td><td>中海拔林下溪谷潮濕處</td><td><b>花 8–10</b></td><td>特・紅 NLC</td></tr>
+<tr><td><b>十齒花科</b></td><td>佩羅特木屬</td><td>佩羅特木（1・1,882 m）</td><td>中海拔林緣灌木</td><td>花 4–5／果 5–7</td><td>特・紅 NLC</td></tr>
+<tr><td><b>樟科</b></td><td>肉桂屬</td><td>臺灣肉桂（1・2,227 m）</td><td>中海拔闊葉林常綠喬木</td><td>花 4–5</td><td>特・紅 NLC</td></tr>
+<tr><td><b>胡桃科</b></td><td>化香樹屬</td><td>化香樹（1・2,414 m）</td><td>向陽坡與崩塌地的落葉喬木，果序呈毬果狀</td><td>花 5–6</td><td>紅 NLC</td></tr>
+<tr><td><b>五加科</b></td><td>常春藤屬</td><td>台灣常春藤（菱葉常春藤）（1・2,610 m）</td><td>以氣生根攀附樹幹與岩壁的常綠藤本</td><td>花 11／果 12–3</td><td>紅 NLC</td></tr>
+<tr><td><b>蕁麻科</b></td><td>盤花麻屬</td><td>長梗盤花麻（1・1,577 m）</td><td>林下潮濕處草本</td><td><b>花 9–11</b></td><td>紅 NLC</td></tr>
+<tr><td rowspan="2"><b>碗蕨科</b></td><td>稀子蕨屬</td><td>稀子蕨（1・1,932 m）</td><td>林下潮濕處，葉軸會長芽孢</td><td>孢子植物</td><td>紅 NLC</td></tr>
+<tr><td>蕨屬</td><td>蕨（1・2,895 m）</td><td>向陽開闊地與火燒跡地常見</td><td>孢子植物</td><td>—</td></tr>
+<tr><td><b>鳳尾蕨科</b></td><td>鳳尾蕨屬</td><td>瓦氏鳳尾蕨（1・2,087 m）</td><td>林下大型蕨類</td><td>孢子植物</td><td>紅 NLC</td></tr>
+<tr><td><b>烏毛蕨科</b></td><td>羅曼蕨屬</td><td>韓氏羅曼蕨（1・2,347 m）</td><td>針闊葉林下的蕨類</td><td>孢子植物</td><td>特・紅 NLC</td></tr>
+<tr><td><b>塔苔科</b></td><td>塔苔屬</td><td>塔苔（1・2,342 m）</td><td>針葉林地被苔蘚，每年長一層、呈階梯狀</td><td>—</td><td>—</td></tr>
+<tr><td rowspan="2"><b>蛺蝶科</b></td><td>蛇目蝶屬</td><td>永澤蛇目蝶（2・3,115–3,350 m）</td><td>高山草原的蛇目蝶，幼蟲以禾本科為食</td><td>—</td><td>特・<b>紅 NNT</b></td></tr>
+<tr><td>蔭蝶屬</td><td>玉山蔭蝶（1・2,824 m）</td><td>中高海拔林緣的蔭蝶</td><td>—</td><td>特・<b>紅 NNT</b></td></tr>
+<tr><td><b>真菌</b></td><td>乳菇屬</td><td>美西楓糖乳菇（1・2,347 m）</td><td>學名為北美種，臺灣紀錄應為近似種，待鑑定</td><td>—</td><td>—</td></tr>
+<tr><td><b>未定</b></td><td>—</td><td>木蘭綱（1・1,561 m）</td><td>待鑑定</td><td>—</td><td>—</td></tr>
+</tbody></table></div>
+
+<h3>為保護而模糊座標、未上圖的 3 筆</h3>
+<ul class="ins-list">
+  <li><b>紅檜</b> <i>Chamaecyparis formosensis</i>：特有，IUCN <b>EN</b>，紅皮書 NNT，檜木霧林的巨木（D1）。</li>
+  <li><b>臺灣黃喉貂</b> <i>Martes flavigula chrysospila</i>：特有亞種，紅皮書 <b>NVU</b>，保育類 III（D1 凌晨）。</li>
+  <li><b>玉山石竹</b> <i>Dianthus pygmaeus</i>：特有，紅皮書 <b>NVU</b>，高山岩屑地（D3）。</li>
+</ul>
+<p class="ins-note">iNaturalist 會自動模糊敏感物種的座標（隨機放在約 20 km 見方的範圍內），因此這 3 筆不放上剖面圖與地圖。</p>
+</div>
 <p class="foot">資料來源 iNaturalist API（觀察者 bunnytailgrass，地點 place_id 7888）· 海拔 SRTM 30 m（雙線性內插）· GPS &gt;100 m 之點位置與高程以鄰近可靠點時間內插 · 科/屬中拉名與特有/保育：TaiCoL 臺灣物種名錄 · 快照 2025/10 · 中央山脈南三段。</p>
 </div>
 <script>

@@ -12,7 +12,35 @@ def _curl(u):
                            "User-Agent: expedition-story/1.0", u], capture_output=True, text=True).stdout
 
 
+# nameMatch statuses, best first: the name's own accepted taxon, then the taxon it is a
+# synonym of; a "misapplied" usage points at a different species and is only a last resort
+_STATUS_RANK = {"accepted": 0, "not-accepted": 1, "misapplied": 2}
+
+
+def _match(sci):
+    """Scientific name -> its TaiCoL taxon via /v2/nameMatch, or None. The fuzzy
+    /v2/taxon?scientific_name= search can return several accepted taxa (Quercus glauca
+    also hits 波葉櫟), so taking the first accepted one there mislabels species."""
+    try:
+        d = json.loads(_curl("https://api.taicol.tw/v2/nameMatch?name=" + urllib.parse.quote(sci)))
+    except Exception:
+        return None
+    hits = [h for h in d.get("data", []) if isinstance(h, dict) and h.get("taxon_id")]
+    if not hits:
+        return None
+    best = min(hits, key=lambda h: _STATUS_RANK.get(h.get("taicol_name_status"), 9))
+    try:
+        recs = json.loads(_curl("https://api.taicol.tw/v2/taxon?taxon_id=" + best["taxon_id"])).get("data", [])
+    except Exception:
+        return None
+    return recs[0] if recs else None
+
+
 def _taicol(common=None, sci=None):
+    if sci:
+        hit = _match(sci)
+        if hit:
+            return hit
     q = ("common_name=" + urllib.parse.quote(common)) if common else ("scientific_name=" + urllib.parse.quote(sci))
     try:
         d = json.loads(_curl("https://api.taicol.tw/v2/taxon?" + q))
@@ -75,6 +103,8 @@ def enrich(species, cache_path):
                 e = {"accepted_sci": rec.get("simple_name"), "accepted_zh": rec.get("common_name_c"),
                      "is_endemic": bool(rec.get("is_endemic")), "iucn": rec.get("iucn"),
                      "redlist": rec.get("redlist"), "protected": rec.get("protected"), "src": "taicol"}
+                if rec.get("is_in_taiwan") is False:   # a non-Taiwan taxon (likely a misID): its
+                    e.update(is_endemic=False, iucn=None, redlist=None, protected=None, src="taicol-not-tw")
                 e.update(_lineage(rec["taxon_id"]))
                 time.sleep(0.4)
             else:
