@@ -61,7 +61,8 @@ site/index.html             # landing: overview map (all tracks) + list sortable
   carries a downsampled `track` and one summary vocabulary for both modes.
 - **P6 [done]** GPX route tier: optional `"gpx"` (trek) — `lib/track.py` places each obs on the recorded
   route by time; distance, elevation profile, peak/ascent and the map line come from the track.
-  `merge_gpx.py` merges per-day files (`--strip` drops HR/cadence for the public repo copy).
+  `merge_gpx.py` merges per-day files (`--strip` drops HR/cadence for the public repo copy;
+  `--every N` thins a 1-second recording to one point per N s).
   First user: `yari-hotaka-circuit-2026-trek` (5 Garmin days, 53.0 km, 3189 m).
 
 ## Reuse source (port, don't re-invent)
