@@ -65,6 +65,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 <div class="nav"><a href="../index.html">← 旅程索引 journeys</a></div>
 <h1>槍・穗高 2026 · Yari-Hotaka Circuit</h1>
 <p class="sub">2026-10-06 – 2026-10-10 · 5 天 · 89 樣點 · 72 種 · 連續路徑剖面 single continuous transect · GPX 實測軌跡 recorded track</p>
+<div class="toc"><a href="#profile">剖面圖</a><a href="#obsmap">觀測點地圖</a><a href="#insights">AI彙整，待查證</a></div>
 <div class="cards">
   <div class="card"><div class="lbl">觀察數 observations</div><div class="val">89</div></div>
   <div class="card"><div class="lbl">物種數 species</div><div class="val">72</div></div>
@@ -84,6 +85,92 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 <h2 class="sec" id="obsmap">觀測點地圖<span>Observation map</span></h2>
 <p class="secnote">橘線為 GPX 實測軌跡　與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</p>
 <div class="mapbox"><div id="map"></div></div>
+<h2 class="sec" id="insights">AI彙整，待查證</h2>
+<div class="ins"><!-- Insights for yari-hotaka-circuit-2026-trek. Hand-curated HTML fragment, inlined by generate.py
+     into the page's third section (AI彙整，待查證). Data: iNaturalist taxonomy, IUCN and Japan establishment means (原生 / 日本特有), iNaturalist Japan Flowers / Fruits annotations (花果期), GPX elevation (棲地). -->
+<ol class="ins-key">
+  <li><b>五天穿越日本北阿爾卑斯的三個植生帶。</b>89 筆紀錄分布在 1,507–3,130 m：上高地一帶的山地帶河畔林（日本落葉松、連香樹、日本七葉樹、日本花柏）→ 1,700–2,500 m 的亞高山帶（魚鱗雲杉、冷杉屬、岳樺、竹林、七灶花楸）→ 2,500 m 以上的高山帶。偃松最低出現在 2,563 m，正是這條路線的森林線；以上是越橘、岩高蘭、黃花石楠、岩梅、高山龍膽等高山灌叢與草本。</li>
+  <li><b>10 月上旬是秋色與果實的季節，不是花季。</b>依 iNaturalist 日本花果標註，約 27 個類群正在果期（七灶花楸、高山花楸、黃蘆木、垂絲衛矛、日本大百合、細齒南星、越橘類、岩高蘭、連香樹），只有約 12 個類群在花期，多是秋季開花的菊科與毛茛科（野紺菊、珠光香青、單穗升麻、薊屬）。高山帶的水仙銀蓮花、高山水楊梅、岩梅、黃花石楠花期都在 6–8 月，已經結束。</li>
+  <li><b>鑑定是這趟最大的缺口。</b>研究等級只有 8/89（9%），45 個種級類群之外，有 26 筆停在屬或更高的分類階層（如「被子植物」「杜鵑花科」）。沒有 IUCN 受脅種；日本特有 4 種（日本落葉松、日本花柏、日本七葉樹、野紺菊）。兩筆需要覆核：細葉山艾是臺灣特有種，出現在日本應為誤認；垂花琴木是熱帶美洲的觀賞樹，在 1,508 m 出現很可疑。</li>
+</ol>
+
+<h3>依棲地 × 屬</h3>
+<p class="ins-note">棲地依 GPS 軌跡記錄的海拔劃分（日本本州中部的山地帶／亞高山帶／高山帶）。＊為日本特有（iNaturalist）。</p>
+<div class="tbl"><table class="t-hab">
+<colgroup><col style="width:22%"><col style="width:46%"><col style="width:32%"></colgroup>
+<thead><tr><th>棲地（筆數・海拔）</th><th>屬：物種</th><th>特性</th></tr></thead>
+<tbody>
+<tr><td><b>A 高山帶：偃松灌叢與高山草地</b><br>34 筆・2,563–3,130 m<br>D2–D5（km 20–33）</td><td>松屬：偃松（3）<br>杜鵑花科：越橘、篤斯越橘、岩高蘭、黃花石楠、白山石楠花、鹿蹄草葉白珠、杜鵑花科／亞科（4）<br>薔薇科：高山水楊梅（2）、Geum pentapetalum（チングルマ）、高山翻白草（2）、高山花楸、花楸屬<br>毛茛科：水仙銀蓮花、銀蓮花屬<br>其他：岩梅、高山龍膽、岩桔梗（Campanula lasiocarpa）、雙黃花菫菜、臺灣三毛草、繁縷族、柳屬、岳樺</td><td>森林線以上的偃松灌叢、岩屑地與雪田草地。草本花期在 6–8 月，10 月以果實與紅葉為主</td></tr>
+<tr><td><b>B 亞高山帶：針葉林與岳樺林</b><br>23 筆・1,719–2,353 m<br>D1、D2、D5</td><td>松科：日本落葉松＊、魚鱗雲杉<br>花楸屬：七灶花楸、高山花楸；樺木屬：岳樺<br>竹：Sasa palmata（2）<br>山茱萸屬：草茱萸、燈台樹；柳屬：Salix udensis、柳屬<br>草本：日本大百合、單穗升麻、珠光香青、假升麻、蒿屬、細葉山艾（待覆核）、菊亞科（2）<br>槭屬：花楷槭；小檗屬：黃蘆木；懸鉤子屬：Rubus crataegifolius</td><td>針葉林、岳樺林與林下竹叢；花楸與槭類在 10 月轉紅。特有 1/16</td></tr>
+<tr><td><b>C 山地帶：上高地河畔林</b><br>32 筆・1,507–1,687 m<br>D1 與 D5</td><td>連香樹屬：連香樹；七葉樹屬：日本七葉樹＊；扁柏屬：日本花柏＊；冷杉屬、松科<br>櫻屬：黑櫻桃；蘋果屬；槭屬；衛矛屬：垂絲衛矛；小檗屬：黃蘆木；岳樺<br>草本：野紺菊＊、虎杖、薊屬、蜂斗菜屬、細齒南星、Rodgersia podophylla、鐵線蓮屬、唇形科、針果芹亞族<br>蕨：雄羊齒；菌：貝形圓孢側耳、擬層孔菌屬、傘菌類（2）；蛾：裳蛾科<br>馬鞭草科：垂花琴木（待覆核）</td><td>梓川沿岸的落葉闊葉林與河畔林，林下潮濕，菌類與蕨類多。日本特有 3/16</td></tr>
+</tbody></table></div>
+
+<h3>依科別：屬、種、生態、花果期、保育等級</h3>
+<p class="ins-note">狀態：IUCN 等級；原生／日本特有依 iNaturalist 的日本分布資料（日本環境省紅皮書在 iNaturalist 沒有資料）。花／果期為 iNaturalist 日本花果標註的高峰月份，標「全」者為全球資料；<b>粗體</b>表示踏查時（10 月）正在花期或果期。名稱以 iNaturalist 為主，括號內為日文名。</p>
+<div class="tbl"><table class="t-fam">
+<colgroup><col style="width:9%"><col style="width:10%"><col style="width:20%"><col style="width:32%"><col style="width:16%"><col style="width:13%"></colgroup>
+<thead><tr><th>科</th><th>屬</th><th>種（筆・海拔）</th><th>生態特色</th><th>花／果期</th><th>狀態</th></tr></thead>
+<tbody>
+<tr><td rowspan="4"><b>松科</b></td><td>松屬</td><td>偃松（ハイマツ）（3・2,563–3,066 m）</td><td>森林線以上的匍匐松，形成高山灌叢；種子是星鴉的食物</td><td>毬果隔年秋熟</td><td>LC・原生</td></tr>
+<tr><td>雲杉屬</td><td>魚鱗雲杉（トウヒ）（1・1,829 m）</td><td>亞高山針葉林的主要樹種</td><td>毬果秋熟</td><td>LC・原生</td></tr>
+<tr><td>落葉松屬</td><td>日本落葉松（カラマツ）（1・1,720 m）</td><td>日本特有的落葉針葉樹，秋季轉金黃</td><td>毬果秋熟</td><td>LC・日本特有</td></tr>
+<tr><td>冷杉屬</td><td>冷杉屬（1・1,687 m）</td><td>亞高山針葉林，待鑑定到種</td><td>—</td><td>—</td></tr>
+<tr><td><b>柏科</b></td><td>扁柏屬</td><td>日本花柏（サワラ）（1・1,577 m）</td><td>日本特有，溪谷濕潤地</td><td>—</td><td>LC・日本特有</td></tr>
+<tr><td><b>樺木科</b></td><td>樺木屬</td><td>岳樺（ダケカンバ）（2・1,616–2,790 m）</td><td>亞高山至森林線的落葉樺，秋季黃葉</td><td>果 6、10–11（全）</td><td>LC</td></tr>
+<tr><td rowspan="7"><b>杜鵑花科</b></td><td>岩高蘭屬</td><td>岩高蘭（ガンコウラン）（1・2,604 m）</td><td>高山匍匐小灌木，黑色漿果</td><td><b>果 7–9（全）</b></td><td>—</td></tr>
+<tr><td rowspan="2">越橘屬</td><td>越橘（コケモモ）（1・2,838 m）</td><td>高山與針葉林下的常綠小灌木，紅果</td><td><b>果 9</b></td><td>LC</td></tr>
+<tr><td>篤斯越橘（クロマメノキ）（1・2,599 m）</td><td>高山落葉小灌木，藍黑色漿果</td><td>果 8–9</td><td>—</td></tr>
+<tr><td rowspan="2">杜鵑花屬</td><td>黃花石楠（キバナシャクナゲ）（1・3,038 m）</td><td>高山帶的矮生杜鵑，淡黃花</td><td>花 6–7（全）</td><td>—</td></tr>
+<tr><td>白山石楠花（ハクサンシャクナゲ）（1・2,781 m）</td><td>亞高山至高山的常綠杜鵑</td><td>花 7</td><td>原生</td></tr>
+<tr><td>白珠樹屬</td><td>鹿蹄草葉白珠（2・1,656–2,745 m）</td><td>匍匐小灌木</td><td>果 8–9</td><td>—</td></tr>
+<tr><td>—</td><td>杜鵑花科／杜鵑花亞科（5・1,914–3,094 m）</td><td>待鑑定到屬</td><td>—</td><td>—</td></tr>
+<tr><td rowspan="10"><b>薔薇科</b></td><td rowspan="2">水楊梅屬</td><td>高山水楊梅（ミヤマダイコンソウ）（2・2,603–2,961 m）</td><td>高山岩礫地</td><td>花 7（全）</td><td>原生</td></tr>
+<tr><td>Geum pentapetalum（チングルマ）（1・2,602 m）</td><td>雪田草地的匍匐小灌木，果穗羽毛狀，秋季紅葉</td><td>花 7／果 7–9</td><td>原生</td></tr>
+<tr><td>委陵菜屬</td><td>高山翻白草（ミヤマキンバイ）（2・2,825–3,130 m）</td><td>高山岩屑草地，黃花</td><td>花 6、9–10</td><td>原生</td></tr>
+<tr><td rowspan="3">花楸屬</td><td>七灶花楸（ナナカマド）（1・1,829 m）</td><td>秋季紅葉與紅果，是日本山岳的秋色代表</td><td><b>果 9</b></td><td>LC・原生</td></tr>
+<tr><td>高山花楸（タカネナナカマド）（2・2,303–2,774 m）</td><td>森林線附近的落葉灌木</td><td>果 7–9（全）</td><td>原生</td></tr>
+<tr><td>花楸屬（1・2,576 m）</td><td>待鑑定到種</td><td><b>果 9–10</b></td><td>—</td></tr>
+<tr><td>假升麻屬</td><td>假升麻（ヤマブキショウマ）（1・2,173 m）</td><td>亞高山林緣的大型草本</td><td>花 6–7</td><td>—</td></tr>
+<tr><td>懸鉤子屬</td><td>Rubus crataegifolius（クマイチゴ）（1・1,719 m）</td><td>林緣帶刺灌木</td><td>果 7–8</td><td>原生</td></tr>
+<tr><td>櫻屬</td><td>黑櫻桃（ミヤマザクラ）（1・1,578 m）</td><td>山地帶的落葉櫻</td><td>—</td><td>LC・原生</td></tr>
+<tr><td>—</td><td>蘋果屬（1・1,540 m）、薔薇亞科（2）</td><td>待鑑定</td><td>—</td><td>—</td></tr>
+<tr><td rowspan="4"><b>毛茛科</b></td><td rowspan="2">銀蓮花屬</td><td>水仙銀蓮花（ハクサンイチゲ）（1・2,757 m）</td><td>雪田周邊的高山草本，白花成片</td><td>花 6–7</td><td>—</td></tr>
+<tr><td>銀蓮花屬（1・2,955 m）</td><td>待鑑定到種</td><td>—</td><td>—</td></tr>
+<tr><td>升麻屬</td><td>單穗升麻（サラシナショウマ）（1・1,950 m）</td><td>林緣草本，白色穗狀花序</td><td><b>花 8–11</b></td><td>—</td></tr>
+<tr><td>鐵線蓮屬</td><td>鐵線蓮屬（1・1,507 m）</td><td>攀緣藤本</td><td><b>花 8–9／果 9–11</b></td><td>—</td></tr>
+<tr><td rowspan="4"><b>菊科</b></td><td>紫菀屬</td><td>野紺菊（ノコンギク）（1・1,541 m）</td><td>日本特有的秋花紫菀</td><td><b>花 9–10</b></td><td>日本特有</td></tr>
+<tr><td>香青屬</td><td>珠光香青（ヤマハハコ）（1・1,831 m）</td><td>向陽草地，白色苞片</td><td>花 8–9（尾聲）</td><td>—</td></tr>
+<tr><td>艾屬</td><td>細葉山艾（1・2,353 m）</td><td>臺灣特有種，日本紀錄應為其他艾屬誤認，待覆核</td><td>—</td><td>—</td></tr>
+<tr><td>—</td><td>蒿屬（1・1,829 m）、薊屬（1・1,558 m）、蜂斗菜屬（1・1,512 m）、菊亞科（2）</td><td>待鑑定到種；薊屬花期長，10 月仍在開</td><td><b>薊屬 花 5–11</b></td><td>—</td></tr>
+<tr><td rowspan="3"><b>無患子科</b></td><td>七葉樹屬</td><td>日本七葉樹（トチノキ）（1・1,560 m）</td><td>日本特有，大型掌狀複葉，種子富含澱粉</td><td><b>果 9</b></td><td>LC・日本特有</td></tr>
+<tr><td rowspan="2">槭屬</td><td>花楷槭（オガラバナ）（1・2,003 m）</td><td>亞高山的槭類，秋季紅葉</td><td>果 8–9</td><td>LC</td></tr>
+<tr><td>槭屬（1・1,535 m）</td><td>待鑑定到種</td><td>—</td><td>—</td></tr>
+<tr><td rowspan="2"><b>楊柳科</b></td><td rowspan="2">柳屬</td><td>Salix udensis（オノエヤナギ）（1・1,806 m）</td><td>河畔與溪谷的柳樹</td><td>—</td><td>LC</td></tr>
+<tr><td>柳屬（2・2,265–2,960 m）</td><td>待鑑定；高處的可能是矮生柳</td><td>—</td><td>—</td></tr>
+<tr><td rowspan="2"><b>山茱萸科</b></td><td rowspan="2">山茱萸屬</td><td>草茱萸（ゴゼンタチバナ）（2・1,658–1,782 m）</td><td>針葉林下的小草本，秋結紅果</td><td><b>果 8、10</b></td><td>—</td></tr>
+<tr><td>燈台樹（ミズキ）（1・1,875 m）</td><td>枝條層層平展的落葉喬木</td><td>果 8</td><td>LC</td></tr>
+<tr><td><b>連香科</b></td><td>連香樹屬</td><td>連香樹（カツラ）（1・1,637 m）</td><td>溪畔落葉喬木，黃葉帶焦糖香</td><td><b>果 9–10（全）</b></td><td>LC</td></tr>
+<tr><td><b>衛矛科</b></td><td>衛矛屬</td><td>垂絲衛矛（ツリバナ）（1・1,589 m）</td><td>果實懸垂，熟時裂開露出紅色假種皮</td><td><b>果 8–10</b></td><td>—</td></tr>
+<tr><td><b>小檗科</b></td><td>小檗屬</td><td>黃蘆木（ヒロハヘビノボラズ）（2・1,508–1,804 m）</td><td>帶刺落葉灌木，紅果</td><td><b>果 6–9（全）</b></td><td>—</td></tr>
+<tr><td><b>百合科</b></td><td>大百合屬</td><td>日本大百合（ウバユリ）（1・1,785 m）</td><td>林下大型百合，秋季留下直立果序</td><td><b>果 8–10</b></td><td>—</td></tr>
+<tr><td><b>天南星科</b></td><td>天南星屬</td><td>細齒南星（マムシグサ）（1・1,553 m）</td><td>林下草本，秋季紅色果穗</td><td><b>果 10–11</b></td><td>—</td></tr>
+<tr><td rowspan="2"><b>禾本科</b></td><td>赤竹屬</td><td>Sasa palmata（チマキザサ）（2・1,720–1,727 m）</td><td>亞高山林下的優勢竹類</td><td>—</td><td>—</td></tr>
+<tr><td>菭草屬</td><td>臺灣三毛草（ミヤマアワガエリ）（1・2,867 m）</td><td>高山草地</td><td>果 7–9（全）</td><td>—</td></tr>
+<tr><td><b>蓼科</b></td><td>虎杖屬</td><td>虎杖（イタドリ）（1・1,542 m）</td><td>河原與崩塌地的先驅草本</td><td><b>花 8–10／果 8–10</b></td><td>—</td></tr>
+<tr><td><b>桔梗科</b></td><td>風鈴草屬</td><td>岩桔梗（イワギキョウ）（1・2,954 m）</td><td>高山岩屑地的藍紫色鐘形花</td><td>花 7–8</td><td>—</td></tr>
+<tr><td><b>岩梅科</b></td><td>岩梅屬</td><td>岩梅（イワウメ）（1・3,000 m）</td><td>高山岩壁的墊狀小灌木</td><td>花 6–7（全）</td><td>—</td></tr>
+<tr><td><b>龍膽科</b></td><td>龍膽屬</td><td>高山龍膽（トウヤクリンドウ）（1・2,856 m）</td><td>高山草地，花期接近尾聲</td><td>花 8（全）</td><td>—</td></tr>
+<tr><td><b>堇菜科</b></td><td>堇菜屬</td><td>雙黃花菫菜（キバナノコマノツメ）（1・2,821 m）</td><td>雪田周邊的黃花菫菜</td><td>花 6–7</td><td>—</td></tr>
+<tr><td rowspan="2"><b>虎耳草科</b></td><td>鬼燈檠屬</td><td>Rodgersia podophylla（ヤグルマソウ）（1・1,551 m）</td><td>溪谷林下的大型葉草本</td><td>花 5–6</td><td>—</td></tr>
+<tr><td>—</td><td>Heuchereae（1・1,516 m）、石竹科繁縷族（2,811 m）、繖形科（1,664 m）、唇形科（1,538 m）</td><td>待鑑定</td><td>—</td><td>—</td></tr>
+<tr><td><b>鱗毛蕨科</b></td><td>鱗毛蕨屬</td><td>雄羊齒（オシダ）（1・1,517 m）</td><td>林下大型蕨類</td><td>孢子植物</td><td>原生</td></tr>
+<tr><td><b>馬鞭草科</b></td><td>琴木屬</td><td>垂花琴木（1・1,508 m）</td><td>熱帶美洲的觀賞樹，在 1,508 m 出現可疑，待覆核</td><td>—</td><td>LC</td></tr>
+<tr><td rowspan="2"><b>真菌</b></td><td>圓孢側耳屬</td><td>貝形圓孢側耳（スギヒラタケ）（1・1,674 m）</td><td>長在針葉樹倒木上；曾有食用中毒案例，不宜食用</td><td>—</td><td>—</td></tr>
+<tr><td>—</td><td>擬層孔菌屬（1・1,555 m）、傘菌目／綱（2）</td><td>倒木上的木材腐朽菌</td><td>—</td><td>—</td></tr>
+<tr><td><b>裳蛾科</b></td><td>—</td><td>裳蛾科（1・1,550 m）</td><td>待鑑定</td><td>—</td><td>—</td></tr>
+<tr><td><b>未定</b></td><td>—</td><td>被子植物（2）、杜鵑花目、殼斗目、禾本目</td><td>待鑑定</td><td>—</td><td>—</td></tr>
+</tbody></table></div>
+</div>
 <p class="foot">資料來源 iNaturalist API（觀察者 bunnytailgrass，地點 place_id 6737）· 距離與海拔：GPX 實測軌跡（裝置高度計）· 觀察點依拍攝時間對齊軌跡 · 科/屬中拉名：iNaturalist 分類（地區俗名 zh-TW） · 快照 2026/10 · Yari-Hotaka Circuit。</p>
 </div>
 <script>

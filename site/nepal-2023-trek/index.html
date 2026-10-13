@@ -65,6 +65,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 <div class="nav"><a href="../index.html">← 旅程索引 journeys</a></div>
 <h1>尼泊爾 2023 · 喜馬拉雅健行</h1>
 <p class="sub">2023-10-01 – 2023-10-12 · 11 天 · 103 樣點 · 88 種 · 連續路徑剖面 single continuous transect</p>
+<div class="toc"><a href="#profile">剖面圖</a><a href="#obsmap">觀測點地圖</a><a href="#insights">AI彙整，待查證</a></div>
 <div class="cards">
   <div class="card"><div class="lbl">觀察數 observations</div><div class="val">103</div></div>
   <div class="card"><div class="lbl">物種數 species</div><div class="val">88</div></div>
@@ -84,6 +85,96 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 <h2 class="sec" id="obsmap">觀測點地圖<span>Observation map</span></h2>
 <p class="secnote">與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</p>
 <div class="mapbox"><div id="map"></div></div>
+<h2 class="sec" id="insights">AI彙整，待查證</h2>
+<div class="ins"><!-- Insights for nepal-2023-trek. Hand-curated HTML fragment, inlined by generate.py
+     into the page's third section (AI彙整，待查證). Data: iNaturalist taxonomy, IUCN and Nepal establishment means, iNaturalist Flowers / Fruits annotations (花果期), SRTM elevation (棲地). -->
+<ol class="ins-key">
+  <li><b>11 天從 2,570 m 走到 5,628 m，跨越四個生物帶。</b>從 Lukla 一帶的溫帶針闊葉林，經 3,300–3,900 m 的杜鵑—樺木林、3,900–4,700 m 的圓柏高山灌叢，到 4,700 m 以上的高山草甸與冰磧岩屑地。103 筆紀錄中植物 88 筆，另有鳥 7、哺乳類 3、昆蟲 3、真菌 2；最高點是 5,628 m 的藏雪雞，植物最高是 5,522 m 的雪絨花屬。</li>
+  <li><b>10 月上旬正值雨季後的秋花期。</b>依 iNaturalist 花果標註，約 41 個類群在花期，最醒目的是龍膽科：平龍膽、華麗龍膽、<i>Gentiana stellata</i> 與 <i>Comastoma pedunculatum</i> 的花期都集中在 10 月；高處還有雪絨花、翠雀、藍鐘花與紫菀。同時西藏沙棘、薔薇、栒子、小檗正在結果。</li>
+  <li><b>受脅物種都是被模糊座標的紀錄；外來種只出現在村落。</b>IUCN EN：白腹麝；VU：山嶺麻黃；NT：喜馬拉雅冷杉、喜馬拉雅塔爾羊。這些紀錄都被 iNaturalist 模糊了座標，卻仍畫在剖面圖與地圖上，海拔不可信（喜馬拉雅冷杉被放在 4,950 m），建議比照臺灣旅程不上圖。外來種 2 種（波斯菊、粗毛小米菊）都在 2,600 m 的村落一帶。研究等級 47/103。</li>
+</ol>
+
+<h3>依棲地 × 屬</h3>
+<p class="ins-note">棲地依 SRTM 海拔劃分（Khumbu 地區的溫帶林／亞高山林／高山灌叢／高山草甸）。標「模糊座標」者的位置與海拔是隨機偏移後的結果，僅供參考。</p>
+<div class="tbl"><table class="t-hab">
+<colgroup><col style="width:22%"><col style="width:46%"><col style="width:32%"></colgroup>
+<thead><tr><th>棲地（筆數・海拔）</th><th>屬：物種</th><th>特性</th></tr></thead>
+<tbody>
+<tr><td><b>A 高山草甸與冰磧岩屑地</b><br>25 筆・4,750–5,628 m<br>Lobuche–Gorak Shep 一帶</td><td>菊科：雪絨花屬（<i>Leontopodium monocephalum</i>）、<i>Allardia glabra</i>、籟簫屬（2）、鼠麴草亞族<br>毛茛科：翠雀屬（2）、<i>Aconitum hookeri</i><br>薔薇科：金露梅（2）<br>其他：紅景天屬、<i>Lagotis kunawurensis</i>、蠅子草屬、毛穗香薷、老鸛草屬、<i>Comastoma pedunculatum</i><br>動物：藏雪雞、黃嘴山鴉、鴝岩鷚、岩鷚屬、喜瑪拉雅塔爾羊（模糊座標，2）<br>喜馬拉雅冷杉（模糊座標，實際應在林帶）</td><td>森林線與灌叢線以上的岩屑與草甸，植物多呈墊狀、蓮座狀或密被絨毛以抗寒抗風。動物紀錄最多的一帶</td></tr>
+<tr><td><b>B 圓柏高山灌叢</b><br>15 筆・3,916–4,676 m<br>Pangboche–Pheriche 一帶</td><td>柏科：垂枝柏、滇藏方枝柏<br>灌木：西藏沙棘、<i>Lonicera obovata</i>、栒子屬、杜鵑花屬、山嶺麻黃（模糊座標）<br>草本：拳參屬、<i>Koenigia tortuosa</i>、虎耳草屬、藍鐘花屬、<i>Comastoma pedunculatum</i>；蕨：茀蕨屬<br>動物：白腹麝（模糊座標）、橙黃豆粉蝶</td><td>森林線以上的圓柏、沙棘與杜鵑灌叢；秋季沙棘、栒子結果</td></tr>
+<tr><td><b>C 杜鵑—樺木林與林緣</b><br>34 筆・3,304–3,878 m<br>Namche–Tengboche 一帶</td><td>杜鵑花屬（5）：<i>Rhododendron lepidotum</i>、<i>R. setosum</i>、杜鵑花屬（3）；<i>Cassiope fastigiata</i><br>龍膽屬（4）：平龍膽（2）、華麗龍膽、<i>Gentiana stellata</i><br>樺木屬：糙皮樺；松屬：喬松；小檗屬（2）；薔薇屬：大葉薔薇<br>菊科：小舌紫菀（2）、<i>Leontopodium stracheyi</i>、<i>Senecio raphanifolius</i>、飛蓬屬、毛鱗菊屬、<i>Anaphalis contorta</i><br>其他：烏頭屬、梅花草屬、<i>Satyrium nepalense</i>（蘭）、繖形科（2）、桔梗亞科；蕨：鱗毛蕨屬（2）、槲蕨屬、碗蕨科<br>動物：白翅擬臘嘴雀</td><td>亞高山的杜鵑、糙皮樺與冷杉林，林緣草地是秋季龍膽的主要棲地</td></tr>
+<tr><td><b>D 溫帶針闊葉林與村落</b><br>29 筆・2,570–3,296 m<br>Lukla–Phakding–Namche</td><td>松屬：喬松；馬醉木屬：<i>Pieris formosa</i>；十大功勞：尼泊爾十大功勞；<i>Leucosceptrum canum</i><br>薔薇屬：絹毛薔薇、大葉薔薇；風鈴草屬：西南風鈴草；紫雀花；鳳仙花屬：<i>Impatiens racemosa</i>；菊葉紅景天；尼泊爾籟簫；天南星屬<br>蕨類：膜蕨屬、蓧蕨屬、卷柏屬、水龍骨屬、鳳尾蕨屬<br>外來：波斯菊、粗毛小米菊<br>動物：巨嘴鴉、林鴝屬、黃網眼蝶、眼灰蝶族；菌：褶孔牛肝菌屬</td><td>較濕潤的溫帶林，附生與林下蕨類多；村落與步道旁出現外來雜草</td></tr>
+</tbody></table></div>
+
+<h3>依科別：屬、種、生態、花果期、保育等級</h3>
+<p class="ins-note">狀態：IUCN 等級；外來依 iNaturalist 的尼泊爾分布資料，其餘未標示者視為原生。花／果期為 iNaturalist 花果標註的高峰月份（尼泊爾標註不足時用全球資料，標「全」）；<b>粗體</b>表示踏查時（10 月）正在花期或果期。名稱以 iNaturalist 為主。</p>
+<div class="tbl"><table class="t-fam">
+<colgroup><col style="width:9%"><col style="width:10%"><col style="width:20%"><col style="width:32%"><col style="width:16%"><col style="width:13%"></colgroup>
+<thead><tr><th>科</th><th>屬</th><th>種（筆・海拔）</th><th>生態特色</th><th>花／果期</th><th>狀態</th></tr></thead>
+<tbody>
+<tr><td rowspan="4"><b>龍膽科</b></td><td rowspan="3">龍膽屬</td><td>平龍膽（2・3,393–3,588 m）</td><td>貼地生長的高山龍膽，藍花</td><td><b>花 10</b></td><td>—</td></tr>
+<tr><td>華麗龍膽（1・3,878 m）</td><td>高山草地，藍白相間的筒狀花</td><td><b>花 10</b></td><td>—</td></tr>
+<tr><td><i>Gentiana stellata</i>（1・3,728 m）</td><td>高山草地小草本</td><td><b>花 10–11</b></td><td>—</td></tr>
+<tr><td>喉毛花屬</td><td><i>Comastoma pedunculatum</i>（2・4,537–4,907 m）</td><td>高山草甸的小型龍膽</td><td><b>花 10</b></td><td>—</td></tr>
+<tr><td rowspan="7"><b>菊科</b></td><td rowspan="2">雪絨花屬</td><td><i>Leontopodium monocephalum</i>（1・5,522 m）</td><td>本次植物最高紀錄，墊狀雪絨花</td><td><b>花 10（全）</b></td><td>—</td></tr>
+<tr><td><i>Leontopodium stracheyi</i>（1・3,831 m）</td><td>亞高山草坡的雪絨花</td><td><b>花 7、10（全）</b></td><td>—</td></tr>
+<tr><td>香青屬</td><td>尼泊爾籟簫（1・2,782 m）、<i>A. nepalensis</i> var. <i>monocephala</i>（4,884 m）、<i>A. contorta</i>（3,550 m）、籟簫屬（4,861 m）</td><td>全株白綿毛，從林緣分布到高山草甸</td><td><b>花 10</b></td><td>—</td></tr>
+<tr><td>紫菀屬</td><td>小舌紫菀（2・3,323–3,560 m）</td><td>林緣灌木狀紫菀</td><td><b>花 10–11</b></td><td>—</td></tr>
+<tr><td>—</td><td><i>Allardia glabra</i>（5,018 m）、<i>Senecio raphanifolius</i>（3,755 m）、飛蓬屬、毛鱗菊屬、鼠麴草亞族</td><td>高山草本</td><td><b>多在 10 月花期</b></td><td>—</td></tr>
+<tr><td>秋英屬</td><td>波斯菊（1・2,613 m）</td><td>中美洲原產的觀賞草花，隨村落逸出</td><td><b>花 8–10</b></td><td><b>外來</b></td></tr>
+<tr><td>牛膝菊屬</td><td>粗毛小米菊（1・2,617 m）</td><td>美洲原產的農地與路旁雜草</td><td>花期長</td><td><b>外來</b></td></tr>
+<tr><td rowspan="5"><b>杜鵑花科</b></td><td rowspan="3">杜鵑花屬</td><td><i>Rhododendron lepidotum</i>（1・3,861 m）</td><td>葉有鱗片的矮生杜鵑</td><td>花 6–7</td><td>—</td></tr>
+<tr><td><i>Rhododendron setosum</i>（1・3,866 m）</td><td>枝葉有剛毛的高山矮杜鵑</td><td>花 5–6</td><td>—</td></tr>
+<tr><td>杜鵑花屬（4・3,534–3,916 m）</td><td>亞高山林與灌叢的優勢灌木，待鑑定到種</td><td>花 4–5</td><td>—</td></tr>
+<tr><td>岩鬚屬</td><td><i>Cassiope fastigiata</i>（1・3,859 m）</td><td>高山岩坡的鱗葉小灌木，白色鐘形花</td><td>花 5–6</td><td>—</td></tr>
+<tr><td>馬醉木屬</td><td><i>Pieris formosa</i>（1・2,699 m）</td><td>溫帶林緣灌木，有毒</td><td>花 3–5／<b>果 10</b></td><td>LC</td></tr>
+<tr><td rowspan="5"><b>薔薇科</b></td><td>金露梅屬</td><td>金露梅（2・4,912–5,117 m）</td><td>高山灌叢的黃花小灌木</td><td><b>花 6–10</b></td><td>—</td></tr>
+<tr><td rowspan="2">薔薇屬</td><td>大葉薔薇（2・3,296–3,304 m）</td><td>林緣灌木，秋季紅色薔薇果</td><td><b>果 10</b></td><td>—</td></tr>
+<tr><td>絹毛薔薇（1・3,020 m）</td><td>四瓣白花的高山薔薇</td><td><b>果 10</b></td><td>—</td></tr>
+<tr><td>栒子屬</td><td>栒子屬（1・3,999 m）</td><td>高山灌叢的匍匐灌木</td><td><b>果 10–11</b></td><td>—</td></tr>
+<tr><td>—</td><td>薔薇科（1・2,682 m）</td><td>待鑑定</td><td>—</td><td>—</td></tr>
+<tr><td rowspan="3"><b>毛茛科</b></td><td>翠雀屬</td><td><i>Delphinium nepalense</i>（4,920 m）、翠雀屬（5,548 m）</td><td>高山岩屑地的藍紫花</td><td><b>花 7、10</b></td><td>—</td></tr>
+<tr><td>烏頭屬</td><td><i>Aconitum hookeri</i>（4,921 m）、烏頭屬（3,789 m）</td><td>高山草地，全株有毒</td><td><b>花 10</b></td><td>—</td></tr>
+<tr><td>—</td><td>毛茛亞科（1・2,840 m）</td><td>待鑑定</td><td>—</td><td>—</td></tr>
+<tr><td rowspan="2"><b>柏科</b></td><td rowspan="2">刺柏屬</td><td>垂枝柏（1・4,003 m）</td><td>枝條下垂的高山圓柏，森林線附近</td><td>—</td><td>LC</td></tr>
+<tr><td>滇藏方枝柏（1・4,676 m）</td><td>高山灌叢的匍匐圓柏，當地作焚香</td><td>—</td><td>LC</td></tr>
+<tr><td rowspan="2"><b>松科</b></td><td>冷杉屬</td><td>喜馬拉雅冷杉（1・圖上 4,950 m）</td><td>亞高山冷杉林的主要樹種；座標被模糊，實際應在林帶</td><td>—</td><td><b>NT</b></td></tr>
+<tr><td>松屬</td><td>喬松（2・2,983–3,428 m）</td><td>溫帶林的五針松</td><td>—</td><td>LC</td></tr>
+<tr><td><b>樺木科</b></td><td>樺木屬</td><td>糙皮樺（1・3,761 m）</td><td>亞高山林的落葉樺，樹皮可剝成紙狀</td><td>—</td><td>LC</td></tr>
+<tr><td rowspan="2"><b>小檗科</b></td><td rowspan="2">小檗屬</td><td>小檗屬（2・3,674–3,799 m）</td><td>帶刺灌木，秋季紅果</td><td><b>花 4–6／果 10</b></td><td>—</td></tr>
+<tr><td>尼泊爾十大功勞（1・2,618 m）</td><td>羽狀複葉的常綠灌木</td><td><b>花 10</b>（多在冬春）</td><td>—</td></tr>
+<tr><td><b>胡頹子科</b></td><td>沙棘屬</td><td>西藏沙棘（1・4,589 m）</td><td>高山河灘的矮生沙棘，橙色果</td><td><b>果 10–11</b></td><td>—</td></tr>
+<tr><td><b>忍冬科</b></td><td>忍冬屬</td><td><i>Lonicera obovata</i>（1・4,598 m）</td><td>高山灌叢的小灌木</td><td><b>果 10–11（全）</b></td><td>—</td></tr>
+<tr><td><b>麻黃科</b></td><td>麻黃屬</td><td>山嶺麻黃（1・4,603 m）</td><td>乾旱岩坡的無葉小灌木；座標被模糊</td><td>—</td><td><b>VU</b></td></tr>
+<tr><td><b>蓼科</b></td><td>—</td><td>拳參屬（3,952 m）、<i>Koenigia tortuosa</i>（3,968 m）、蓼亞科（2,692 m）</td><td>高山草地與林緣草本</td><td><b>花 7、10</b></td><td>—</td></tr>
+<tr><td><b>景天科</b></td><td>紅景天屬</td><td>菊葉紅景天（2,934 m）、紅景天屬（4,928 m）</td><td>岩縫中的多肉草本</td><td><b>果 10–11</b></td><td>—</td></tr>
+<tr><td><b>桔梗科</b></td><td>—</td><td>西南風鈴草（3,022 m）、藍鐘花屬（4,282 m）、桔梗亞科（3,585 m）</td><td>林緣與高山草地的藍花</td><td><b>花 9–11</b></td><td>—</td></tr>
+<tr><td><b>唇形科</b></td><td>—</td><td>毛穗香薷（4,922 m）、<i>Leucosceptrum canum</i>（2,654 m）</td><td>香薷為高山芳香草本；後者為溫帶林緣灌木</td><td>花 10</td><td>LC</td></tr>
+<tr><td><b>車前科</b></td><td>兔耳草屬</td><td><i>Lagotis kunawurensis</i>（1・5,025 m）</td><td>高山岩屑地的蓮座狀草本</td><td>花 7（全）</td><td>—</td></tr>
+<tr><td><b>石竹科</b></td><td>蠅子草屬</td><td>蠅子草屬（1・5,009 m）</td><td>高山墊狀草本</td><td>花 8</td><td>—</td></tr>
+<tr><td><b>牻牛兒苗科</b></td><td>老鸛草屬</td><td>老鸛草屬（1・4,913 m）</td><td>高山草甸</td><td><b>花 7、10</b></td><td>—</td></tr>
+<tr><td><b>虎耳草科</b></td><td>虎耳草屬</td><td>虎耳草屬（1・3,916 m）</td><td>岩縫與高山草地</td><td><b>花 7–10</b></td><td>—</td></tr>
+<tr><td><b>衛矛科</b></td><td>梅花草屬</td><td>梅花草屬（1・3,836 m）</td><td>濕潤高山草地</td><td><b>花 7–8、10</b></td><td>—</td></tr>
+<tr><td><b>蘭科</b></td><td>鳥足蘭屬</td><td><i>Satyrium nepalense</i>（1・3,835 m）</td><td>高山草地的地生蘭，粉紅花</td><td><b>花 10</b></td><td>—</td></tr>
+<tr><td><b>豆科</b></td><td>紫雀花屬</td><td>紫雀花（1・3,094 m）</td><td>林緣匍匐草本，藍紫色蝶形花</td><td><b>花 7、10</b></td><td>LC</td></tr>
+<tr><td><b>鳳仙花科</b></td><td>鳳仙花屬</td><td><i>Impatiens racemosa</i>（1・2,615 m）</td><td>溫帶林下潮濕處</td><td><b>花 9–10</b></td><td>—</td></tr>
+<tr><td><b>天南星科</b></td><td>天南星屬</td><td>天南星屬（1・2,698 m）</td><td>林下草本，秋季紅果</td><td><b>果 8–10</b></td><td>—</td></tr>
+<tr><td><b>繖形科</b></td><td>—</td><td>繖形科（2・3,555–3,869 m）</td><td>待鑑定</td><td><b>花／果 10</b></td><td>—</td></tr>
+<tr><td><b>蕨類</b></td><td>—</td><td>鱗毛蕨屬（2）、膜蕨屬、蓧蕨屬、卷柏屬、水龍骨科（4）、鳳尾蕨屬、碗蕨科</td><td>溫帶林下與附生蕨類，最高到 3,917 m</td><td>孢子植物</td><td>—</td></tr>
+<tr><td><b>鳥類</b></td><td>—</td><td>藏雪雞（5,628 m）、黃嘴山鴉（5,116 m）、鴝岩鷚（4,750 m）、岩鷚屬（5,035 m）、白翅擬臘嘴雀（3,486 m）、林鴝屬（3,241 m）、巨嘴鴉（2,570 m）</td><td>藏雪雞與黃嘴山鴉是喜馬拉雅最高海拔的常見鳥種</td><td>—</td><td>LC</td></tr>
+<tr><td rowspan="2"><b>哺乳類</b></td><td>塔爾羊屬</td><td>喜瑪拉雅塔爾羊（2・圖上 4,937–5,047 m）</td><td>陡峭岩壁上的野生山羊；座標被模糊</td><td>—</td><td><b>NT</b></td></tr>
+<tr><td>麝屬</td><td>白腹麝（1・圖上 4,056 m）</td><td>林緣灌叢的小型鹿類，因麝香遭盜獵；座標被模糊</td><td>—</td><td><b>EN</b></td></tr>
+<tr><td><b>昆蟲</b></td><td>—</td><td>橙黃豆粉蝶（3,967 m）、黃網眼蝶（2,696 m）、眼灰蝶族（2,824 m）</td><td>高山與林緣蝴蝶</td><td>—</td><td>—</td></tr>
+<tr><td><b>真菌</b></td><td>—</td><td>褶孔牛肝菌屬（2,812 m）、傘菌綱（3,850 m）</td><td>林下菌類</td><td>—</td><td>—</td></tr>
+<tr><td><b>未定</b></td><td>—</td><td>木蘭綱（3）</td><td>待鑑定</td><td>—</td><td>—</td></tr>
+</tbody></table></div>
+
+<h3>座標被模糊、但仍畫在圖上的 5 筆</h3>
+<ul class="ins-list">
+  <li><b>喜馬拉雅冷杉</b> <i>Abies spectabilis</i>（IUCN NT）、<b>白腹麝</b> <i>Moschus leucogaster</i>（EN）、<b>喜瑪拉雅塔爾羊</b> <i>Hemitragus jemlahicus</i>（NT，2 筆）、<b>山嶺麻黃</b> <i>Ephedra gerardiana</i>（VU）。</li>
+</ul>
+<p class="ins-note">iNaturalist 會把敏感物種的座標隨機放在約 20 km 見方的範圍內。這趟沒有 GPS 軌跡，這 5 筆的距離與海拔都是由模糊後的座標算出，並不可信；臺灣的旅程已將這類紀錄排除在圖外。</p>
+</div>
 <p class="foot">資料來源 iNaturalist API（觀察者 bunnytailgrass，地點 place_id 7335）· 海拔 SRTM 30 m（雙線性內插）· GPS &gt;100 m 之點位置與高程以鄰近可靠點時間內插 · 科/屬中拉名：iNaturalist 分類（地區俗名 zh-TW） · 快照 2023/10 · Khumbu。</p>
 </div>
 <script>
