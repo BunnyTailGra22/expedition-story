@@ -126,6 +126,7 @@ use steps 1, 3, 4 and 6.
 | Journey | Mode | Summary |
 |---|---|---|
 | **二格山稜線 2026-04-25** | survey | 93 pts / 63 spp / 0.6 km（長期物候典藏另存於 `../2G 二格/iNAT in Erge/`） |
+| **中央山脈北三段 2021 · North Section Three** | trek + GPX | 7 days · 73 pts / 62 spp / 74.4 km / peak 3350 m (8 Garmin files, D3 in two; GPS altitude smoothed) |
 | **中央山脈南一段 2025 · South Section One** | trek + GPX | 5 days · 46 pts / 39 spp / 52.3 km / peak 3677 m |
 | **中央山脈南二段 2024 · South Section Two** | trek + GPX | 8 days · 70 pts / 49 spp / 86.9 km / peak 3652 m |
 | **中央山脈南三段 2025 · South Section Three** | trek + GPX | 8 days · 85 pts / 58 spp / 101.3 km / peak 3623 m (D6 morning and D8 after 11:36 not recorded: battery) |

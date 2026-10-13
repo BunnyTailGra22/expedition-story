@@ -69,6 +69,8 @@ site/index.html             # landing: overview map (all tracks) + list sortable
   `nanhu-2020-trek` on 4 Garmin files (35.9 km, 3752 m; D3 and the D5 descent not recorded — the 7 descent obs
   sit by nearest point on the approach they retrace). Its watch logged GPS altitude: `"gpx_smooth_s": 120`
   median-filters the elevation (ascent +6703 m raw → +4160 m; SRTM along the track +3855 m).
+  `north3-2021-trek` on 8 Garmin files (D3 split in two; 74.4 km, 3350 m); `"gpx_smooth_s": 120` takes the
+  ascent from +11934 m raw to +6503 m (SRTM along the track +5569 m).
 - **P7 [done]** page sections: 地形/高程剖面圖 · 觀測點地圖 · AI彙整，待查證 (insights). A trek may add a hand-curated
   `journeys/<id>/insights.html` (habitat × genus, family table with ecology / 花果期 / 特有·IUCN·紅皮書, three key
   findings); `generate.py` inlines it as the third section. First user: `south1-2025-trek`.
