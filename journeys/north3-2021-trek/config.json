@@ -1,0 +1,26 @@
+{
+  "id": "north3-2021-trek",
+  "label": "中央山脈北三段 2021 · North Section Three",
+  "user_login": "bunnytailgrass",
+  "place_id": 7887,
+  "d1": "2021-03-31",
+  "d2": "2021-04-06",
+  "mode": "trek",
+  "taxonomy": "taicol",
+  "gpx": "track.gpx",
+  "scope": {
+    "exclude_obs_ids": [
+      "73168377",
+      "73100884",
+      "73100853",
+      "73100775",
+      "73100723",
+      "73100703",
+      "73100691",
+      "73100069"
+    ]
+  },
+  "snapshot": "2021/03 · 中央山脈北三段",
+  "elevation": "srtm30m",
+  "brand": "sow"
+}

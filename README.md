@@ -124,6 +124,7 @@ use steps 1, 3, 4 and 6.
 | Journey | Mode | Summary |
 |---|---|---|
 | **二格山稜線 2026-04-25** | survey | 93 pts / 63 spp / 0.6 km（長期物候典藏另存於 `../2G 二格/iNAT in Erge/`） |
+| **中央山脈北三段 2021 · North Section Three** | trek + GPX | 7 days · 73 pts / 62 spp / 74.4 km / peak 3354 m |
 | **中央山脈南一段 2025 · South Section One** | trek + GPX | 5 days · 46 pts / 39 spp / 52.3 km / peak 3677 m |
 | **中央山脈南三段 2025 · South Section Three** | trek + GPX | 8 days · 85 pts / 58 spp / 101.3 km / peak 3623 m (D6 morning and D8 after 11:36 not recorded: battery) |
 | **路過島峰 2023 · Island Peak, Nepal** | trek + GPX | 11 days · 98 pts / 84 spp / 131.8 km / peak 6062 m · 植群帶對照 |
