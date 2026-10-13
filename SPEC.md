@@ -48,6 +48,7 @@ Reference for journey inputs, generated outputs, and the create-journey form.
 | `taxonomy` | `"inat"` \| `"taicol"` | — | Family/genus source. Omitted ⇒ `taicol`. Use `inat` outside Taiwan. |
 | `walk_gap_min` | integer | — | Survey only. New walk on new day **or** gap > this (default 120). |
 | `gpx` | string \| string[] | — | Trek only. GPX file(s) in `journeys/<id>/` (merge per-day files with `merge_gpx.py --strip`; add `--every 5` for a 1-second recording). The recorded route then sets distance, elevation and the map line; each observation is placed on it by time. |
+| `vegzones.json` / `vegzones.html` / `vegzones.png` | files | — | Overseas trek only. Zones for `vegzones.py`, which draws `vegzones.png`; with `vegzones.html` they form the **植群帶對照** section between the map and the insights. |
 | `insights.html` | file | — | Trek only. Optional hand-curated HTML fragment in `journeys/<id>/`; rendered as the page's third section **AI彙整，待查證** (AI-compiled, to be verified), after the elevation profile and the observation map, with a jump link under the title. |
 | `scope.exclude_obs_ids` | string[] | — | Observation ids to drop (off-trail outliers, bad points). |
 | `scope.time_before` | `"HH:MM"` | — | Drop observations at/after this local (CST) time. |

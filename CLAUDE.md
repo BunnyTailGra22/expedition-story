@@ -67,6 +67,10 @@ site/index.html             # landing: overview map (all tracks) + list sortable
 - **P7 [done]** page sections: 地形/高程剖面圖 · 觀測點地圖 · AI彙整，待查證 (insights). A trek may add a hand-curated
   `journeys/<id>/insights.html` (habitat × genus, family table with ecology / 花果期 / 特有·IUCN·紅皮書, three key
   findings); `generate.py` inlines it as the third section. First user: `south1-2025-trek`.
+- **P8 [done]** overseas treks add a **植群帶對照** section (between the map and the insights): `vegzones.py`
+  (matplotlib, authoring-only) draws Taiwan's zones (蘇鴻傑 1984) beside the region's on one elevation axis with
+  one blue dot per observation → `journeys/<id>/vegzones.png`, plus `vegzones.json` (zones) and `vegzones.html`
+  (3–5 differences from Taiwan). `generate.py` copies the PNG into `site/<id>/`.
 
 ## Reuse source (port, don't re-invent)
 `../2G 二格/iNAT in Erge/` already has working: GPS correction (build_profile.py),
