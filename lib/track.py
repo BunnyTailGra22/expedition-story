@@ -4,7 +4,7 @@ axis, its recorded elevation the profile, and each observation is placed on it b
 time (the track knows where you were when the photo was taken).
 
 Loading is namespace-agnostic (GPX 1.0/1.1) and stdlib-only."""
-import bisect, datetime, xml.etree.ElementTree as ET
+import bisect, datetime, statistics, xml.etree.ElementTree as ET
 from . import geo
 
 TIME_TOL_M = 250            # a time-matched position must lie this close to the obs fix
@@ -19,9 +19,25 @@ def _child(el, name):
     return next((c for c in el if _tag(c) == name), None)
 
 
-def load(paths):
+def smooth(t, ele, win_s):
+    """Centred moving median of elevation over win_s seconds. For a watch that logs
+    GPS-derived (not barometric) altitude: its jitter, summed by the ascent dead-band,
+    inflates the climb (南湖 2020: +6703 m raw vs +4160 m at 120 s, SRTM +3855 m),
+    while a median keeps the summits."""
+    ts, out, a, b = [x.timestamp() for x in t], [], 0, 0
+    for i, ti in enumerate(ts):
+        while ts[a] < ti - win_s / 2:
+            a += 1
+        while b < len(ts) and ts[b] <= ti + win_s / 2:
+            b += 1
+        out.append(statistics.median(ele[a:b]))
+    return out
+
+
+def load(paths, smooth_s=0):
     """GPX files (any order; days may be split across files) -> one time-sorted
-    track {"t": [datetime], "lat", "lng", "ele", "x": [cumulative m]}."""
+    track {"t": [datetime], "lat", "lng", "ele", "x": [cumulative m]}. smooth_s > 0
+    median-filters a noisy elevation record (config "gpx_smooth_s")."""
     rows = []
     for p in paths:
         for tp in ET.parse(p).getroot().iter():
@@ -44,8 +60,11 @@ def load(paths):
         if v is None:
             j = bisect.bisect_left(known, i)
             ele[i] = ele[known[min(j, len(known) - 1)]]
+    t = [r[0] for r in rows]
+    if smooth_s:
+        ele = smooth(t, ele, smooth_s)
     lat, lng = [r[1] for r in rows], [r[2] for r in rows]
-    return {"t": [r[0] for r in rows], "lat": lat, "lng": lng, "ele": ele,
+    return {"t": t, "lat": lat, "lng": lng, "ele": ele,
             "x": geo.cumdist(list(zip(lat, lng)))}
 
 

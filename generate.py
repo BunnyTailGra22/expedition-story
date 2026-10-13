@@ -118,7 +118,7 @@ def run_trek(cfg, obs, out):
     if cfg.get("gpx"):
         g = cfg["gpx"]
         trk = TR.load([os.path.join(HERE, "journeys", cfg["id"], f)
-                       for f in ([g] if isinstance(g, str) else g)])
+                       for f in ([g] if isinstance(g, str) else g)], cfg.get("gpx_smooth_s", 0))
     pts = P.build(obs, cfg.get("scope"), CACHE, track=trk)
     if not pts:
         print(f"{cfg['label']}: no usable points after scope.")

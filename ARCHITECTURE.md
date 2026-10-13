@@ -103,7 +103,8 @@ and links without JavaScript.
   point within ±3 h (a circuit retraces its approach trail, so time picks the right pass). The obs then
   takes the track's along-route distance and recorded elevation; the profile line, trail length, peak,
   ascent (3 m dead-band) and the map line all come from the track (decimated to ~25 m), and zoom sync
-  runs through it. Without a GPX, the observations stand in for the route as below.
+  runs through it. `gpx_smooth_s` first median-filters the elevation of a GPS-altitude recording.
+  Without a GPX, the observations stand in for the route as below.
 - **Observation map** (Leaflet): an orange track polyline through the points (the GPX route when
   present), circular photo markers
   (dots when a photo is missing), popups → iNaturalist. The base map is **OpenStreetMap**, with a

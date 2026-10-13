@@ -24,6 +24,7 @@ Reference for journey inputs, generated outputs, and the create-journey form.
   "mode": "trek",                   // optional · "trek" | absent (= survey)
   "taxonomy": "inat",               // optional · "inat" | "taicol" (default: taicol)
   "gpx": "track.gpx",               // optional · trek only · recorded route, relative to journeys/<id>/
+  "gpx_smooth_s": 120,              // optional · with gpx · median-filter a noisy elevation record (s)
   "walk_gap_min": 120,              // optional · survey segmentation gap, minutes (default 120)
 
   "scope": {                        // optional · data cleaning
@@ -48,6 +49,7 @@ Reference for journey inputs, generated outputs, and the create-journey form.
 | `taxonomy` | `"inat"` \| `"taicol"` | — | Family/genus source. Omitted ⇒ `taicol`. Use `inat` outside Taiwan. |
 | `walk_gap_min` | integer | — | Survey only. New walk on new day **or** gap > this (default 120). |
 | `gpx` | string \| string[] | — | Trek only. GPX file(s) in `journeys/<id>/` (merge per-day files with `merge_gpx.py --strip`; add `--every 5` for a 1-second recording). The recorded route then sets distance, elevation and the map line; each observation is placed on it by time. |
+| `gpx_smooth_s` | number | — | With `gpx`. Centred moving median of the recorded elevation over this many seconds, for a watch that logs GPS-derived altitude (no barometer), whose jitter otherwise inflates total ascent. `120` took 南湖 2020 from +6703 m to +4160 m (SRTM along the track: +3855 m) and kept the summit. Default 0: elevation as recorded. |
 | `vegzones.json` / `vegzones.html` / `vegzones.png` | files | — | Overseas trek only. Zones for `vegzones.py`, which draws `vegzones.png`; with `vegzones.html` they form the **植群帶對照** section between the map and the insights. |
 | `insights.html` | file | — | Trek only. Optional hand-curated HTML fragment in `journeys/<id>/`; rendered as the page's third section **AI彙整，待查證** (AI-compiled, to be verified), after the elevation profile and the observation map, with a jump link under the title. |
 | `scope.exclude_obs_ids` | string[] | — | Observation ids to drop (off-trail outliers, bad points). |
