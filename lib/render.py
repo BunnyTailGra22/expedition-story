@@ -57,6 +57,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 .ins h3{font-size:15px;font-weight:700;color:var(--ink);margin:22px 0 8px}
 .ins-key{margin:0;padding-left:22px;font-size:14px;line-height:1.75}.ins-key li{margin-bottom:8px}.ins-key b{color:var(--green)}
 .ins-note{font-size:12px;color:var(--gray);line-height:1.6;margin:0 0 8px}
+.ins-fig{display:block;width:100%;height:auto;border:0.5px solid var(--gray2);border-radius:10px;margin:4px 0 14px;background:#fff}
 .ins-list{margin:0 0 6px;padding-left:20px;font-size:13.5px;line-height:1.7}
 .tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:0.5px solid var(--gray2);border-radius:10px}
 .tbl table{border-collapse:collapse;width:100%;min-width:720px;table-layout:fixed;font-size:13px;line-height:1.55}
@@ -346,11 +347,14 @@ def transect_html(meta, pts):
                "海拔 SRTM 30 m（雙線性內插）· GPS &gt;100 m 之點位置與高程以鄰近可靠點時間內插 · ")
             + tax
             + (f" · 快照 {meta['snapshot']}" if meta.get("snapshot") else "") + "。")
-    ins = meta.get("insights")
-    insights = (f'<h2 class="sec" id="insights">AI彙整，待查證</h2>\n<div class="ins">{ins}</div>\n'
-                if ins else "")
-    toc = ('<div class="toc"><a href="#profile">剖面圖</a><a href="#obsmap">觀測點地圖</a>'
-           '<a href="#insights">AI彙整，待查證</a></div>\n' if ins else "")
+    ins, vz = meta.get("insights"), meta.get("vegzones")
+    insights = ((f'<h2 class="sec" id="vegzones">植群帶對照</h2>\n<div class="ins">{vz}</div>\n' if vz else "")
+                + (f'<h2 class="sec" id="insights">AI彙整，待查證</h2>\n<div class="ins">{ins}</div>\n'
+                   if ins else ""))
+    links = [("profile", "剖面圖"), ("obsmap", "觀測點地圖")] + ([("vegzones", "植群帶對照")] if vz else []) \
+        + ([("insights", "AI彙整，待查證")] if ins else [])
+    toc = ('<div class="toc">' + "".join(f'<a href="#{a}">{t}</a>' for a, t in links) + '</div>\n'
+           if ins or vz else "")
     rep = {"__TITLE__": meta["title"], "__SUBT__": meta["subtitle"], "__NAV__": nav,
            "__TOC__": toc, "__INSIGHTS__": insights,
            "__N__": str(len(pts)), "__SP__": str(nsp), "__DIST__": dist, "__DUNIT__": unit,

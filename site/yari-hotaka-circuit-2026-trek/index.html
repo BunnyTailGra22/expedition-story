@@ -41,6 +41,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 .ins h3{font-size:15px;font-weight:700;color:var(--ink);margin:22px 0 8px}
 .ins-key{margin:0;padding-left:22px;font-size:14px;line-height:1.75}.ins-key li{margin-bottom:8px}.ins-key b{color:var(--green)}
 .ins-note{font-size:12px;color:var(--gray);line-height:1.6;margin:0 0 8px}
+.ins-fig{display:block;width:100%;height:auto;border:0.5px solid var(--gray2);border-radius:10px;margin:4px 0 14px;background:#fff}
 .ins-list{margin:0 0 6px;padding-left:20px;font-size:13.5px;line-height:1.7}
 .tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:0.5px solid var(--gray2);border-radius:10px}
 .tbl table{border-collapse:collapse;width:100%;min-width:720px;table-layout:fixed;font-size:13px;line-height:1.55}
@@ -65,7 +66,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 <div class="nav"><a href="../index.html">← 旅程索引 journeys</a></div>
 <h1>槍・穗高 2026 · Yari-Hotaka Circuit</h1>
 <p class="sub">2026-10-06 – 2026-10-10 · 5 天 · 89 樣點 · 72 種 · 連續路徑剖面 single continuous transect · GPX 實測軌跡 recorded track</p>
-<div class="toc"><a href="#profile">剖面圖</a><a href="#obsmap">觀測點地圖</a><a href="#insights">AI彙整，待查證</a></div>
+<div class="toc"><a href="#profile">剖面圖</a><a href="#obsmap">觀測點地圖</a><a href="#vegzones">植群帶對照</a><a href="#insights">AI彙整，待查證</a></div>
 <div class="cards">
   <div class="card"><div class="lbl">觀察數 observations</div><div class="val">89</div></div>
   <div class="card"><div class="lbl">物種數 species</div><div class="val">72</div></div>
@@ -85,6 +86,17 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 <h2 class="sec" id="obsmap">觀測點地圖<span>Observation map</span></h2>
 <p class="secnote">橘線為 GPX 實測軌跡　與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</p>
 <div class="mapbox"><div id="map"></div></div>
+<h2 class="sec" id="vegzones">植群帶對照</h2>
+<div class="ins"><img class="ins-fig" src="vegzones.png" alt="植群帶對照圖：臺灣與日本北阿爾卑斯的植群帶並排在同一個海拔尺度上，藍點為本次每筆觀察的海拔" loading="lazy">
+<p class="ins-note">兩地植群帶畫在同一個海拔尺度上；藍點是本次每筆觀察的海拔（依 GPX 軌跡對齊）。帶界為概略值：臺灣依蘇鴻傑（1984），日本依中部山岳常用的垂直帶區分。由 <code>vegzones.py</code> 產生。</p>
+<h3>與臺灣的差異</h3>
+<ol class="ins-key">
+  <li><b>森林線低了約 1,100 m。</b>北阿爾卑斯約 2,500 m，臺灣約 3,600 m。這裡的緯度（36°N）比臺灣（23.5°N）高約 12 度，同海拔氣溫更低，冬季季風帶來的大雪與強風也把森林壓得更低。</li>
+  <li><b>同樣的海拔，看到的是不同的植被。</b>本次 1,500–1,700 m 的上高地是落葉闊葉河畔林（連香樹、日本七葉樹）；臺灣同高度是櫟林帶的常綠闊葉林。2,500–3,100 m 在這裡已是偃松灌叢與高山草地，在臺灣仍是鐵杉、雲杉針葉林。</li>
+  <li><b>森林線以上的主角不同。</b>日本是匍匐的偃松，臺灣是玉山圓柏、玉山杜鵑灌叢與箭竹草原。</li>
+  <li><b>秋色來自落葉樹。</b>亞高山帶有岳樺、七灶花楸、槭類等落葉樹，10 月形成整片紅黃葉；臺灣同一帶以常綠針葉樹為主，秋色只零星出現在巒大花楸等少數落葉樹。</li>
+</ol>
+</div>
 <h2 class="sec" id="insights">AI彙整，待查證</h2>
 <div class="ins"><!-- Insights for yari-hotaka-circuit-2026-trek. Hand-curated HTML fragment, inlined by generate.py
      into the page's third section (AI彙整，待查證). Data: iNaturalist taxonomy, IUCN and Japan establishment means (原生 / 日本特有), iNaturalist Japan Flowers / Fruits annotations (花果期), GPX elevation (棲地). -->

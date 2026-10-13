@@ -5,7 +5,7 @@ a journey index links them.
 
 Usage:  python3 generate.py --journey <id>   # reads journeys/<id>/config.json
 """
-import argparse, json, os, sys, datetime
+import argparse, json, os, shutil, sys, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -59,6 +59,19 @@ def insights_of(cfg):
     third section (AI彙整，待查證), below the profile and the map."""
     p = os.path.join(HERE, "journeys", cfg["id"], "insights.html")
     return open(p, encoding="utf-8").read() if os.path.exists(p) else None
+
+
+def vegzones_of(cfg, out):
+    """Optional journeys/<id>/vegzones.html (+ vegzones.png from vegzones.py) → the
+    植群帶對照 section between the map and the insights; the figure is copied beside
+    the page it is referenced from."""
+    jdir = os.path.join(HERE, "journeys", cfg["id"])
+    p = os.path.join(jdir, "vegzones.html")
+    if not os.path.exists(p):
+        return None
+    if os.path.exists(os.path.join(jdir, "vegzones.png")):
+        shutil.copy(os.path.join(jdir, "vegzones.png"), os.path.join(out, "vegzones.png"))
+    return open(p, encoding="utf-8").read()
 
 
 def enrich_points(pts, cfg):
@@ -124,7 +137,7 @@ def run_trek(cfg, obs, out):
             "snapshot": cfg.get("snapshot"), "trek": True,
             "taxonomy": cfg.get("taxonomy"),
             "track": line, "ascent": st["ascent"] if trk else None,
-            "insights": insights_of(cfg)}
+            "insights": insights_of(cfg), "vegzones": vegzones_of(cfg, out)}
     open(os.path.join(out, "index.html"), "w").write(R.transect_html(meta, pts))
     json.dump({"id": cfg["id"], "label": cfg["label"], "mode": "trek",
                "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
