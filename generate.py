@@ -165,7 +165,8 @@ def main():
         nsp = len({p["s"] for p in pts})
         meta = {"title": f"{cfg['label']} · {wid}",
                 "subtitle": f"{w['date']} 踏查 · {w['start']}–{w['end']} · {len(pts)} 樣點 · {nsp} 種",
-                "user": cfg["user_login"], "place_id": cfg["place_id"], "snapshot": cfg.get("snapshot")}
+                "user": cfg["user_login"], "place_id": cfg["place_id"], "snapshot": cfg.get("snapshot"),
+                "insights": insights_of(cfg)}
         wdir = os.path.join(out, wid)
         os.makedirs(wdir, exist_ok=True)
         open(os.path.join(wdir, "index.html"), "w").write(R.transect_html(meta, pts))

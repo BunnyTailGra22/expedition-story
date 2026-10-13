@@ -34,8 +34,21 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 .ctt.sheet img{width:88px;height:88px;flex:0 0 auto;object-fit:cover;border-radius:8px;background:#f1efe8}
 .ctt .nm{font-weight:700;color:var(--green);font-size:14px}.ctt .sci{font-style:italic;color:var(--gray)}.ctt .fam{color:var(--gray)}.ctt .lnk{display:inline-block;margin-top:6px;color:var(--green);font-weight:500;text-decoration:none}
 .foot{margin-top:20px;font-size:11.5px;color:var(--gray2);line-height:1.6}
-.seclbl{font-size:15px;font-weight:500;color:var(--green);margin:30px 0 6px}
-.seclbl span{font-size:12px;font-weight:400;color:var(--gray2);margin-left:8px}
+.sec{font-size:18px;font-weight:700;color:var(--green);margin:34px 0 4px;padding-top:14px;border-top:0.5px solid var(--gray2)}
+.sec span{font-size:13px;font-weight:400;color:var(--gray);margin-left:8px}
+.secnote{font-size:12px;color:var(--gray2);margin:0 0 10px}
+.toc{font-size:13px;margin:-12px 0 18px}.toc a{color:var(--green);text-decoration:none;margin-right:14px}
+.ins h3{font-size:15px;font-weight:700;color:var(--ink);margin:22px 0 8px}
+.ins-key{margin:0;padding-left:22px;font-size:14px;line-height:1.75}.ins-key li{margin-bottom:8px}.ins-key b{color:var(--green)}
+.ins-note{font-size:12px;color:var(--gray);line-height:1.6;margin:0 0 8px}
+.ins-list{margin:0 0 6px;padding-left:20px;font-size:13.5px;line-height:1.7}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:0.5px solid var(--gray2);border-radius:10px}
+.tbl table{border-collapse:collapse;width:100%;min-width:720px;table-layout:fixed;font-size:13px;line-height:1.55}
+.tbl table.t-fam{min-width:900px}
+.tbl th{background:#f5f4ef;color:var(--gray);font-weight:500;text-align:left;padding:8px 10px;white-space:nowrap}
+.tbl td{padding:8px 10px;border-top:0.5px solid #e4e2da;vertical-align:top}
+.tbl td b{color:var(--green)}
+.t-fam td:last-child{white-space:nowrap}
 .mapbox{position:relative;width:100%;height:480px;border-radius:12px;overflow:hidden;border:0.5px solid var(--gray2)}
 #map{width:100%;height:100%;background:#eee}
 .mk{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);background:#f1efe8}
@@ -60,6 +73,7 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
   <div class="card"><div class="lbl">步道長 trail</div><div class="val">53.0 km</div></div>
   <div class="card"><div class="lbl">最高海拔 peak</div><div class="val">3189 m</div><div class="sub2">總爬升 +2915 m</div></div>
 </div>
+<h2 class="sec" id="profile">地形/高程剖面圖<span>Topographic Cross-Section / Elevation Profile</span></h2>
 <div class="legend">
   <span><i class="dot" style="background:var(--green)"></i>研究等級 research</span>
   <span><i class="dot" style="background:var(--green2)"></i>需鑑定 needs-ID</span>
@@ -67,7 +81,8 @@ h1{font-weight:700;font-size:24px;color:var(--green);margin:0 0 4px}
 </div>
 <div class="ctrl"><span>縮放：雙指 / 滾輪　平移：拖曳　點選點位 → iNaturalist　剖面圖與地圖同步縮放</span><button id="rz" type="button">重置 reset</button></div>
 <div class="chartbox"><canvas id="t" role="img" aria-label="槍・穗高 2026 · Yari-Hotaka Circuit 海拔剖面圖"></canvas></div>
-<div class="seclbl">觀測點地圖 observation map<span>橘線為 GPX 實測軌跡　與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</span></div>
+<h2 class="sec" id="obsmap">觀測點地圖<span>Observation map</span></h2>
+<p class="secnote">橘線為 GPX 實測軌跡　與剖面圖同步縮放平移　科/屬篩選同步　游標連動　右下可切換底圖</p>
 <div class="mapbox"><div id="map"></div></div>
 <p class="foot">資料來源 iNaturalist API（觀察者 bunnytailgrass，地點 place_id 6737）· 距離與海拔：GPX 實測軌跡（裝置高度計）· 觀察點依拍攝時間對齊軌跡 · 科/屬中拉名：iNaturalist 分類（地區俗名 zh-TW） · 快照 2026/10 · Yari-Hotaka Circuit。</p>
 </div>
