@@ -12,6 +12,27 @@
   "peak_m": 3866,
   "low_m": 1880,
   "climb_m": 257,
+  "taxa": [
+    "Adenophora morrisonensis uehatae",
+    "Anaphalis nagasawae",
+    "Berberis morrisonensis",
+    "Cerastium morrisonense",
+    "Cirsium arisanense",
+    "Gaultheria borneensis",
+    "Gentiana arisanensis",
+    "Gentiana davidii formosana",
+    "Geranium hayatanum",
+    "Hypericum nagasawae",
+    "Hypochaeris radicata",
+    "Juniperus squamata",
+    "Parnassia palustris",
+    "Picris hieracioides morrisonensis",
+    "Rhododendron pseudochrysanthum",
+    "Rosa sericea morrisonensis",
+    "Scabiosa lacerifolia",
+    "Selliguea quasidivaricata",
+    "Tracheophyta"
+  ],
   "track": [
     [
       [

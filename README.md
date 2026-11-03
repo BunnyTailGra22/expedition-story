@@ -115,8 +115,8 @@ use steps 1, 3, 4 and 6.
 | `journeys/<id>/insights_spec.py` → `insights.html` | curated insights: source data and the generated fragment |
 | `journeys/<id>/vegzones.json` · `vegzones.html` · `vegzones.png` | overseas zone comparison: data, summary, figure |
 | `site/<id>/index.html` | the self-contained page: profile + map (+ zones) + insights |
-| `site/<id>/journey.json` | manifest: dates, days, points, species, km, peak, ascent, downsampled track |
-| `site/index.html` | landing page: overview map of every track + list sortable by date / km / days / obs / spp |
+| `site/<id>/journey.json` | manifest: dates, days, points, species (count + names), km, peak, ascent, downsampled track |
+| `site/index.html` | landing page: summary cards for the whole collection, overview map of every track, and a grid of journey cards (mini stat tiles) sortable by date / km / days / obs / spp |
 | `caches/` (gitignored) | elevation, TaiCoL, iNaturalist taxa, phenology and per-journey insights data |
 
 **Regenerate one journey** — `python3 generate.py --journey erge-2026-04-25`.

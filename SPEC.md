@@ -67,16 +67,22 @@ Reference for journey inputs, generated outputs, and the create-journey form.
 ## Generated output
 
 ```
-site/index.html                 global landing — overview map + sortable list of every journey
+site/index.html                 global landing — summary cards + overview map + sortable journey cards
 site/<id>/index.html            trek: the transect   ·   survey: the journey index
 site/<id>/<walk>/index.html     survey only: one walk's transect (walk id = its date, e.g. 2026-04-25)
 site/<id>/journey.json          manifest (see below)
 ```
 
-`site/index.html` shows one **overview map** (OpenTopoMap, with OSM/light in the switcher) drawing every
-journey's track in its own colour — click a track or its start marker for a popup through to that
-journey — above a list that sorts by **date / distance / days / observations / species** (click a key
-again to flip direction). Hovering a row highlights its track and vice versa.
+`site/index.html` opens with six **summary cards** for the whole collection: journeys (trek / survey
+split), field days (year span), total trail km, observations, species (distinct across all journeys —
+the union of every manifest's `taxa`; falls back to a labelled per-journey sum if any manifest predates
+`taxa`), and the highest peak (with its journey). Below them, one **overview map** (OpenTopoMap, with
+OSM/light in the switcher) draws every journey's track in its own colour — click a track or its start
+marker for a popup through to that journey — above a grid of **journey cards** (two columns, one on
+phones). Each card shows its mode tag, date range, title, and five mini tiles: days (walks for a
+survey), distance, peak, observations, species; its top edge matches its track colour. The cards sort by
+**date / distance / days / observations / species** (click a key again to flip direction). Hovering a
+card highlights its track and vice versa.
 
 Each transect page contains, top to bottom: title + summary cards + family/genus filters → **elevation
 transect** (Chart.js) → **observation map** (Leaflet, OSM base + light/topo switcher) → footer.
@@ -89,17 +95,20 @@ Both views share one point array and are linked three ways: hover, the 科/屬 f
 // trek
 { "id", "label", "mode": "trek", "generated_at",
   "d1", "d2", "days", "points", "species", "trail_km", "peak_m", "low_m", "climb_m",
+  "taxa": [ "Aconitum", … ],                // distinct scientific names behind "species"
   "track": [ [ [lat, lng], … ] ] }          // one segment, downsampled to ≤140 points
 
 // survey — same summary vocabulary, so both modes sort together on the landing page
 { "id", "label", "generated_at",
   "walks": [ { "walk_id", "date", "start", "end", "n", "species" }, … ],
-  "d1", "d2", "days", "points", "species", "trail_km", "peak_m", "low_m",
+  "d1", "d2", "days", "points", "species", "taxa", "trail_km", "peak_m", "low_m",
   "track": [ … one segment per walk … ] }
 ```
 
 A survey's `trail_km` is its **longest walk**, not the sum: repeat walks retrace one trail, so
-summing them would report a path nobody walked. `species` is distinct across the journey.
+summing them would report a path nobody walked. `species` is distinct across the journey; `taxa` lists
+those names (unnamed observations are counted in `species` but have no entry), so the landing page can
+count species across journeys without double-counting.
 
 `build_site_index.py` consumes these to build the global index.
 
