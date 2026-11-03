@@ -23,7 +23,7 @@ lib/                        the engine (pure-stdlib Python)
   profile.py                one walk's obs → transect points (scope → QA → elev → distance)
   render.py                 points → self-contained HTML (transect chart + observation map)
 generate.py                 orchestrator: config → fetch → (trek | survey) → site/<id>/
-build_site_index.py         scans site/*/journey.json → site/index.html (overview map + sortable list)
+build_site_index.py         scans site/*/journey.json → site/index.html (summary cards + overview map + sortable journey cards)
 new_journey.py              scaffolder: resolve place + write a config + probe (form/CLI)
 merge_gpx.py                per-day GPX files → one track (one segment per day; --strip extensions, --every N s)
 insights_data.py            authoring: facts for the insights — zone × genus, status, 花果期 → report + caches/insights/<id>.json
@@ -82,13 +82,18 @@ Both the chart and the map render the **same** ordered array, so they link by in
 
 ### `journey.json` manifest
 
-- **trek**: `{id, label, mode, generated_at, d1, d2, days, points, species, trail_km, peak_m, low_m, climb_m}`
-- **survey**: `{id, label, generated_at, walks:[{walk_id, date, start, end, n, species}, …]}`
+- **trek**: `{id, label, mode, generated_at, d1, d2, days, points, species, trail_km, peak_m, low_m, climb_m, taxa, track}`
+- **survey**: `{id, label, generated_at, walks:[{walk_id, date, start, end, n, species}, …], d1, d2, days, points, species, taxa, trail_km, peak_m, low_m, track}`
 
-`build_site_index.py` reads these to build the landing page: an OpenTopoMap overview drawing every
-journey's `track` (colour-coded, click → that journey) and a list sortable by date / distance / days /
-observations / species. Sorting is DOM reordering over `data-*` attributes, so the list still renders
-and links without JavaScript.
+`taxa` is the sorted list of distinct scientific names behind `species`.
+
+`build_site_index.py` reads these to build the landing page: a row of **summary cards** for the whole
+collection (journeys, field days, trail km, observations, species, highest peak), an OpenTopoMap overview
+drawing every journey's `track` (colour-coded, click → that journey), and a grid of **journey cards** —
+each with its own mini stat tiles and a top edge in its track colour — sortable by date / distance / days /
+observations / species. The species card is the size of the union of every journey's `taxa`, so a species
+seen on several journeys counts once (a plain sum of `species` would double-count). Sorting is DOM
+reordering over `data-*` attributes, so the cards still render and link without JavaScript.
 
 ## Rendering
 

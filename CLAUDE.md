@@ -46,7 +46,7 @@ caches/                     # cross-journey shared: elevation.json, taicol.json,
 generate.py --journey <id>  # config -> fetch -> segment -> per-walk render -> site/<id>/
 site/<id>/journey.json      # walk manifest (P1)
 site/<id>/<walk>/index.html # per-walk transect (P3)
-site/index.html             # landing: overview map (all tracks) + list sortable by date/km/days/obs/spp
+site/index.html             # landing: summary cards + overview map (all tracks) + journey cards sortable by date/km/days/obs/spp
 ```
 
 ## Phases
@@ -58,7 +58,9 @@ site/index.html             # landing: overview map (all tracks) + list sortable
   global `inat_taxa.py` (TaiCoL is Taiwan-only), adaptive m↔km axis, peak-vs-climb card.
 - **P5 [done]** landing page `site/index.html`: OpenTopoMap overview of every journey's track
   (click → that journey) + list sorted by date/distance/days/observations/species; journey.json
-  carries a downsampled `track` and one summary vocabulary for both modes.
+  carries a downsampled `track` and one summary vocabulary for both modes. Later: a row of
+  collection-wide summary cards on top, and the list became a grid of journey cards with mini stat
+  tiles; journey.json gained `taxa` (species names) so the species card is a true union, not a sum.
 - **P6 [done]** GPX route tier: optional `"gpx"` (trek) — `lib/track.py` places each obs on the recorded
   route by time; distance, elevation profile, peak/ascent and the map line come from the track.
   `merge_gpx.py` merges per-day files (`--strip` drops HR/cadence for the public repo copy;

@@ -150,7 +150,10 @@ def run_trek(cfg, obs, out):
                "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
                "d1": d0, "d2": d1, "days": ndays, "points": len(pts), "species": nsp,
                "trail_km": round(km, 1), "peak_m": round(peak), "low_m": round(low),
-               "climb_m": round(climb), "track": [track_of(route)]},
+               "climb_m": round(climb),
+               # names, not just the count: the landing page unions them across journeys
+               "taxa": sorted({p["s"] for p in pts if p["s"]}),
+               "track": [track_of(route)]},
               open(os.path.join(out, "journey.json"), "w"), ensure_ascii=False, indent=2)
     print(f"{cfg['label']}: {len(obs)} obs → 1 continuous transect → site/{cfg['id']}/")
     print(f"  {d0}–{d1} · {ndays} 天 · {len(pts)} pts · {nsp} spp · {km:.1f} km · "
@@ -205,6 +208,7 @@ def main():
             "d1": index[0]["date"], "d2": index[-1]["date"],
             "days": len({w["date"] for w in index}), "points": len(flat),
             "species": len({p["s"] for p in flat}),
+            "taxa": sorted({p["s"] for p in flat if p["s"]}),
             # each walk retraces the same trail, so the journey's length is one walk's,
             # not the sum — take the longest
             "trail_km": round(max(w[-1]["x"] for w in allpts) / 1000, 1),

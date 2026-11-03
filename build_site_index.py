@@ -2,10 +2,12 @@
 """Build site/index.html — the global landing page listing every journey, read
 from each site/<id>/journey.json. SOW brand; matches the per-journey index style.
 
-The page has two views of the same set: an overview map (OpenTopoMap) drawing
-every journey's track, each clickable through to its page, and a list that can be
-sorted by date / distance / days / observations / species. Hovering either one
-highlights the other. Run after generate.py. Usage: python3 build_site_index.py"""
+The page opens with a row of summary cards for the whole collection (journeys,
+field days, trail km, observations, unique species, highest peak), then two views
+of the same set: an overview map (OpenTopoMap) drawing every journey's track, each
+clickable through to its page, and a grid of journey cards with their own mini stat
+tiles, sortable by date / distance / days / observations / species. Hovering a card
+or a track highlights the other. Run after generate.py. Usage: python3 build_site_index.py"""
 import json, glob, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -33,8 +35,44 @@ def summarize(j):
         "obs": j.get("points") or sum(w["n"] for w in walks),
         "spp": j.get("species") or sum(w["species"] for w in walks),
         "km": j.get("trail_km"), "peak": j.get("peak_m"),
+        "taxa": j.get("taxa"),   # species names; absent in manifests older than the field
         "track": j.get("track") or [],
     }
+
+
+def totals(S):
+    """The summary-card row: the whole collection at a glance, as (label, value, sub)."""
+    trek = sum(s["trek"] for s in S)
+    years = sorted(s["d1"][:4] for s in S if s["d1"])
+    top = max((s for s in S if s["peak"] is not None), key=lambda s: s["peak"], default=None)
+    if all(s["taxa"] is not None for s in S):   # a species seen on several journeys counts once
+        spp, spp_sub = len(set().union(*(s["taxa"] for s in S))), "跨旅程不重複 unique"
+    else:                                       # an older manifest has no names to union
+        spp, spp_sub = sum(s["spp"] for s in S), "各趟加總 sum"
+    return [
+        ("旅程 journeys", f"{len(S)}", f"{trek} 健行 · {len(S) - trek} 踏查"),
+        ("野外天數 days", f'{sum(s["days"] for s in S)}', f"{years[0]}–{years[-1]}" if years else ""),
+        ("步道長 trail", f'{round(sum(s["km"] or 0 for s in S)):,} km', "累計 total"),
+        ("觀察數 observations", f'{sum(s["obs"] for s in S):,}', "樣點 points"),
+        ("物種數 species", f"{spp:,}", spp_sub),
+        ("最高海拔 peak", f'{top["peak"]:,} m' if top else "—", top["label"].split(" · ")[0] if top else ""),
+    ]
+
+
+def card(lbl, val, sub):
+    return (f'<div class="card"><div class="lbl">{lbl}</div><div class="val">{val}</div>'
+            f'<div class="sub2">{sub}</div></div>')
+
+
+def tiles(s):
+    """A journey's own mini summary cards: the same numbers the list sorts by."""
+    unit = lambda v, u: f"{v}<small>{u}</small>" if v is not None else "—"
+    first = ("天數", "days", s["days"]) if s["trek"] else ("趟數", "walks", s["walks"])
+    # the English half of a label hides on phones, where five tiles share ~340 px
+    return "".join(f'<span class="t"><b>{v}</b><i>{zh}<em> {en}</em></i></span>' for zh, en, v in
+                   [first, ("距離", "dist", unit(s["km"], "km")),
+                    ("最高", "peak", unit(f'{s["peak"]:,}' if s["peak"] is not None else None, "m")),
+                    ("樣點", "obs", f'{s["obs"]:,}'), ("物種", "spp", f'{s["spp"]:,}')])
 
 
 def stat_line(s):
@@ -49,13 +87,15 @@ def stat_line(s):
 
 
 def entry(s, i):
+    c = PAL[i % len(PAL)]   # the card's top edge matches its track colour on the map
     return (f'<li data-id="{s["id"]}" data-i="{i}" data-date="{s["d1"]}" '
             f'data-km="{s["km"] if s["km"] is not None else -1}" data-days="{s["days"]}" '
-            f'data-obs="{s["obs"]}" data-spp="{s["spp"]}">'
-            f'<a href="{s["id"]}/index.html"><span class="tag" style="color:{PAL[i % len(PAL)]};'
-            f'border-color:{PAL[i % len(PAL)]}">{s["tag"]}</span>'
+            f'data-obs="{s["obs"]}" data-spp="{s["spp"]}" style="border-top:3px solid {c}">'
+            f'<a href="{s["id"]}/index.html"><span class="top">'
+            f'<span class="tag" style="color:{c};border-color:{c}">{s["tag"]}</span>'
+            f'<span class="dt">{s["d1"]} – {s["d2"]}</span></span>'
             f'<span class="nm">{s["label"]}</span>'
-            f'<span class="st">{stat_line(s)}</span></a></li>')
+            f'<span class="tiles">{tiles(s)}</span></a></li>')
 
 
 def main():
@@ -63,6 +103,7 @@ def main():
     journeys.sort(key=lambda j: (j.get("mode") != "trek", j["id"]))
     S = [summarize(j) for j in journeys]
     rows = "".join(entry(s, i) for i, s in enumerate(S))
+    cards = "".join(card(*c) for c in totals(S))
     btns = "".join(f'<button type="button" data-k="{k}"{" class=on" if k == "date" else ""}>{lbl}</button>'
                    for k, lbl in SORTS)
     mapdata = json.dumps([{"id": s["id"], "label": s["label"], "stat": stat_line(s),
@@ -85,10 +126,24 @@ h1{{color:{BR['green']};font-weight:700;font-size:26px;margin:0 0 4px}}
 .sortbar button{{font-family:inherit;font-size:12px;color:{BR['gray']};background:#fff;border:0.5px solid {BR['gray2']};border-radius:20px;padding:5px 12px;cursor:pointer}}
 .sortbar button:hover{{background:#f5f4ef}}
 .sortbar button.on{{color:#fff;background:{BR['green']};border-color:{BR['green']}}}
-ul{{list-style:none;padding:0;margin:0}}
-li{{border:0.5px solid {BR['gray2']};border-radius:10px;margin-bottom:12px}}
-li a{{display:block;padding:16px 18px;color:#3a3a36;text-decoration:none}}
+.cards{{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:0 0 20px}}
+.card{{background:#f5f4ef;border-radius:10px;padding:11px 12px;min-width:0}}
+.card .lbl{{font-size:12px;color:{BR['gray']}}}.card .val{{font-size:22px;font-weight:500}}
+.card .sub2{{font-size:11px;color:{BR['gray2']};margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+ul{{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+li{{border:0.5px solid {BR['gray2']};border-radius:10px;overflow:hidden}}
+li a{{display:flex;flex-direction:column;height:100%;box-sizing:border-box;padding:13px 15px 14px;color:#3a3a36;text-decoration:none}}
 li a:hover,li.hi a{{background:#f5f4ef}}
+li .top{{display:flex;justify-content:space-between;align-items:center;gap:8px}}
+li .dt{{font-size:12px;color:{BR['gray2']};white-space:nowrap}}
+li .nm{{display:block;margin:8px 0 12px;line-height:1.35}}
+.tiles{{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:auto}}
+.t{{background:#f5f4ef;border-radius:8px;padding:6px 7px;min-width:0}}
+li a:hover .t,li.hi .t{{background:#fff}}
+.t b{{display:block;font-size:15px;font-weight:500;white-space:nowrap}}
+.t small{{font-size:10.5px;font-weight:400;color:{BR['gray']};margin-left:2px}}
+.t i{{display:block;font-style:normal;font-size:10.5px;color:{BR['gray']};white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+.t em{{font-style:normal}}
 .tag{{display:inline-block;font-size:11px;color:{BR['green']};border:0.5px solid {BR['green']};border-radius:20px;padding:2px 9px;margin-right:8px;vertical-align:middle}}
 .nm{{font-size:17px;font-weight:500;color:{BR['green']}}}
 .st{{display:block;font-size:13px;color:{BR['gray']};margin-top:5px}}
@@ -96,10 +151,12 @@ li a:hover,li.hi a{{background:#f5f4ef}}
 .pp .nm{{font-size:15px}}.pp .st{{font-size:12px}}
 .pp a{{display:inline-block;margin-top:6px;color:{BR['green']};font-weight:500;text-decoration:none;font-size:12px}}
 .foot{{margin-top:28px;font-size:11.5px;color:{BR['gray2']};line-height:1.7}}
-@media(max-width:760px){{.wrap{{padding:28px 16px}}.mapbox{{height:320px}}}}</style></head><body><div class="wrap">
+@media(max-width:760px){{.wrap{{padding:28px 16px}}.mapbox{{height:320px}}.cards{{grid-template-columns:repeat(3,1fr)}}ul{{grid-template-columns:minmax(0,1fr)}}}}
+@media(max-width:480px){{.cards{{grid-template-columns:repeat(2,1fr)}}.card .val{{font-size:19px}}.t{{padding:6px 5px}}.t em{{display:none}}}}</style></head><body><div class="wrap">
 <h1>Expedition Story</h1>
 <p class="sub">把任一段 iNaturalist 踏查（使用者 × 地點 × 日期區間）自動產成植被／生物多樣性海拔剖面圖。<br>
-共 {len(S)} 趟旅程。地圖：點選路線或標記開啟該趟旅程。</p>
+地圖與卡片連動：點選路線、標記或卡片開啟該趟旅程。</p>
+<div class="cards">{cards}</div>
 <div class="mapbox"><div id="map"></div></div>
 <div class="sortbar"><span>排序 sort by</span>{btns}</div>
 <ul id="list">{rows}</ul>
